@@ -1,4 +1,8 @@
 import { Module } from '@nestjs/common';
+import { StoreModule } from "./store/store.module";
 
-@Module({})
+@Module({
+  imports: [StoreModule]
+})
 export class InpostackModule {}
+
