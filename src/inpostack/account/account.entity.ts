@@ -6,6 +6,9 @@ export class Account {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
+  @Column({nullable: true})
+  email: string;
+
   @Column({nullable: false})
   name: string;
 
