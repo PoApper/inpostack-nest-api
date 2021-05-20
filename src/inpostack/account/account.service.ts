@@ -13,7 +13,7 @@ export class AccountService {
   }
 
   async save(dto: AccountCreateDto) {
-    const saveDto = Object.assign({lastLoginAt: new Date()}, dto);
+    const saveDto = Object.assign({ lastLoginAt: new Date() }, dto);
     return this.accountRepo.save(saveDto);
   }
 
@@ -23,6 +23,10 @@ export class AccountService {
 
   findOne(findOptions: object) {
     return this.accountRepo.findOne(findOptions);
+  }
+
+  findOneOrFail(findOptions: object) {
+    return this.accountRepo.findOneOrFail(findOptions);
   }
 
   update(findOptions: object, dto: AccountUpdateDto) {

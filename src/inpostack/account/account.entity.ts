@@ -21,7 +21,8 @@ export class Account {
   @Column({nullable: false})
   accountType: AccountType;
 
-  @Column({nullable: false, default: AccountStatus.deactivated})
+  // TODO: modify default status to be deactivated later
+  @Column({nullable: false, default: AccountStatus.activated})
   accountStatus: AccountStatus;
 
   @CreateDateColumn()
