@@ -110,8 +110,20 @@ describe('Store Controller', () => {
     describe('update one store', () => {
         it('should update a store entity', async () => {
             const exist_users = await storeController.get()
-            const exist_user = exist_users[0]
-            expect(await storeController.put(exist_user.uuid, storeDto2))
+            const exist_user = exist_users[0];
+            await storeController.put(exist_user.uuid, storeDto2);
+            const updated_user = await storeController.getOne(exist_user.uuid);
+            const {name, phone, desc, location, openTime, closeTime, menu} = updated_user;
+            const tempDto = {
+                name: name,
+                phone: phone,
+                desc: desc,
+                location: location,
+                openTime: openTime,
+                closeTime: closeTime,
+                menu: menu
+            }
+            expect(tempDto)
                 .toEqual({
                     name: "참서리2",
                     phone: "010-1111-1111",

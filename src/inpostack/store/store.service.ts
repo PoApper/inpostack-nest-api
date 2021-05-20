@@ -38,13 +38,20 @@ export class StoreService {
 
     const readPath = `./static/store/menu/${store.uuid}.json`;
     const menuJson = fs.readFileSync(readPath, "utf8");
-    store["menu"] = JSON.parse(menuJson);
+    const result = Object.assign({menu: JSON.parse(menuJson)}, store);
 
-    return store;
+    return result;
   }
 
-  update(findOptions: object, dto: StoreDto) {
-    return this.storeRepo.update(findOptions, dto);
+  async update(findOptions: object, dto: StoreDto) {
+    const existStore = await this.findOne(findOptions);
+    const {menu, ...updateDto} = dto;
+    const out = await this.storeRepo.update(findOptions, updateDto);
+
+    const menuSavePath = `./static/store/menu/${existStore.uuid}.json`;
+
+    fs.writeFileSync(menuSavePath, JSON.stringify(menu));
+    return out;
   }
 
   delete(findOptions: object) {
