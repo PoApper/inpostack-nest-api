@@ -3,11 +3,22 @@ import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "./auth.service";
 import { Request, Response } from "express";
 
+/**
+ * This is for handle 'verifyToken', 'login', 'logout' tasks
+ */
+
 @Controller("auth")
 export class AuthController {
   constructor(
     private authService: AuthService
   ) {
+  }
+
+  @Get("verifyToken")
+  @UseGuards(AuthGuard("jwt"))
+  verifyToken(@Req() req: Request) {
+    const user: any = req.user;
+    return user;
   }
 
   @Post("login")
@@ -18,13 +29,6 @@ export class AuthController {
       "Set-Cookie", `Authentication=${token}; HttpOnly; Path=/;`
     );
     return res.send(req.user);
-  }
-
-  @Get("verifyToken")
-  @UseGuards(AuthGuard("jwt"))
-  verifyToken(@Req() req: Request) {
-    const user: any = req.user;
-    return user;
   }
 
   @Get("logout")
