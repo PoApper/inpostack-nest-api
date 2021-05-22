@@ -4,12 +4,23 @@ import { AuthService } from "./auth.service";
 import { Request, Response } from "express";
 import {AccountService} from "../inpostack/account/account.service";
 
+/**
+ * This is for handle 'verifyToken', 'login', 'logout' tasks
+ */
+
 @Controller("auth")
 export class AuthController {
   constructor(
     private authService: AuthService,
     private readonly accountService: AccountService
   ) {
+  }
+
+  @Get("verifyToken")
+  @UseGuards(AuthGuard("jwt"))
+  verifyToken(@Req() req: Request) {
+    const user: any = req.user;
+    return user;
   }
 
   @Post("login")
@@ -22,13 +33,6 @@ export class AuthController {
     );
     this.accountService.updateLoginById(user.id);
     return res.send(user);
-  }
-
-  @Get("verifyToken")
-  @UseGuards(AuthGuard("jwt"))
-  verifyToken(@Req() req: Request) {
-    const user: any = req.user;
-    return user;
   }
 
   @Get("logout")
