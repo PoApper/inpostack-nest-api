@@ -2,22 +2,26 @@ import { Controller, Get, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "./auth.service";
 import { Request, Response } from "express";
+import {AccountService} from "../inpostack/account/account.service";
 
 @Controller("auth")
 export class AuthController {
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private readonly accountService: AccountService
   ) {
   }
 
   @Post("login")
   @UseGuards(AuthGuard("local"))
   async login(@Req() req: Request, @Res() res: Response) {
-    const token = this.authService.generateJwtToken(req.user);
+    const user: any = req.user;
+    const token = this.authService.generateJwtToken(user);
     res.setHeader(
       "Set-Cookie", `Authentication=${token}; HttpOnly; Path=/;`
     );
-    return res.send(req.user);
+    this.accountService.updateLoginById(user.id);
+    return res.send(user);
   }
 
   @Get("verifyToken")

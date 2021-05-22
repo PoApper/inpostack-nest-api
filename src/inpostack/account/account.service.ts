@@ -1,8 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import {BadRequestException, Injectable} from "@nestjs/common";
 import { Repository } from "typeorm";
 import { Account } from "./account.entity";
 import { AccountCreateDto, AccountUpdateDto } from "./account.dto";
 import { InjectRepository } from "@nestjs/typeorm";
+
+const Message = {
+  NOT_EXISTING_USER: "There's no such user."
+}
 
 @Injectable()
 export class AccountService {
@@ -31,6 +35,17 @@ export class AccountService {
 
   update(findOptions: object, dto: AccountUpdateDto) {
     return this.accountRepo.update(findOptions, dto);
+  }
+
+  async updateLoginById(id: string) {
+    const existUser = await this.findOne({id: id});
+    if(!existUser) {
+      throw new BadRequestException(Message.NOT_EXISTING_USER);
+    } else {
+      this.accountRepo.update({uuid: existUser.uuid, email: existUser.email, id: existUser.id}, {
+        lastLoginAt: new Date()
+      })
+    }
   }
 
   delete(findOptions: object) {
