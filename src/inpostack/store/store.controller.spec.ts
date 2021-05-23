@@ -60,7 +60,7 @@ describe('Store Controller', () => {
     describe('save one store', () => {
         it('should create a store entity', async () => {
             const saved_user = await storeController.post(storeDto1);
-            const {name, phone, desc, location, openTime, closeTime, menu} = saved_user;
+            const {name, phone, description, location, open_time, close_time, menu} = saved_user;
             const tempDto = {
                 name: name,
                 phone: phone,
@@ -85,14 +85,14 @@ describe('Store Controller', () => {
             const exist_users = await storeController.get()
             const exist_user = exist_users[0]
             const saved_user = await storeController.getOne(exist_user.uuid)
-            const {name, phone, desc, location, openTime, closeTime} = saved_user;
+            const {name, phone, description, location, open_time, close_time} = saved_user;
             const tempDto = {
                 name: name,
                 phone: phone,
-                desc: desc,
+                desc: description,
                 location: location,
-                openTime: openTime,
-                closeTime: closeTime
+                openTime: open_time,
+                closeTime: close_time
             }
 
             expect(tempDto)
@@ -113,14 +113,14 @@ describe('Store Controller', () => {
             const exist_user = exist_users[0];
             await storeController.put(exist_user.uuid, storeDto2);
             const updated_user = await storeController.getOne(exist_user.uuid);
-            const {name, phone, desc, location, openTime, closeTime, menu} = updated_user;
+            const {name, phone, description, location, open_time, close_time, menu} = updated_user;
             const tempDto = {
                 name: name,
                 phone: phone,
-                desc: desc,
+                desc: description,
                 location: location,
-                openTime: openTime,
-                closeTime: closeTime,
+                openTime: open_time,
+                closeTime: close_time,
                 menu: menu
             }
             expect(tempDto)

@@ -1,12 +1,15 @@
-import {BadRequestException, Injectable} from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import * as crypto from "crypto";
 import { Account } from "./account.entity";
 import { AccountCreateDto, AccountUpdateDto } from "./account.dto";
-import { InjectRepository } from "@nestjs/typeorm";
+import encryptPassword from "../../utils/encryptPassword";
+
 
 const Message = {
   NOT_EXISTING_USER: "There's no such user."
-}
+};
 
 @Injectable()
 export class AccountService {
@@ -17,7 +20,14 @@ export class AccountService {
   }
 
   async save(dto: AccountCreateDto) {
-    const saveDto = Object.assign({ lastLoginAt: new Date() }, dto);
+    // encrypt password
+    const cryptoSalt = crypto.randomBytes(64).toString("base64");
+    const encryptedPassword = encryptPassword(dto.password, cryptoSalt);
+
+    const saveDto = Object.assign(
+      dto,
+      { last_login_at: new Date(), password: encryptedPassword, crypto_salt: cryptoSalt }
+    );
     return this.accountRepo.save(saveDto);
   }
 
@@ -38,13 +48,13 @@ export class AccountService {
   }
 
   async updateLoginById(id: string) {
-    const existUser = await this.findOne({id: id});
-    if(!existUser) {
+    const existUser = await this.findOne({ id: id });
+    if (!existUser) {
       throw new BadRequestException(Message.NOT_EXISTING_USER);
     } else {
-      this.accountRepo.update({uuid: existUser.uuid, email: existUser.email, id: existUser.id}, {
-        lastLoginAt: new Date()
-      })
+      this.accountRepo.update({ uuid: existUser.uuid, email: existUser.email, id: existUser.id }, {
+        last_login_at: new Date()
+      });
     }
   }
 
