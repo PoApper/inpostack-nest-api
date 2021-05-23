@@ -19,6 +19,9 @@ export class Account {
   password: string;
 
   @Column({nullable: false})
+  cryptoSalt: string;
+
+  @Column({nullable: false})
   accountType: AccountType;
 
   // TODO: modify default status to be deactivated later

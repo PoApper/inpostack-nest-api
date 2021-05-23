@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { AccountService } from "../inpostack/account/account.service";
 import { AccountStatus } from "../inpostack/account/account.meta";
 import { JwtService } from "@nestjs/jwt";
+import encryptPassword from "../utils/encryptPassword";
 
 @Injectable()
 export class AuthService {
@@ -20,9 +21,9 @@ export class AuthService {
       throw new UnauthorizedException("Not activated account.");
     }
 
-    // TODO: password encryption
-    if (account.password === pass) {
-      const { password, lastLoginAt, accountStatus, ...info } = account;
+    const encryptedPassword = encryptPassword(pass, account.cryptoSalt);
+    if (account.password === encryptedPassword) {
+      const { password, cryptoSalt, lastLoginAt, accountStatus, ...info } = account;
       return info;
     }
   }
