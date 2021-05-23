@@ -5,7 +5,7 @@ export class AccountCreateDto {
   readonly name: string;
   readonly id: string;
   readonly password: string;
-  readonly accountType: AccountType;
+  readonly account_type: AccountType;
 }
 
 export class AccountUpdateDto {
@@ -13,6 +13,6 @@ export class AccountUpdateDto {
   readonly name: string;
   readonly id: string;
   readonly password: string;
-  readonly accountType: AccountType;
-  readonly accountStatus: AccountStatus;
+  readonly account_type: AccountType;
+  readonly account_status: AccountStatus;
 }

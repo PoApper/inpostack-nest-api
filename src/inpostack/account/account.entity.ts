@@ -19,18 +19,18 @@ export class Account {
   password: string;
 
   @Column({nullable: false})
-  cryptoSalt: string;
+  crypto_salt: string;
 
   @Column({nullable: false})
-  accountType: AccountType;
+  account_type: AccountType;
 
   // TODO: modify default status to be deactivated later
   @Column({nullable: false, default: AccountStatus.activated})
-  accountStatus: AccountStatus;
+  account_status: AccountStatus;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @Column()
-  lastLoginAt: Date;
+  last_login_at: Date;
 }

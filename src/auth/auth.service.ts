@@ -17,13 +17,13 @@ export class AuthService {
   async validateAccount(id: string, pass: string): Promise<any> {
     const account = await this.accountService.findOneOrFail({ id: id });
 
-    if (account.accountStatus != AccountStatus.activated) {
+    if (account.account_status != AccountStatus.activated) {
       throw new UnauthorizedException("Not activated account.");
     }
 
-    const encryptedPassword = encryptPassword(pass, account.cryptoSalt);
+    const encryptedPassword = encryptPassword(pass, account.crypto_salt);
     if (account.password === encryptedPassword) {
-      const { password, cryptoSalt, lastLoginAt, accountStatus, ...info } = account;
+      const { password, crypto_salt, last_login_at, account_status, ...info } = account;
       return info;
     }
   }

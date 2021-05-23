@@ -1,7 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { AccountService } from "./account.service";
 import { AccountCreateDto, AccountUpdateDto } from "./account.dto";
 import { AccountStatus, AccountType } from "./account.meta";
+import { AuthGuard } from "@nestjs/passport";
+import { AccountTypes } from "../../auth/role.decorator";
+import { AccountTypeGuard } from "../../auth/role.guard";
 
 @Controller("account")
 export class AccountController {
@@ -15,7 +18,7 @@ export class AccountController {
 
   @Get()
   get() {
-    return this.accountService.find({ order: { createdAt: "DESC" } });
+    return this.accountService.find({ order: { created_at: "DESC" } });
   }
 
   /**

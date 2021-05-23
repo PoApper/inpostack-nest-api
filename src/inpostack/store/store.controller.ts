@@ -14,7 +14,7 @@ export class StoreController {
 
   @Get()
   get() {
-    return this.storeService.find({ order: { createdAt: "DESC" } });
+    return this.storeService.find({ order: { created_at: "DESC" } });
   }
 
   @Get(":uuid")

@@ -19,7 +19,7 @@ export class AccountTypeGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const account: Account = request.user; // account entity injected by AuthGuard
 
-    const isOk = requiredTypes.some((type) => account.accountType?.includes(type));
+    const isOk = requiredTypes.some((type) => account.account_type?.includes(type));
 
     if (!isOk) {
       throw new UnauthorizedException("Unauthorized AccountType");

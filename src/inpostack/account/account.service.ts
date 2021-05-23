@@ -26,7 +26,7 @@ export class AccountService {
 
     const saveDto = Object.assign(
       dto,
-      { lastLoginAt: new Date(), password: encryptedPassword, cryptoSalt: cryptoSalt }
+      { last_login_at: new Date(), password: encryptedPassword, crypto_salt: cryptoSalt }
     );
     return this.accountRepo.save(saveDto);
   }
@@ -53,7 +53,7 @@ export class AccountService {
       throw new BadRequestException(Message.NOT_EXISTING_USER);
     } else {
       this.accountRepo.update({ uuid: existUser.uuid, email: existUser.email, id: existUser.id }, {
-        lastLoginAt: new Date()
+        last_login_at: new Date()
       });
     }
   }

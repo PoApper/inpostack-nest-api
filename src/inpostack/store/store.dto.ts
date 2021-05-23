@@ -1,9 +1,9 @@
 export class StoreDto {
   readonly name: string;
   readonly phone: string;
-  readonly desc: string;
+  readonly description: string;
   readonly location: string;
-  readonly openTime: number; // HHMM
-  readonly closeTime: number; // HHMM
+  readonly open_time: number; // HHMM
+  readonly close_time: number; // HHMM
   readonly menu: JSON;
 }

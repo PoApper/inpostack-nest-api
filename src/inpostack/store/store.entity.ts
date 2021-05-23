@@ -12,20 +12,20 @@ export class Store {
   phone: string;
 
   @Column('text')
-  desc: string; // description
+  description: string; // description
 
   @Column()
   location: string;
 
   @Column()
-  openTime: number;
+  open_time: number;
 
   @Column()
-  closeTime: number;
+  close_time: number;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updated_at: Date;
 }
