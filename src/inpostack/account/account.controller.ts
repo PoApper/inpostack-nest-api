@@ -6,6 +6,9 @@ import { AuthGuard } from "@nestjs/passport";
 import { AccountTypes } from "../../auth/role.decorator";
 import { AccountTypeGuard } from "../../auth/role.guard";
 
+import { ApiTags } from "@nestjs/swagger";
+
+@ApiTags('Account')
 @Controller("account")
 export class AccountController {
   constructor(private readonly accountService: AccountService) {
