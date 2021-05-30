@@ -13,14 +13,14 @@ export class Notice {
     content: string;
 
     @Column()
-    noticeType: NoticeType;
+    notice_type: NoticeType;
 
     @Column()
     views: number;
 
     @CreateDateColumn()
-    createdAt: Date;
+    created_at: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updated_at: Date;
 }

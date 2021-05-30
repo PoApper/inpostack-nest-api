@@ -7,5 +7,5 @@ export class NoticeDto{
     @ApiProperty({type: String, description: 'notice body content'})
     readonly content: string;
     @ApiProperty({type: String, description: 'notice type(GLOBAL/STORE-OWNER/USER)'})
-    readonly noticeType: NoticeType;
+    readonly notice_type: NoticeType;
 }
