@@ -47,7 +47,7 @@ export class AccountService {
     return this.accountRepo.findOneOrFail(findOptions);
   }
 
-  update(findOptions: object, dto: AccountUpdateDto) {
+  update(findOptions: object, dto: AccountUpdateDto | object) {
     return this.accountRepo.update(findOptions, dto);
   }
 
