@@ -35,6 +35,10 @@ export class AccountService {
     return this.accountRepo.find(findOptions);
   }
 
+  count(findOptions?: object) {
+    return this.accountRepo.count(findOptions);
+  }
+
   findOne(findOptions: object) {
     return this.accountRepo.findOne(findOptions);
   }
