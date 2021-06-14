@@ -13,7 +13,7 @@ export class NoticeService {
     }
 
     async save(dto: NoticeDto) {
-        const saveDto = Object.assign({ updatedAt: new Date() }, dto);
+        const saveDto = Object.assign({ updated_at: new Date() }, dto);
         return this.noticeRepo.save(saveDto);
     }
 

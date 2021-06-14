@@ -18,7 +18,7 @@ export class NoticeController {
     @Get()
     @ApiOperation({summary: 'get all notice API', description: 'get whole notices'})
     get() {
-        return this.noticeService.find({order: {createAt: "DESC"}});
+        return this.noticeService.find({order: {created_at: "DESC"}});
     }
 
     @Get(":uuid")
