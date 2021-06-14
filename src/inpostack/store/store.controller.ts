@@ -1,15 +1,16 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { StoreService } from "./store.service";
 import { StoreDto } from "./store.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiBody } from "@nestjs/swagger";
 
-@ApiTags('Store')
+@ApiTags("Store")
 @Controller("store")
 export class StoreController {
   constructor(private readonly storeService: StoreService) {
   }
 
   @Post()
+  @ApiBody({ type: StoreDto })
   post(@Body() dto: StoreDto) {
     return this.storeService.save(dto);
   }

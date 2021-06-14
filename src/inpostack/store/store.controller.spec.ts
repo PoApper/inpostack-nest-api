@@ -3,28 +3,29 @@ import {Test, TestingModule} from "@nestjs/testing";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {Store} from "./store.entity";
 import {StoreService} from "./store.service";
+import { StoreDto } from "./store.dto";
 
 describe('Store Controller', () => {
     let storeController: StoreController;
     let storeModule: TestingModule;
 
-    const storeDto1 = {
+    const storeDto1: StoreDto = {
         name: "참서리",
         phone: "010-0000-0000",
-        desc: "참서리에요~",
+        description: "참서리에요~",
         location: "효자동",
-        openTime: 1200,
-        closeTime: 1800,
+        open_time: 1200,
+        close_time: 1800,
         menu: JSON.parse('{"name": "food"}')
     };
 
-    const storeDto2 = {
+    const storeDto2: StoreDto = {
         name: "참서리2",
         phone: "010-1111-1111",
-        desc: "참서리에요~!",
+        description: "참서리에요~!",
         location: "효자동.",
-        openTime: 1230,
-        closeTime: 1830,
+        open_time: 1230,
+        close_time: 1830,
         menu: JSON.parse('{"name": "food2"}')
     };
 
@@ -64,10 +65,10 @@ describe('Store Controller', () => {
             const tempDto = {
                 name: name,
                 phone: phone,
-                desc: desc,
+                desc: description,
                 location: location,
-                openTime: openTime,
-                closeTime: closeTime,
+                open_time: open_time,
+                close_time: close_time,
                 menu: menu
             }
             expect(tempDto)
@@ -76,8 +77,8 @@ describe('Store Controller', () => {
                     phone: "010-0000-0000",
                     desc: "참서리에요~",
                     location: "효자동",
-                    openTime: 1200,
-                    closeTime: 1800,
+                    open_time: 1200,
+                    close_time: 1800,
                     menu: JSON.parse('{"name": "food"}')
                 })
         })
@@ -91,8 +92,8 @@ describe('Store Controller', () => {
                 phone: phone,
                 desc: description,
                 location: location,
-                openTime: open_time,
-                closeTime: close_time
+                open_time: open_time,
+                close_time: close_time
             }
 
             expect(tempDto)
@@ -101,8 +102,8 @@ describe('Store Controller', () => {
                     phone: "010-0000-0000",
                     desc: "참서리에요~",
                     location: "효자동",
-                    openTime: 1200,
-                    closeTime: 1800
+                    open_time: 1200,
+                    close_time: 1800
                 })
         })
     })
@@ -114,23 +115,23 @@ describe('Store Controller', () => {
             await storeController.put(exist_user.uuid, storeDto2);
             const updated_user = await storeController.getOne(exist_user.uuid);
             const {name, phone, description, location, open_time, close_time, menu} = updated_user;
-            const tempDto = {
+            const tempDto: StoreDto = {
                 name: name,
                 phone: phone,
-                desc: description,
+                description: description,
                 location: location,
-                openTime: open_time,
-                closeTime: close_time,
+                open_time: open_time,
+                close_time: close_time,
                 menu: menu
             }
             expect(tempDto)
                 .toEqual({
                     name: "참서리2",
                     phone: "010-1111-1111",
-                    desc: "참서리에요~!",
+                    description: "참서리에요~!",
                     location: "효자동.",
-                    openTime: 1230,
-                    closeTime: 1830,
+                    open_time: 1230,
+                    close_time: 1830,
                     menu: JSON.parse('{"name": "food2"}')
                 })
         })
