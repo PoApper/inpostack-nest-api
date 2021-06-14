@@ -6,6 +6,6 @@ export class NoticeDto{
     readonly title: string;
     @ApiProperty({type: String, description: 'notice body content'})
     readonly content: string;
-    @ApiProperty({type: String, description: 'notice type(GLOBAL/STORE-OWNER/USER)'})
+    @ApiProperty({enum: NoticeType, description: 'notice type(GLOBAL/STORE-OWNER/USER)'})
     readonly notice_type: NoticeType;
 }
