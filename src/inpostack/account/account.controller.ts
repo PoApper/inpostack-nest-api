@@ -26,15 +26,12 @@ export class AccountController {
     return this.accountService.find({ order: { created_at: "DESC" } });
   }
 
-  /**
-   * Account Meta-data API
-   */
   @Get("meta")
   @ApiOperation({summary: 'get account meta API', description: 'get account meta data'})
-  getAccountMeta() {
+  getMeta() {
     return {
-      "AccountType": AccountType,
-      "AccountStatus": AccountStatus
+      "account_type": AccountType,
+      "account_status": AccountStatus
     };
   }
 
