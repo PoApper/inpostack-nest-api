@@ -1,26 +1,30 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { StoreType } from "./store.meta";
 
 @Entity()
 export class Store {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   uuid: string;
 
-  @Column({nullable: false})
+  @Column({ nullable: false })
   name: string;
 
-  @Column({nullable: false})
+  @Column({ nullable: false })
   phone: string;
 
-  @Column('text')
-  description: string; // description
+  @Column("text")
+  description: string;
 
-  @Column()
+  @Column({ nullable: false, default: StoreType.etc })
+  store_type: StoreType;
+
+  @Column({ nullable: false })
   location: string;
 
-  @Column()
+  @Column({ nullable: false })
   open_time: number;
 
-  @Column()
+  @Column({ nullable: false })
   close_time: number;
 
   @CreateDateColumn()
