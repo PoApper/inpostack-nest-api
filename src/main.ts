@@ -9,9 +9,7 @@ async function bootstrap() {
     // TODO: refine CORS urls after production
     origin: [
       "http://localhost:3000", "http://localhost:3001", "http://localhost:3002",
-      "http://158.247.211.82", "http://158.247.211.82:3000",
-      "http://158.247.211.82:3001", "http://158.247.211.82:3002",
-      "http://inpo.poapper.com:3001",
+      "http://inpo.poapper.com", "http://admin.inpo.poapper.com", "http://store.inpo.poapper.com"
     ],
     credentials: true
   });
