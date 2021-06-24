@@ -28,8 +28,8 @@ export class CategoryService {
     return this.categoryRepo.find(findOptions);
   }
 
-  findOne(findOptions: object) {
-    return this.categoryRepo.findOne(findOptions);
+  findOne(findOptions: object, maybeOptions?: object) {
+    return this.categoryRepo.findOne(findOptions, maybeOptions);
   }
 
   findOneOrFail(findOptions: object) {

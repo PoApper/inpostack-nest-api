@@ -20,8 +20,8 @@ export class StoreService {
     return this.storeRepo.find(findOptions);
   }
 
-  async findOne(findOptions: object) {
-    return await this.storeRepo.findOne(findOptions);
+  async findOne(findOptions: object, maybeOptions?: object) {
+    return await this.storeRepo.findOne(findOptions, maybeOptions);
   }
 
   async findOneOrFail(findOptions: object) {

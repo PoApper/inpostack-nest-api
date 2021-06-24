@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { StoreService } from "./store.service";
 import { StoreDto } from "./store.dto";
-import { ApiTags, ApiBody, ApiOperation } from "@nestjs/swagger";
+import { ApiTags, ApiBody, ApiOperation, ApiQuery } from "@nestjs/swagger";
 import { StoreType } from "./store.meta";
 
 @ApiTags("Store")
@@ -17,8 +17,20 @@ export class StoreController {
   }
 
   @Get()
-  get() {
-    return this.storeService.find({ order: { created_at: "DESC" } });
+  @ApiQuery({ name: "category", required: false })
+  @ApiQuery({ name: "menu", required: false })
+  getAll(
+    @Query("category") category: boolean,
+    @Query("menu") menu: boolean
+  ) {
+    const relation_query = [];
+    if (category) relation_query.push("category");
+    if (category && menu) relation_query.push("category.menu");
+
+    return this.storeService.find({
+      order: { created_at: "DESC" },
+      relations: relation_query
+    });
   }
 
   @Get("meta")
@@ -30,8 +42,21 @@ export class StoreController {
   }
 
   @Get(":uuid")
-  getOne(@Param("uuid") uuid: string) {
-    return this.storeService.findOne({ uuid: uuid });
+  @ApiQuery({ name: "category", required: false })
+  @ApiQuery({ name: "menu", required: false })
+  getOne(
+    @Param("uuid") uuid: string,
+    @Query("category") category: boolean,
+    @Query("menu") menu: boolean
+  ) {
+    const relation_query = [];
+    if (category) relation_query.push("category");
+    if (category && menu) relation_query.push("category.menu");
+
+    return this.storeService.findOne(
+      { uuid: uuid },
+      { relations: relation_query }
+    );
   }
 
   @Put(":uuid")

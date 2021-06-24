@@ -28,12 +28,14 @@ export class MenuController {
   }
 
   @Put(":uuid")
-  putOne(@Param("uuid") uuid: string, @Body() dto: MenuUpdateDto) {
+  async putOne(@Param("uuid") uuid: string, @Body() dto: MenuUpdateDto) {
+    await this.menuService.findOneOrFail({ uuid: uuid });
     return this.menuService.update({ uuid: uuid }, dto);
   }
 
   @Delete(":uuid")
-  deleteOne(@Param("uuid") uuid: string) {
+  async deleteOne(@Param("uuid") uuid: string) {
+    await this.menuService.findOneOrFail({ uuid: uuid });
     return this.menuService.delete({ uuid: uuid });
   }
 

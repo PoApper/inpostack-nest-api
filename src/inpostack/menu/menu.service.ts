@@ -31,8 +31,8 @@ export class MenuService {
     return this.menuRepo.find(findOptions);
   }
 
-  findOne(findOptions: object) {
-    return this.menuRepo.findOne(findOptions);
+  findOne(findOptions: object, maybeOptions?: object) {
+    return this.menuRepo.findOne(findOptions, maybeOptions);
   }
 
   findOneOrFail(findOptions: object) {
