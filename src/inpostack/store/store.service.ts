@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Store } from "./store.entity";
 import { Repository } from "typeorm";
 import { StoreDto } from "./store.dto";
-import * as fs from "fs";
 
 @Injectable()
 export class StoreService {
@@ -14,19 +13,7 @@ export class StoreService {
   }
 
   async save(dto: StoreDto) {
-    const saveDto = Object.assign({}, dto);
-    const newStore = await this.storeRepo.save(saveDto);
-
-    const menuSavePath = `./static/store/menu/${newStore.uuid}.json`;
-
-    fs.writeFile(menuSavePath, JSON.stringify(dto.menu), err => {
-      if (err) {
-        console.log(`Error writing ${dto.name} menu json`, err);
-      } else {
-        console.log(`Successfully wrote ${dto.name} menu json`);
-      }
-    });
-    return newStore;
+    return await this.storeRepo.save(dto);
   }
 
   find(findOptions?: object) {
@@ -34,24 +21,15 @@ export class StoreService {
   }
 
   async findOne(findOptions: object) {
-    const store = await this.storeRepo.findOne(findOptions);
+    return await this.storeRepo.findOne(findOptions);
+  }
 
-    const readPath = `./static/store/menu/${store.uuid}.json`;
-    const menuJson = fs.readFileSync(readPath, "utf8");
-    const result = Object.assign({menu: JSON.parse(menuJson)}, store);
-
-    return result;
+  async findOneOrFail(findOptions: object) {
+    return await this.storeRepo.findOneOrFail(findOptions);
   }
 
   async update(findOptions: object, dto: StoreDto) {
-    const existStore = await this.findOne(findOptions);
-    const {menu, ...updateDto} = dto;
-    const out = await this.storeRepo.update(findOptions, updateDto);
-
-    const menuSavePath = `./static/store/menu/${existStore.uuid}.json`;
-
-    fs.writeFileSync(menuSavePath, JSON.stringify(menu));
-    return out;
+    return await this.storeRepo.update(findOptions, dto);
   }
 
   delete(findOptions: object) {

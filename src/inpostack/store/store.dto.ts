@@ -23,6 +23,4 @@ export class StoreDto {
   @ApiProperty()
   readonly close_time: number; // HHMM
 
-  @ApiProperty()
-  readonly menu: JSON;
 }

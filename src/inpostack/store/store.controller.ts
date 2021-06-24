@@ -35,12 +35,12 @@ export class StoreController {
   }
 
   @Put(":uuid")
-  put(@Param("uuid") uuid: string, @Body() dto: StoreDto) {
+  putOne(@Param("uuid") uuid: string, @Body() dto: StoreDto) {
     return this.storeService.update({ uuid: uuid }, dto);
   }
 
   @Delete(":uuid")
-  delete(@Param("uuid") uuid: string) {
+  deleteOne(@Param("uuid") uuid: string) {
     return this.storeService.delete({ uuid: uuid });
   }
 }

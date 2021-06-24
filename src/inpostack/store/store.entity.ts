@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
 import { StoreType } from "./store.meta";
+import { Category } from "../category/category.entity";
 
 @Entity()
 export class Store {
@@ -32,4 +33,11 @@ export class Store {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  /**
+   * Database Relationship
+   */
+
+  @OneToMany(() => Category, category => category.store)
+  category: Category[];
 }
