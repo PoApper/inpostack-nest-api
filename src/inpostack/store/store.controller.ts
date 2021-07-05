@@ -20,8 +20,8 @@ export class StoreController {
   @ApiQuery({ name: "category", required: false })
   @ApiQuery({ name: "menu", required: false })
   getAll(
-    @Query("category") category: boolean,
-    @Query("menu") menu: boolean
+    @Query("category") category?: boolean,
+    @Query("menu") menu?: boolean
   ) {
     const relation_query = [];
     if (category) relation_query.push("category");
