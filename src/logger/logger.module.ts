@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
-import * as winston from 'winston';
-import * as winstonDaily from 'winston-daily-rotate-file';
-import { WinstonModule } from 'nest-winston';
+import { Module } from "@nestjs/common";
+import * as winston from "winston";
+import * as winstonDaily from "winston-daily-rotate-file";
+import { WinstonModule } from "nest-winston";
 
 @Module({
   imports: [
@@ -10,7 +10,7 @@ import { WinstonModule } from 'nest-winston';
         new winston.transports.Console({
           format: winston.format.combine(
             winston.format.timestamp({
-              format: 'YYYY-MM-DD HH:mm:ss',
+              format: "YYYY-MM-DD HH:mm:ss",
             }),
             winston.format.colorize(),
             winston.format.printf(
@@ -20,13 +20,13 @@ import { WinstonModule } from 'nest-winston';
           )
         }),
         new winstonDaily({
-          level: 'info',
-          dirname: 'log',
-          filename: '%DATE%.log',
-          maxFiles: '7d',
+          level: "info",
+          dirname: "log",
+          filename: "%DATE%.log",
+          maxFiles: "7d",
           format: winston.format.combine(
             winston.format.timestamp({
-              format: 'YYYY-MM-DD HH:mm:ss',
+              format: "YYYY-MM-DD HH:mm:ss",
             }),
             winston.format.printf(
               info => `${info.timestamp} [${info.level}]: ${info.message}`
@@ -34,13 +34,13 @@ import { WinstonModule } from 'nest-winston';
           )
         }),
         new winstonDaily({
-          level: 'error',
-          dirname: 'log/error',
-          filename: '%DATE%.log',
-          maxFiles: '7d',
+          level: "error",
+          dirname: "log/error",
+          filename: "%DATE%.log",
+          maxFiles: "7d",
           format: winston.format.combine(
             winston.format.timestamp({
-              format: 'YYYY-MM-DD HH:mm:ss',
+              format: "YYYY-MM-DD HH:mm:ss",
             }),
             winston.format.printf(
               info => `${info.timestamp} [${info.level}]: ${info.message}`
