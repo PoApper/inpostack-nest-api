@@ -33,6 +33,7 @@
     "cookie-parser": "^1.4.5",
     "crypto": "^1.0.1",
     "mysql2": "^2.2.5",
+    "nest-winston": "^1.5.0",
     "nodemailer": "^6.6.1",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
@@ -42,7 +43,9 @@
     "rxjs": "^6.6.6",
     "sqlite3": "^5.0.2",
     "swagger-ui-express": "^4.1.6",
-    "typeorm": "^0.2.32"
+    "typeorm": "^0.2.32",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.5"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",
