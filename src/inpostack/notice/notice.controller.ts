@@ -2,6 +2,8 @@ import {Body, Controller, Delete, Get, Param, Post, Put} from '@nestjs/common';
 import {NoticeService} from "./notice.service";
 import {NoticeDto} from "./notice.dto";
 import {ApiOperation, ApiTags} from "@nestjs/swagger";
+import { AccountStatus, AccountType } from "../account/account.meta";
+import { NoticeType } from "./notice.meta";
 
 @ApiTags('Notice')
 @Controller('notice')
@@ -19,6 +21,14 @@ export class NoticeController {
     @ApiOperation({summary: 'get all notice API', description: 'get whole notices'})
     get() {
         return this.noticeService.find({order: {created_at: "DESC"}});
+    }
+
+    @Get("meta")
+    @ApiOperation({summary: 'get notice meta API', description: 'get notice meta data'})
+    getMeta() {
+        return {
+            "notice_type": NoticeType,
+        };
     }
 
     @Get(":uuid")

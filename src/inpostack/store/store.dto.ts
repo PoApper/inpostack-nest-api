@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { StoreType } from "./store.meta";
 
 export class StoreDto {
   @ApiProperty()
@@ -10,6 +11,9 @@ export class StoreDto {
   @ApiProperty()
   readonly description: string;
 
+  @ApiProperty({enum: StoreType, description: "store type (ex: KOREAN, SEA FOOD, ... "})
+  readonly store_type: StoreType;
+
   @ApiProperty()
   readonly location: string;
 
@@ -19,6 +23,4 @@ export class StoreDto {
   @ApiProperty()
   readonly close_time: number; // HHMM
 
-  @ApiProperty()
-  readonly menu: JSON;
 }
