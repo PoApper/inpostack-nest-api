@@ -6,6 +6,7 @@ import { InpostackModule } from "./inpostack/inpostack.module";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@nestjs/config";
 import { MailModule } from "./mail/mail.module";
+import { LoggerModule } from "./logger/logger.module";
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { MailModule } from "./mail/mail.module";
     ConfigModule.forRoot(),
     InpostackModule,
     AuthModule,
-    MailModule
+    MailModule,
+    LoggerModule
   ],
   controllers: [AppController],
   providers: [AppService]
