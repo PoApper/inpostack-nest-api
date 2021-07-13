@@ -35,5 +35,6 @@ lerna-debug.log*
 
 # customs
 static/
+log/
 
 *.sqlite
