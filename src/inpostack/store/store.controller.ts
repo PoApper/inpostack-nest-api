@@ -59,6 +59,11 @@ export class StoreController {
     );
   }
 
+  @Get("owner/:owner_uuid")
+  getByOwner(@Param('owner_uuid') owner_uuid: string) {
+    return this.storeService.findOneOrFail({ owner_uuid: owner_uuid });
+  }
+
   @Put(":uuid")
   putOne(@Param("uuid") uuid: string, @Body() dto: StoreDto) {
     return this.storeService.update({ uuid: uuid }, dto);

@@ -23,4 +23,6 @@ export class StoreDto {
   @ApiProperty()
   readonly close_time: number; // HHMM
 
+  @ApiProperty()
+  readonly owner_uuid?: string; // uuid of owner account (it can be null)
 }

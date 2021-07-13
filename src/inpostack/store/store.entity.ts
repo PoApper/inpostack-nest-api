@@ -1,6 +1,15 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  OneToOne, JoinColumn
+} from 'typeorm';
 import { StoreType } from "./store.meta";
 import { Category } from "../category/category.entity";
+import { Account } from '../account/account.entity';
 
 @Entity()
 export class Store {
@@ -28,6 +37,9 @@ export class Store {
   @Column({ nullable: false })
   close_time: number;
 
+  @Column({nullable: true})
+  owner_uuid: string;
+
   @CreateDateColumn()
   created_at: Date;
 
@@ -37,6 +49,10 @@ export class Store {
   /**
    * Database Relationship
    */
+
+  @OneToOne(() => Account, account => account.store)
+  @JoinColumn({name: "owner_uuid"})
+  owner: Account;
 
   @OneToMany(() => Category, category => category.store)
   category: Category[];

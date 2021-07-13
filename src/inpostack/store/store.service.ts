@@ -1,38 +1,38 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Store } from "./store.entity";
-import { Repository } from "typeorm";
-import { StoreDto } from "./store.dto";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Store } from './store.entity';
+import { Repository } from 'typeorm';
+import { StoreDto } from './store.dto';
 
 @Injectable()
 export class StoreService {
-  constructor(
+  constructor (
     @InjectRepository(Store)
-    private readonly storeRepo: Repository<Store>
+    private readonly storeRepo: Repository<Store>,
   ) {
   }
 
-  async save(dto: StoreDto) {
-    return await this.storeRepo.save(dto);
+  save (dto: StoreDto) {
+    return this.storeRepo.save(dto);
   }
 
-  find(findOptions?: object) {
+  find (findOptions?: object) {
     return this.storeRepo.find(findOptions);
   }
 
-  async findOne(findOptions: object, maybeOptions?: object) {
-    return await this.storeRepo.findOne(findOptions, maybeOptions);
+  findOne (findOptions: object, maybeOptions?: object) {
+    return this.storeRepo.findOne(findOptions, maybeOptions);
   }
 
-  async findOneOrFail(findOptions: object) {
-    return await this.storeRepo.findOneOrFail(findOptions);
+  findOneOrFail (findOptions: object, maybeOptions?: object) {
+    return this.storeRepo.findOneOrFail(findOptions, maybeOptions);
   }
 
-  async update(findOptions: object, dto: StoreDto) {
-    return await this.storeRepo.update(findOptions, dto);
+  update (findOptions: object, dto: StoreDto) {
+    return this.storeRepo.update(findOptions, dto);
   }
 
-  delete(findOptions: object) {
+  delete (findOptions: object) {
     return this.storeRepo.delete(findOptions);
   }
 }
