@@ -1,5 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  OneToOne,
+} from 'typeorm';
 import { AccountStatus, AccountType } from "./account.meta";
+import { Store } from '../store/store.entity';
 
 @Entity()
 export class Account {
@@ -32,4 +39,12 @@ export class Account {
 
   @Column()
   last_login_at: Date;
+
+  /**
+   * Database Relationship
+   */
+
+  @OneToOne(() => Store, store => store.owner)
+  store: Store;
+
 }
