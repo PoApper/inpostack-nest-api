@@ -34,7 +34,7 @@ describe("Notice Controller", () => {
     noticeController = noticeModule.get<NoticeController>(NoticeController);
   });
 
-  afterAll(async () => {
+  afterAll(() => {
     noticeModule.close();
   });
 
@@ -60,8 +60,6 @@ describe("Notice Controller", () => {
 
     it("should get a saved entity", async () => {
       const exist_notice = await noticeController.getOne(saved_entity.uuid);
-      console.log(exist_notice);
-      console.log(saved_entity);
       expect(exist_notice).toEqual(saved_entity);
     })
 

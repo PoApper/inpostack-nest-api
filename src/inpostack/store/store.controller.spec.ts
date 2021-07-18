@@ -8,6 +8,7 @@ import { StoreType } from "./store.meta";
 import { CategoryModule } from "../category/category.module";
 import { Category } from "../category/category.entity";
 import { Menu } from "../menu/menu.entity";
+import { Account } from '../account/account.entity';
 
 describe("Store Controller", () => {
   let storeController: StoreController;
@@ -39,7 +40,7 @@ describe("Store Controller", () => {
         TypeOrmModule.forRoot({
           type: "sqlite",
           database: ":memory:",
-          entities: [Store, Category, Menu],
+          entities: [Store, Category, Menu, Account],
           synchronize: true
         }),
         TypeOrmModule.forFeature([Store]),
@@ -52,7 +53,7 @@ describe("Store Controller", () => {
     storeController = storeModule.get<StoreController>(StoreController);
   });
 
-  afterAll(async () => {
+  afterAll(() => {
     storeModule.close();
   });
 
@@ -75,6 +76,7 @@ describe("Store Controller", () => {
         description: description,
         store_type: store_type,
         location: location,
+        owner_uuid: null,
         open_time: open_time,
         close_time: close_time,
         created_at: created_at,
