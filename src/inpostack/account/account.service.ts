@@ -25,7 +25,7 @@ export class AccountService {
     const encryptedPassword = encryptPassword(dto.password, cryptoSalt);
 
     const saveDto = Object.assign(
-      dto,
+      {}, dto,
       { last_login_at: new Date(), password: encryptedPassword, crypto_salt: cryptoSalt }
     );
     return this.accountRepo.save(saveDto);
