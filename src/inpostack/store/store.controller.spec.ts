@@ -15,27 +15,27 @@ describe('Store Controller', () => {
   let storeModule: TestingModule;
 
   const storeDto1: StoreDto = {
-    name: '참서리',
+    name: '무은재기념관',
     phone: '010-0000-0000',
-    description: '참서리에요~',
+    description: '학문에는 경계가 없다',
     store_type: StoreType.korean,
-    address1: '포항시 청암로 77',
+    address1: '경상북도 포항시 남구 청암로 77(지곡동)',
     address2: '기숙사 1동 101호',
     zipcode: 12345,
-    open_time: 1200,
-    close_time: 1800,
+    open_time: '12:00',
+    close_time: '18:00',
   };
 
   const storeDto2: StoreDto = {
-    name: '참서리2',
+    name: '박태준 학술정보관',
     phone: '010-1111-1111',
-    description: '참서리에요~!',
+    description: '자원은 유한하지만, 창의는 무한하다',
     store_type: StoreType.korean,
-    address1: '포항시 청암로 77',
+    address1: '경상북도 포항시 남구 청암로 77(지곡동)',
     address2: '기숙사 1동 101호',
     zipcode: 12345,
-    open_time: 1230,
-    close_time: 1830,
+    open_time: '12:30',
+    close_time: '18:30',
   };
 
   beforeAll(async () => {

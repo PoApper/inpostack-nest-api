@@ -39,10 +39,10 @@ export class Store {
   zipcode: number;
 
   @Column({ nullable: false })
-  open_time: number;
+  open_time: string; // HH:MM
 
   @Column({ nullable: false })
-  close_time: number;
+  close_time: string; // HH:MM
 
   @Column({ nullable: true })
   owner_uuid: string;

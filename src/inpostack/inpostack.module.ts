@@ -90,8 +90,8 @@ export class InpostackModule {
       address1: '경상북도 포항시 남구 청암로 77(지곡동)',
       address2: '기숙사 1동 101호',
       zipcode: 37673,
-      open_time: 900,
-      close_time: 1800,
+      open_time: '09:00',
+      close_time: '18:00',
       owner_uuid: owner_uuid,
     };
 

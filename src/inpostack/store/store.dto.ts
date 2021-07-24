@@ -27,10 +27,10 @@ export class StoreDto {
   readonly zipcode: number;
 
   @ApiProperty()
-  readonly open_time: number; // HHMM
+  readonly open_time: string; // HH:MM
 
   @ApiProperty()
-  readonly close_time: number; // HHMM
+  readonly close_time: string; // HH:MM
 
   @ApiProperty()
   readonly owner_uuid?: string; // uuid of owner account (it can be null)
