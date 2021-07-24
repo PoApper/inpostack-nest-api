@@ -8,30 +8,33 @@ import { AccountCreateDto } from './account.dto';
 import { LoggerModule } from '../../logger/logger.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Account]),
-    LoggerModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Account]), LoggerModule],
   providers: [AccountService],
   controllers: [AccountController],
   exports: [AccountService],
 })
 export class AccountModule {
-  constructor (private readonly accountService: AccountService) {
-    this.createDefaultAdmin().then(
-      (adminDto) =>
-        console.log(
-          `Create Default Admin Account:
+  constructor(private readonly accountService: AccountService) {
+    this.createDefaultAdmin()
+      .then((adminDto) => {
+        if (adminDto) {
+          console.log(
+            `Create Default Admin Account:
             - id: ${adminDto.id}
             - pw: ${adminDto.password}`,
-        )).catch(
-      (err) => console.error('Fail to create default Admin account...', err),
-    );
+          );
+        } else {
+          console.log('There are already accounts...!');
+        }
+      })
+      .catch((err) =>
+        console.error('Fail to create default Admin account...', err),
+      );
   }
 
-  async createDefaultAdmin (): Promise<AccountCreateDto> {
+  async createDefaultAdmin(): Promise<AccountCreateDto> {
     const num: number = await this.accountService.count();
-    if (num) return;
+    if (num) return null;
     // create default admin account
     const id = 'admin';
     const password = 'admin1234';
