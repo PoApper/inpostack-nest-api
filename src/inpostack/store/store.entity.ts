@@ -5,15 +5,16 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  OneToOne, JoinColumn
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
-import { StoreType } from "./store.meta";
-import { Category } from "../category/category.entity";
+import { StoreType } from './store.meta';
+import { Category } from '../category/category.entity';
 import { Account } from '../account/account.entity';
 
 @Entity()
 export class Store {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
   @Column({ nullable: false })
@@ -22,14 +23,20 @@ export class Store {
   @Column({ nullable: false })
   phone: string;
 
-  @Column("text")
+  @Column('text')
   description: string;
 
   @Column({ nullable: false, default: StoreType.etc })
   store_type: StoreType;
 
   @Column({ nullable: false })
-  location: string;
+  address1: string;
+
+  @Column({ nullable: false })
+  address2: string;
+
+  @Column({ nullable: false })
+  zipcode: number;
 
   @Column({ nullable: false })
   open_time: number;
@@ -37,7 +44,7 @@ export class Store {
   @Column({ nullable: false })
   close_time: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   owner_uuid: string;
 
   @CreateDateColumn()
@@ -50,10 +57,10 @@ export class Store {
    * Database Relationship
    */
 
-  @OneToOne(() => Account, account => account.store)
-  @JoinColumn({name: "owner_uuid"})
+  @OneToOne(() => Account, (account) => account.store)
+  @JoinColumn({ name: 'owner_uuid' })
   owner: Account;
 
-  @OneToMany(() => Category, category => category.store)
+  @OneToMany(() => Category, (category) => category.store)
   category: Category[];
 }
