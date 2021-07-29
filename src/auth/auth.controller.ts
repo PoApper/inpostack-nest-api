@@ -5,6 +5,7 @@ import {
   Inject,
   Param,
   Post,
+  Put,
   Query,
   Req,
   Res,
@@ -23,6 +24,7 @@ import { AccountCreateDto } from '../inpostack/account/account.dto';
 import { StoreService } from '../inpostack/store/store.service';
 import { AccountTypeGuard } from './role.guard';
 import { AccountTypes } from './role.decorator';
+import { StoreDto } from '../inpostack/store/store.dto';
 
 /**
  * This is for handle "verifyToken", "login", "logout" tasks
@@ -49,8 +51,6 @@ export class AuthController {
       user.store = await this.storeService.findOne({ owner_uuid: user.uuid });
     }
 
-    console.log(user);
-
     return user;
   }
 
@@ -70,9 +70,17 @@ export class AuthController {
   @Get('me/store')
   @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
   @AccountTypes(AccountType.storeOwner)
-  etStoreInfo(@Req() req: Request) {
+  getStoreInfo(@Req() req: Request) {
     const user: any = req.user;
     return this.storeService.findOne({ owner_uuid: user.uuid });
+  }
+
+  @Put('me/store')
+  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @AccountTypes(AccountType.storeOwner)
+  updateStoreInfo(@Req() req: Request, @Body() updateDto: StoreDto) {
+    const user: any = req.user;
+    return this.storeService.update({ owner_uuid: user.uuid }, updateDto);
   }
 
   @Post('login')
