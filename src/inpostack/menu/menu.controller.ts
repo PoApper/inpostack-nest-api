@@ -1,7 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ApiBody, ApiTags } from "@nestjs/swagger";
 import { MenuCreateDto, MenuUpdateDto } from "./menuCreateDto";
 import { MenuService } from "./menu.service";
+import { FileInterceptor } from '@nestjs/platform-express';
+import fs from 'fs';
 
 @ApiTags("Menu")
 @Controller("menu")
@@ -12,9 +14,19 @@ export class MenuController {
   }
 
   @Post()
+  @UseInterceptors(FileInterceptor('file'))
   @ApiBody({ type: MenuCreateDto })
-  post(@Body() dto: MenuCreateDto) {
-    return this.menuService.save(dto);
+  post(@Body() dto: MenuCreateDto, @UploadedFile() file) {
+    if (file) {
+      const stored_path = `uploads/menu/${file.originalname}`
+      const saveDto = Object.assign(dto, {
+        image_url: stored_path
+      })
+      fs.writeFile(stored_path, file.buffer, () => {});
+      return this.menuService.save(saveDto);
+    } else {
+      return this.menuService.save(dto);
+    }
   }
 
   @Get()
@@ -28,9 +40,21 @@ export class MenuController {
   }
 
   @Put(":uuid")
-  async putOne(@Param("uuid") uuid: string, @Body() dto: MenuUpdateDto) {
-    await this.menuService.findOneOrFail({ uuid: uuid });
-    return this.menuService.update({ uuid: uuid }, dto);
+  @UseInterceptors(FileInterceptor('file'))
+  async putOne(@Param("uuid") uuid: string, @Body() dto: MenuUpdateDto, @UploadedFile() file) {
+    if (file) {
+      const stored_path = `uploads/menu/${file.originalname}`
+      const saveDto = Object.assign(dto, {
+        image_url: stored_path
+      })
+      fs.writeFile(stored_path, file.buffer, () => {});
+      await this.menuService.findOneOrFail({ uuid: uuid });
+      return this.menuService.update({ uuid: uuid }, saveDto);
+    } else {
+      await this.menuService.findOneOrFail({ uuid: uuid });
+      return this.menuService.update({ uuid: uuid }, dto);
+    }
+
   }
 
   @Delete(":uuid")

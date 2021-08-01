@@ -71,7 +71,7 @@ describe('Store Controller', () => {
     let saved_entity;
 
     it('should create a store entity', async () => {
-      saved_entity = await storeController.post(storeDto1);
+      saved_entity = await storeController.post(storeDto1, "");
       const {
         name,
         phone,
@@ -95,6 +95,7 @@ describe('Store Controller', () => {
         address2: address2,
         zipcode: zipcode,
         owner_uuid: null,
+        image_url: null,
         open_time: open_time,
         close_time: close_time,
         created_at: created_at,
@@ -116,7 +117,7 @@ describe('Store Controller', () => {
     it('should update a store entity', async () => {
       const exist_users = await storeController.getAll(false, false);
       const exist_user = exist_users[0];
-      await storeController.putOne(exist_user.uuid, storeDto2);
+      await storeController.putOne(exist_user.uuid, storeDto2, "");
       const updated_user = await storeController.getOne(
         exist_user.uuid,
         false,
