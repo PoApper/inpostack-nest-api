@@ -18,7 +18,6 @@ export class MenuController {
   @ApiBody({ type: MenuCreateDto })
   post(@Body() dto: MenuCreateDto, @UploadedFile() file) {
     if (file) {
-      console.log(file);
       const stored_path = `uploads/menu/${file.originalname}`
       const saveDto = Object.assign(dto, {
         image_url: stored_path
@@ -44,7 +43,6 @@ export class MenuController {
   @UseInterceptors(FileInterceptor('file'))
   async putOne(@Param("uuid") uuid: string, @Body() dto: MenuUpdateDto, @UploadedFile() file) {
     if (file) {
-      console.log(file);
       const stored_path = `uploads/menu/${file.originalname}`
       const saveDto = Object.assign(dto, {
         image_url: stored_path

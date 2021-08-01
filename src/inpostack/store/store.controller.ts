@@ -17,7 +17,6 @@ export class StoreController {
   @ApiBody({ type: StoreDto })
   post(@Body() dto: StoreDto, @UploadedFile() file) {
     if (file) {
-      console.log(file);
       const stored_path = `uploads/store/${file.originalname}`
       const saveDto = Object.assign(dto, {
         image_url: stored_path
@@ -81,7 +80,6 @@ export class StoreController {
   @UseInterceptors(FileInterceptor('file'))
   putOne(@Param("uuid") uuid: string, @Body() dto: StoreDto, @UploadedFile() file) {
     if (file) {
-      console.log(file);
       const stored_path = `uploads/store/${file.originalname}`
       const saveDto = Object.assign(dto, {
         image_url: stored_path
