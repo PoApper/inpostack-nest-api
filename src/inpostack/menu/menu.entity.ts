@@ -28,6 +28,9 @@ export class Menu {
   @Column({ nullable: false, default: 0 })
   hate: number;
 
+  @Column({ nullable: true })
+  image_url: string;
+
   @CreateDateColumn()
   created_at: Date;
 

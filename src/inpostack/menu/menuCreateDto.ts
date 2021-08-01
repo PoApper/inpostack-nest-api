@@ -18,6 +18,9 @@ export class MenuCreateDto {
 
   @ApiProperty()
   readonly hate: number;
+
+  @ApiProperty()
+  readonly image_url?: string;
 }
 
 export class MenuUpdateDto {
@@ -35,4 +38,7 @@ export class MenuUpdateDto {
 
   @ApiProperty()
   readonly hate: number;
+
+  @ApiProperty()
+  readonly image_url?: string;
 }

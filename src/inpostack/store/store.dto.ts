@@ -34,4 +34,7 @@ export class StoreDto {
 
   @ApiProperty()
   readonly owner_uuid?: string; // uuid of owner account (it can be null)
+
+  @ApiProperty()
+  readonly image_url?: string;
 }

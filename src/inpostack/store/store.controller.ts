@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { StoreService } from "./store.service";
 import { StoreDto } from "./store.dto";
 import { ApiTags, ApiBody, ApiOperation, ApiQuery } from "@nestjs/swagger";
 import { StoreType } from "./store.meta";
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as fs from 'fs';
 
 @ApiTags("Store")
 @Controller("store")
@@ -11,9 +13,20 @@ export class StoreController {
   }
 
   @Post()
+  @UseInterceptors(FileInterceptor('file'))
   @ApiBody({ type: StoreDto })
-  post(@Body() dto: StoreDto) {
-    return this.storeService.save(dto);
+  post(@Body() dto: StoreDto, @UploadedFile() file) {
+    if (file) {
+      console.log(file);
+      const stored_path = `uploads/store/${file.originalname}`
+      const saveDto = Object.assign(dto, {
+        image_url: stored_path
+      })
+      fs.writeFile(stored_path, file.buffer, () => {});
+      return this.storeService.save(saveDto);
+    } else {
+      return this.storeService.save(dto);
+    }
   }
 
   @Get()
@@ -65,8 +78,19 @@ export class StoreController {
   }
 
   @Put(":uuid")
-  putOne(@Param("uuid") uuid: string, @Body() dto: StoreDto) {
-    return this.storeService.update({ uuid: uuid }, dto);
+  @UseInterceptors(FileInterceptor('file'))
+  putOne(@Param("uuid") uuid: string, @Body() dto: StoreDto, @UploadedFile() file) {
+    if (file) {
+      console.log(file);
+      const stored_path = `uploads/store/${file.originalname}`
+      const saveDto = Object.assign(dto, {
+        image_url: stored_path
+      })
+      fs.writeFile(stored_path, file.buffer, () => {});
+      return this.storeService.update({ uuid: uuid }, saveDto);
+    } else {
+      return this.storeService.update({ uuid: uuid }, dto);
+    }
   }
 
   @Delete(":uuid")
