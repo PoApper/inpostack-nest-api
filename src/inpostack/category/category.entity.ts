@@ -2,21 +2,25 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
-import { Store } from "../store/store.entity";
-import { Menu } from "../menu/menu.entity";
+  UpdateDateColumn,
+} from 'typeorm';
+import { Store } from '../store/store.entity';
+import { Menu } from '../menu/menu.entity';
 
 @Entity()
 export class Category {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
   @Column({ nullable: false })
   name: string;
+
+  @Column({ nullable: false })
+  store_uuid: string;
 
   @CreateDateColumn()
   created_at: Date;
@@ -28,10 +32,10 @@ export class Category {
    * Database Relationship
    */
 
-  @ManyToOne(() => Store, store => store.category)
+  @ManyToOne(() => Store, (store) => store.category)
+  @JoinColumn({ name: 'store_uuid' })
   store: Store;
 
-  @OneToMany(() => Menu, menu => menu.category)
+  @OneToMany(() => Menu, (menu) => menu.category)
   menu: Menu[];
-
 }
