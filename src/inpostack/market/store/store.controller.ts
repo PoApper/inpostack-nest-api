@@ -7,7 +7,9 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { StoreService } from './store.service';
@@ -16,6 +18,10 @@ import { ApiTags, ApiBody, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { StoreType } from './store.meta';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs';
+import { AuthGuard } from '@nestjs/passport';
+import { AccountTypeGuard } from '../../../auth/role.guard';
+import { AccountTypes } from '../../../auth/role.decorator';
+import { AccountType } from '../../account/account.meta';
 
 @ApiTags('Store')
 @Controller('store')
@@ -23,8 +29,10 @@ export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
   @ApiBody({ type: StoreDto })
+  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @AccountTypes(AccountType.admin)
+  @UseInterceptors(FileInterceptor('file'))
   post(@Body() dto: StoreDto, @UploadedFile() file) {
     if (file) {
       const stored_path = `uploads/store/${file.originalname}`;
@@ -52,15 +60,23 @@ export class StoreController {
     });
   }
 
-  @Get('meta')
-  @ApiOperation({
-    summary: 'get store meta API',
-    description: 'get store meta data',
-  })
-  getMeta() {
-    return {
-      store_type: StoreType,
-    };
+  @Get('me')
+  @ApiQuery({ name: 'category', required: false })
+  @ApiQuery({ name: 'menu', required: false })
+  getOwnStore(
+    @Req() req,
+    @Query('category') category: boolean,
+    @Query('menu') menu: boolean,
+  ) {
+    const user = req.user;
+    const relation_query = [];
+    if (category) relation_query.push('category');
+    if (category && menu) relation_query.push('category.menu');
+
+    return this.storeService.findOneOrFail(
+      { owner_uuid: user.uuid },
+      { relations: relation_query },
+    );
   }
 
   @Get(':uuid')
@@ -86,9 +102,26 @@ export class StoreController {
     return this.storeService.findOneOrFail({ owner_uuid: owner_uuid });
   }
 
+  @Get('meta')
+  @ApiOperation({
+    summary: 'get store meta API',
+    description: 'get store meta data',
+  })
+  getMeta() {
+    return {
+      store_type: StoreType,
+    };
+  }
+
   @Put(':uuid')
+  @ApiOperation({
+    summary: 'update store API',
+    description: 'update store information with auth token',
+  })
+  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @AccountTypes(AccountType.admin)
   @UseInterceptors(FileInterceptor('file'))
-  putOne(
+  updateOne(
     @Param('uuid') uuid: string,
     @Body() dto: StoreDto,
     @UploadedFile() file,
@@ -105,7 +138,30 @@ export class StoreController {
     }
   }
 
+  @Put()
+  @ApiOperation({
+    summary: 'update store API',
+    description: '(only for admin) update store information',
+  })
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FileInterceptor('file'))
+  updateOwnStore(@Req() req, @Body() dto: StoreDto, @UploadedFile() file) {
+    const user = req.user;
+    if (file) {
+      const stored_path = `uploads/store/${file.originalname}`;
+      const saveDto = Object.assign(dto, {
+        image_url: stored_path,
+      });
+      fs.writeFile(stored_path, file.buffer, () => {});
+      return this.storeService.update({ uuid: user.uuid }, saveDto);
+    } else {
+      return this.storeService.update({ uuid: user.uuid }, dto);
+    }
+  }
+
   @Delete(':uuid')
+  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @AccountTypes(AccountType.admin)
   deleteOne(@Param('uuid') uuid: string) {
     return this.storeService.delete({ uuid: uuid });
   }

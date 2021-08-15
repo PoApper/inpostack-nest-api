@@ -119,7 +119,7 @@ describe('Store Controller', () => {
     it('should update a store entity', async () => {
       const stores = await storeController.getAll(false, false);
       const store = stores[0];
-      await storeController.putOne(store.uuid, storeDto2, '');
+      await storeController.updateOne(store.uuid, storeDto2, '');
       const updated_user = await storeController.getOne(
         store.uuid,
         false,

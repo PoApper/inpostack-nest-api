@@ -8,18 +8,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
 import { MailModule } from '../mail/mail.module';
-import { StoreModule } from '../inpostack/market/store/store.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    AccountModule,
-    StoreModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRETE_KEY,
       signOptions: { expiresIn: '360000s' },
     }),
+    AccountModule,
     MailModule,
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
