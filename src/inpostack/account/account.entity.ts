@@ -4,9 +4,11 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
 import { AccountStatus, AccountType } from './account.meta';
 import { Store } from '../market/store/store.entity';
+import { Review } from '../market/review/review.entity';
 
 @Entity()
 export class Account {
@@ -46,4 +48,7 @@ export class Account {
 
   @OneToOne(() => Store, (store) => store.owner)
   store: Store;
+
+  @OneToMany(() => Review, (review) => review.reviewer)
+  review: Review[];
 }
