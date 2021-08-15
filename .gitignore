@@ -38,3 +38,4 @@ static/
 log/
 
 *.sqlite
+.env
