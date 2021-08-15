@@ -1,26 +1,27 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Category } from "./category.entity";
-import { CategoryCreateDto, CategoryUpdateDto } from "./categoryCreateDto";
-import { StoreService } from "../store/store.service";
-import { Store } from "../store/store.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Category } from './category.entity';
+import { CategoryCreateDto, CategoryUpdateDto } from './categoryCreateDto';
+import { StoreService } from '../store.service';
+import { Store } from '../store.entity';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepo: Repository<Category>,
-    private readonly storeService: StoreService
-  ) {
-  }
+    private readonly storeService: StoreService,
+  ) {}
 
   async save(dto: CategoryCreateDto) {
-    const store: Store = await this.storeService.findOneOrFail({ uuid: dto.store_uuid });
+    const store: Store = await this.storeService.findOneOrFail({
+      uuid: dto.store_uuid,
+    });
 
     return this.categoryRepo.save({
       name: dto.name,
-      store: store
+      store: store,
     });
   }
 

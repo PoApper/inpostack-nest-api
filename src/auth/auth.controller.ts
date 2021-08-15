@@ -21,10 +21,10 @@ import { Logger } from 'winston';
 import { AccountService } from '../inpostack/account/account.service';
 import { AccountStatus, AccountType } from '../inpostack/account/account.meta';
 import { AccountCreateDto } from '../inpostack/account/account.dto';
-import { StoreService } from '../inpostack/store/store.service';
+import { StoreService } from '../inpostack/market/store/store.service';
 import { AccountTypeGuard } from './role.guard';
 import { AccountTypes } from './role.decorator';
-import { StoreDto } from '../inpostack/store/store.dto';
+import { StoreDto } from '../inpostack/market/store/store.dto';
 
 /**
  * This is for handle "verifyToken", "login", "logout" tasks

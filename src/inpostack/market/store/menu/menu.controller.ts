@@ -1,27 +1,34 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { ApiBody, ApiTags } from "@nestjs/swagger";
-import { MenuCreateDto, MenuUpdateDto } from "./menuCreateDto";
-import { MenuService } from "./menu.service";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { MenuCreateDto, MenuUpdateDto } from './menuCreateDto';
+import { MenuService } from './menu.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import fs from 'fs';
 
-@ApiTags("Menu")
-@Controller("menu")
+@ApiTags('Menu')
+@Controller('menu')
 export class MenuController {
-  constructor(
-    private readonly menuService: MenuService
-  ) {
-  }
+  constructor(private readonly menuService: MenuService) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   @ApiBody({ type: MenuCreateDto })
   post(@Body() dto: MenuCreateDto, @UploadedFile() file) {
     if (file) {
-      const stored_path = `uploads/menu/${file.originalname}`
+      const stored_path = `uploads/menu/${file.originalname}`;
       const saveDto = Object.assign(dto, {
-        image_url: stored_path
-      })
+        image_url: stored_path,
+      });
       fs.writeFile(stored_path, file.buffer, () => {});
       return this.menuService.save(saveDto);
     } else {
@@ -34,19 +41,23 @@ export class MenuController {
     return this.menuService.findAll();
   }
 
-  @Get(":uuid")
-  getOne(@Param("uuid") uuid: string) {
+  @Get(':uuid')
+  getOne(@Param('uuid') uuid: string) {
     return this.menuService.findOne({ uuid: uuid });
   }
 
-  @Put(":uuid")
+  @Put(':uuid')
   @UseInterceptors(FileInterceptor('file'))
-  async putOne(@Param("uuid") uuid: string, @Body() dto: MenuUpdateDto, @UploadedFile() file) {
+  async putOne(
+    @Param('uuid') uuid: string,
+    @Body() dto: MenuUpdateDto,
+    @UploadedFile() file,
+  ) {
     if (file) {
-      const stored_path = `uploads/menu/${file.originalname}`
+      const stored_path = `uploads/menu/${file.originalname}`;
       const saveDto = Object.assign(dto, {
-        image_url: stored_path
-      })
+        image_url: stored_path,
+      });
       fs.writeFile(stored_path, file.buffer, () => {});
       await this.menuService.findOneOrFail({ uuid: uuid });
       return this.menuService.update({ uuid: uuid }, saveDto);
@@ -54,13 +65,11 @@ export class MenuController {
       await this.menuService.findOneOrFail({ uuid: uuid });
       return this.menuService.update({ uuid: uuid }, dto);
     }
-
   }
 
-  @Delete(":uuid")
-  async deleteOne(@Param("uuid") uuid: string) {
+  @Delete(':uuid')
+  async deleteOne(@Param('uuid') uuid: string) {
     await this.menuService.findOneOrFail({ uuid: uuid });
     return this.menuService.delete({ uuid: uuid });
   }
-
 }

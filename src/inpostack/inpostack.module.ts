@@ -1,26 +1,18 @@
 import { Module } from '@nestjs/common';
-import { StoreModule } from './store/store.module';
 import { AccountModule } from './account/account.module';
+import { MarketModule } from './market/market.module';
 import { NoticeModule } from './notice/notice.module';
-import { CategoryModule } from './category/category.module';
-import { MenuModule } from './menu/menu.module';
-import { StoreService } from './store/store.service';
+import { StoreService } from './market/store/store.service';
 import { AccountService } from './account/account.service';
-import { StoreDto } from './store/store.dto';
-import { StoreType } from './store/store.meta';
+import { StoreDto } from './market/store/store.dto';
+import { StoreType } from './market/store/store.meta';
 import { AccountCreateDto } from './account/account.dto';
 import { AccountStatus, AccountType } from './account/account.meta';
 import { Account } from './account/account.entity';
-import { Store } from './store/store.entity';
+import { Store } from './market/store/store.entity';
 
 @Module({
-  imports: [
-    StoreModule,
-    AccountModule,
-    NoticeModule,
-    CategoryModule,
-    MenuModule,
-  ],
+  imports: [AccountModule, MarketModule, NoticeModule],
 })
 export class InpostackModule {
   constructor(

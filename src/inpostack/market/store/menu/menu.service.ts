@@ -1,21 +1,22 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Menu } from "./menu.entity";
-import { Repository } from "typeorm";
-import { MenuCreateDto, MenuUpdateDto } from "./menuCreateDto";
-import { CategoryService } from "../category/category.service";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Menu } from './menu.entity';
+import { Repository } from 'typeorm';
+import { MenuCreateDto, MenuUpdateDto } from './menuCreateDto';
+import { CategoryService } from '../category/category.service';
 
 @Injectable()
 export class MenuService {
   constructor(
     @InjectRepository(Menu)
     private readonly menuRepo: Repository<Menu>,
-    private readonly categoryService: CategoryService
-  ) {
-  }
+    private readonly categoryService: CategoryService,
+  ) {}
 
   async save(dto: MenuCreateDto) {
-    const category = await this.categoryService.findOneOrFail({ uuid: dto.category_uuid });
+    const category = await this.categoryService.findOneOrFail({
+      uuid: dto.category_uuid,
+    });
 
     return this.menuRepo.save({
       name: dto.name,
@@ -23,7 +24,7 @@ export class MenuService {
       description: dto.description,
       like: dto.like,
       hate: dto.hate,
-      category: category
+      category: category,
     });
   }
 
@@ -46,5 +47,4 @@ export class MenuService {
   delete(findOptions: object) {
     return this.menuRepo.delete(findOptions);
   }
-
 }

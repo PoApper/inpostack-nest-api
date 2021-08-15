@@ -5,10 +5,10 @@ import { Store } from './store.entity';
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
 import { StoreType } from './store.meta';
-import { CategoryModule } from '../category/category.module';
-import { Category } from '../category/category.entity';
-import { Menu } from '../menu/menu.entity';
-import { Account } from '../account/account.entity';
+import { CategoryModule } from './category/category.module';
+import { Category } from './category/category.entity';
+import { Menu } from './menu/menu.entity';
+import { Account } from '../../account/account.entity';
 
 const storeDto1: StoreDto = {
   name: '무은재기념관',

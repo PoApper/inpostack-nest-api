@@ -9,9 +9,9 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { StoreType } from './store.meta';
-import { Category } from '../category/category.entity';
-import { Account } from '../account/account.entity';
-import { Menu } from '../menu/menu.entity';
+import { Category } from './category/category.entity';
+import { Account } from '../../account/account.entity';
+import { Menu } from './menu/menu.entity';
 
 @Entity()
 export class Store {

@@ -22,5 +22,6 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
+    '@typescript-eslint/no-empty-function': 'off',
   },
 };

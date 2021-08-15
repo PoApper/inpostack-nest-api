@@ -1,9 +1,9 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CategoryCreateDto {
   @ApiProperty()
   readonly store_uuid: string;
-  
+
   @ApiProperty()
   readonly name: string;
 }
