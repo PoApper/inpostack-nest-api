@@ -2,15 +2,17 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
-import { Category } from "../category/category.entity";
+  UpdateDateColumn,
+} from 'typeorm';
+import { Category } from '../category/category.entity';
+import { Store } from '../store/store.entity';
 
 @Entity()
 export class Menu {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
   @Column({ nullable: false })
@@ -19,7 +21,7 @@ export class Menu {
   @Column({ nullable: false })
   price: number;
 
-  @Column("text")
+  @Column('text')
   description: string;
 
   @Column({ nullable: false, default: 0 })
@@ -31,6 +33,12 @@ export class Menu {
   @Column({ nullable: true })
   image_url: string;
 
+  @Column({ nullable: false })
+  store_uuid: string;
+
+  @Column({ nullable: true })
+  category_uuid: string;
+
   @CreateDateColumn()
   created_at: Date;
 
@@ -41,6 +49,11 @@ export class Menu {
    * Database Relationship
    */
 
-  @ManyToOne(() => Category, category => category.menu)
+  @ManyToOne(() => Store, (store) => store.menu)
+  @JoinColumn({ name: 'store_uuid' })
+  store: Store;
+
+  @ManyToOne(() => Category, (category) => category.menu)
+  @JoinColumn({ name: 'category_uuid' })
   category: Category;
 }

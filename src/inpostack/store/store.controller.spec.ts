@@ -1,6 +1,6 @@
-import { StoreController } from './store.controller';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { StoreController } from './store.controller';
 import { Store } from './store.entity';
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
@@ -10,33 +10,33 @@ import { Category } from '../category/category.entity';
 import { Menu } from '../menu/menu.entity';
 import { Account } from '../account/account.entity';
 
+const storeDto1: StoreDto = {
+  name: '무은재기념관',
+  phone: '010-0000-0000',
+  description: '학문에는 경계가 없다',
+  store_type: StoreType.korean,
+  address1: '경상북도 포항시 남구 청암로 77(지곡동)',
+  address2: '기숙사 1동 101호',
+  zipcode: 12345,
+  open_time: '12:00',
+  close_time: '18:00',
+};
+
+const storeDto2: StoreDto = {
+  name: '박태준 학술정보관',
+  phone: '010-1111-1111',
+  description: '자원은 유한하지만, 창의는 무한하다',
+  store_type: StoreType.korean,
+  address1: '경상북도 포항시 남구 청암로 77(지곡동)',
+  address2: '기숙사 1동 101호',
+  zipcode: 12345,
+  open_time: '12:30',
+  close_time: '18:30',
+};
+
 describe('Store Controller', () => {
   let storeController: StoreController;
   let storeModule: TestingModule;
-
-  const storeDto1: StoreDto = {
-    name: '무은재기념관',
-    phone: '010-0000-0000',
-    description: '학문에는 경계가 없다',
-    store_type: StoreType.korean,
-    address1: '경상북도 포항시 남구 청암로 77(지곡동)',
-    address2: '기숙사 1동 101호',
-    zipcode: 12345,
-    open_time: '12:00',
-    close_time: '18:00',
-  };
-
-  const storeDto2: StoreDto = {
-    name: '박태준 학술정보관',
-    phone: '010-1111-1111',
-    description: '자원은 유한하지만, 창의는 무한하다',
-    store_type: StoreType.korean,
-    address1: '경상북도 포항시 남구 청암로 77(지곡동)',
-    address2: '기숙사 1동 101호',
-    zipcode: 12345,
-    open_time: '12:30',
-    close_time: '18:30',
-  };
 
   beforeAll(async () => {
     storeModule = await Test.createTestingModule({
@@ -71,7 +71,7 @@ describe('Store Controller', () => {
     let saved_entity;
 
     it('should create a store entity', async () => {
-      saved_entity = await storeController.post(storeDto1, "");
+      saved_entity = await storeController.post(storeDto1, '');
       const {
         name,
         phone,
@@ -103,23 +103,24 @@ describe('Store Controller', () => {
         uuid: uuid,
       }).toEqual(storeDto1);
     });
+
     it('should get a store entity', async () => {
-      const exist_user = await storeController.getOne(
+      const store = await storeController.getOne(
         saved_entity.uuid,
         false,
         false,
       );
-      expect(exist_user).toEqual(saved_entity);
+      expect(store).toEqual(saved_entity);
     });
   });
 
   describe('update one store', () => {
     it('should update a store entity', async () => {
-      const exist_users = await storeController.getAll(false, false);
-      const exist_user = exist_users[0];
-      await storeController.putOne(exist_user.uuid, storeDto2, "");
+      const stores = await storeController.getAll(false, false);
+      const store = stores[0];
+      await storeController.putOne(store.uuid, storeDto2, '');
       const updated_user = await storeController.getOne(
-        exist_user.uuid,
+        store.uuid,
         false,
         false,
       );
@@ -151,10 +152,10 @@ describe('Store Controller', () => {
 
   describe('delete one store', () => {
     it('should delete a store entity', async () => {
-      const exist_users = await storeController.getAll(false, false);
-      const exist_user = exist_users[0];
+      const stores = await storeController.getAll(false, false);
+      const store = stores[0];
 
-      expect(await storeController.deleteOne(exist_user.uuid)).toEqual({
+      expect(await storeController.deleteOne(store.uuid)).toEqual({
         raw: [],
       });
     });
