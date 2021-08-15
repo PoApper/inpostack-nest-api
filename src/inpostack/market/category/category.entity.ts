@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Store } from '../store.entity';
+import { Store } from '../store/store.entity';
 import { Menu } from '../menu/menu.entity';
 
 @Entity()
