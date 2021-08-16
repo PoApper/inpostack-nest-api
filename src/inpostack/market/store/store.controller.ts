@@ -19,8 +19,8 @@ import * as fs from 'fs';
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
 import { StoreType } from './store.meta';
-import { AccountTypeGuard } from '../../../auth/role.guard';
-import { AccountTypes } from '../../../auth/role.decorator';
+import { AccountTypeGuard } from '../../../auth/role/role.guard';
+import { AccountTypes } from '../../../auth/role/role.decorator';
 import { AccountType } from '../../account/account.meta';
 
 @ApiTags('Store')
@@ -81,6 +81,8 @@ export class StoreController {
   @Get('owner')
   @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'menu', required: false })
+  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @AccountTypes(AccountType.storeOwner)
   getOwnStore(
     @Req() req,
     @Query('category') category: boolean,
@@ -144,6 +146,7 @@ export class StoreController {
     description: 'update store information using auth token',
   })
   @UseGuards(AuthGuard('jwt'))
+  @AccountTypes(AccountType.storeOwner)
   @UseInterceptors(FileInterceptor('file'))
   updateOwnStore(@Req() req, @Body() dto: StoreDto, @UploadedFile() file) {
     const user = req.user;
