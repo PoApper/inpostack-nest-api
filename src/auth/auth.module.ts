@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { AccountModule } from '../inpostack/account/account.module';
-import { LocalStrategy } from './local.strategy';
+import { LocalStrategy } from './strategy/local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtStrategy } from './strategy/jwt.strategy';
 import { MailModule } from '../mail/mail.module';
+import { StoreModule } from '../inpostack/market/store/store.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MailModule } from '../mail/mail.module';
       signOptions: { expiresIn: '360000s' },
     }),
     AccountModule,
+    StoreModule,
     MailModule,
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
