@@ -59,6 +59,16 @@ export class AccountController {
     return this.accountService.find({ order: { created_at: 'DESC' } });
   }
 
+  @Get(':uuid')
+  @ApiOperation({
+    summary: 'get account API',
+    description: 'get a specific account using uuid',
+  })
+  getOne(@Param('uuid') uuid: string) {
+    // TODO: need to hide password!
+    return this.accountService.findOne({ uuid: uuid });
+  }
+
   @Get('me')
   @ApiOperation({
     summary: 'get account API with auth token',
@@ -69,16 +79,6 @@ export class AccountController {
     const user = req.user;
     // TODO: need to hide password!
     return this.accountService.findOne({ uuid: user.uuid });
-  }
-
-  @Get(':uuid')
-  @ApiOperation({
-    summary: 'get account API',
-    description: 'get a specific account using uuid',
-  })
-  getOne(@Param('uuid') uuid: string) {
-    // TODO: need to hide password!
-    return this.accountService.findOne({ uuid: uuid });
   }
 
   @Get('meta')
@@ -93,22 +93,6 @@ export class AccountController {
     };
   }
 
-  @Put()
-  @ApiOperation({
-    summary: 'update own account API',
-    description: 'update a specific account using uuid',
-  })
-  @UseGuards(AuthGuard('jwt'))
-  updateOwnAccount(@Req() req, @Body() dto: AccountUpdateDto) {
-    const user = req.user;
-    try {
-      this.logger.info(`Update account: uuid=${user.uuid}`);
-      return this.accountService.update({ uuid: user.uuid }, dto);
-    } catch (err) {
-      this.logger.error(`Failed to update account...${err}`);
-    }
-  }
-
   @Put(':uuid')
   @ApiOperation({
     summary: 'update specific account API',
@@ -120,6 +104,22 @@ export class AccountController {
     try {
       this.logger.info(`Update account: uuid=${uuid}`);
       return this.accountService.update({ uuid: uuid }, dto);
+    } catch (err) {
+      this.logger.error(`Failed to update account...${err}`);
+    }
+  }
+
+  @Put('me')
+  @ApiOperation({
+    summary: 'update own account API',
+    description: 'update own account using auth token',
+  })
+  @UseGuards(AuthGuard('jwt'))
+  updateOwnAccount(@Req() req, @Body() dto: AccountUpdateDto) {
+    const user = req.user;
+    try {
+      this.logger.info(`Update account: uuid=${user.uuid}`);
+      return this.accountService.update({ uuid: user.uuid }, dto);
     } catch (err) {
       this.logger.error(`Failed to update account...${err}`);
     }

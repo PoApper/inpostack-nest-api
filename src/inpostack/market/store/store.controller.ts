@@ -12,13 +12,13 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiTags, ApiBody, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '@nestjs/passport';
+import * as fs from 'fs';
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
-import { ApiTags, ApiBody, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { StoreType } from './store.meta';
-import { FileInterceptor } from '@nestjs/platform-express';
-import * as fs from 'fs';
-import { AuthGuard } from '@nestjs/passport';
 import { AccountTypeGuard } from '../../../auth/role.guard';
 import { AccountTypes } from '../../../auth/role.decorator';
 import { AccountType } from '../../account/account.meta';
@@ -60,25 +60,6 @@ export class StoreController {
     });
   }
 
-  @Get('me')
-  @ApiQuery({ name: 'category', required: false })
-  @ApiQuery({ name: 'menu', required: false })
-  getOwnStore(
-    @Req() req,
-    @Query('category') category: boolean,
-    @Query('menu') menu: boolean,
-  ) {
-    const user = req.user;
-    const relation_query = [];
-    if (category) relation_query.push('category');
-    if (category && menu) relation_query.push('category.menu');
-
-    return this.storeService.findOneOrFail(
-      { owner_uuid: user.uuid },
-      { relations: relation_query },
-    );
-  }
-
   @Get(':uuid')
   @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'menu', required: false })
@@ -93,6 +74,25 @@ export class StoreController {
 
     return this.storeService.findOne(
       { uuid: uuid },
+      { relations: relation_query },
+    );
+  }
+
+  @Get('owner')
+  @ApiQuery({ name: 'category', required: false })
+  @ApiQuery({ name: 'menu', required: false })
+  getOwnStore(
+    @Req() req,
+    @Query('category') category: boolean,
+    @Query('menu') menu: boolean,
+  ) {
+    const user = req.user;
+    const relation_query = [];
+    if (category) relation_query.push('category');
+    if (category && menu) relation_query.push('category.menu');
+
+    return this.storeService.findOneOrFail(
+      { owner_uuid: user.uuid },
       { relations: relation_query },
     );
   }
@@ -116,7 +116,7 @@ export class StoreController {
   @Put(':uuid')
   @ApiOperation({
     summary: 'update store API',
-    description: 'update store information with auth token',
+    description: '(only for admin) update store information',
   })
   @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
   @AccountTypes(AccountType.admin)
@@ -138,10 +138,10 @@ export class StoreController {
     }
   }
 
-  @Put()
+  @Put('owner')
   @ApiOperation({
-    summary: 'update store API',
-    description: '(only for admin) update store information',
+    summary: 'update own store API',
+    description: 'update store information using auth token',
   })
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('file'))
