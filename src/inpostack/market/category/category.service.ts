@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './category.entity';
-import { CategoryCreateDto, CategoryUpdateDto } from './categoryCreateDto';
+import { CategoryDto, CategoryUpdateDto } from './categoryDto';
 import { StoreService } from '../store/store.service';
 import { Store } from '../store/store.entity';
 
@@ -14,7 +14,7 @@ export class CategoryService {
     private readonly storeService: StoreService,
   ) {}
 
-  async save(dto: CategoryCreateDto) {
+  async save(dto: CategoryDto) {
     const store: Store = await this.storeService.findOneOrFail({
       uuid: dto.store_uuid,
     });

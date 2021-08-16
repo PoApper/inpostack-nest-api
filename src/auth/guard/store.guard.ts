@@ -9,6 +9,10 @@ import { StoreService } from '../../inpostack/market/store/store.service';
 
 /**
  * Return Store information
+ * Usage
+ * @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
+ * @AccountTypes(AccountType.storeOwner)
+ * controllerFun() {...}
  */
 
 @Injectable()
