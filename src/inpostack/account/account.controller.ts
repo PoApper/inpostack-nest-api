@@ -59,16 +59,6 @@ export class AccountController {
     return this.accountService.find({ order: { created_at: 'DESC' } });
   }
 
-  @Get(':uuid')
-  @ApiOperation({
-    summary: 'get account API',
-    description: 'get a specific account using uuid',
-  })
-  getOne(@Param('uuid') uuid: string) {
-    // TODO: need to hide password!
-    return this.accountService.findOne({ uuid: uuid });
-  }
-
   @Get('me')
   @ApiOperation({
     summary: 'get account API with auth token',
@@ -91,6 +81,16 @@ export class AccountController {
       account_type: AccountType,
       account_status: AccountStatus,
     };
+  }
+
+  @Get(':uuid')
+  @ApiOperation({
+    summary: 'get account API',
+    description: 'get a specific account using uuid',
+  })
+  getOne(@Param('uuid') uuid: string) {
+    // TODO: need to hide password!
+    return this.accountService.findOne({ uuid: uuid });
   }
 
   @Put(':uuid')

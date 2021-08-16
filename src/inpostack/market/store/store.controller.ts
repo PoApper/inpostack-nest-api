@@ -60,24 +60,6 @@ export class StoreController {
     });
   }
 
-  @Get(':uuid')
-  @ApiQuery({ name: 'category', required: false })
-  @ApiQuery({ name: 'menu', required: false })
-  getOne(
-    @Param('uuid') uuid: string,
-    @Query('category') category: boolean,
-    @Query('menu') menu: boolean,
-  ) {
-    const relation_query = [];
-    if (category) relation_query.push('category');
-    if (category && menu) relation_query.push('category.menu');
-
-    return this.storeService.findOne(
-      { uuid: uuid },
-      { relations: relation_query },
-    );
-  }
-
   @Get('owner')
   @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'menu', required: false })
@@ -113,6 +95,24 @@ export class StoreController {
     return {
       store_type: StoreType,
     };
+  }
+
+  @Get(':uuid')
+  @ApiQuery({ name: 'category', required: false })
+  @ApiQuery({ name: 'menu', required: false })
+  getOne(
+    @Param('uuid') uuid: string,
+    @Query('category') category: boolean,
+    @Query('menu') menu: boolean,
+  ) {
+    const relation_query = [];
+    if (category) relation_query.push('category');
+    if (category && menu) relation_query.push('category.menu');
+
+    return this.storeService.findOne(
+      { uuid: uuid },
+      { relations: relation_query },
+    );
   }
 
   @Put(':uuid')
