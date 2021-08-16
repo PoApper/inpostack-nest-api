@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { StoreType } from './store.meta';
 import { Category } from '../category/category.entity';
-import { Account } from '../account/account.entity';
+import { Account } from '../../account/account.entity';
 import { Menu } from '../menu/menu.entity';
 
 @Entity()
@@ -70,4 +70,7 @@ export class Store {
 
   @OneToMany(() => Menu, (menu) => menu.store)
   menu: Menu[];
+
+  @OneToMany(() => Menu, (menu) => menu.store)
+  review: Menu[];
 }

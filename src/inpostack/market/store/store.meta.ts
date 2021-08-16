@@ -8,6 +8,5 @@ export enum StoreType {
   japanese = 'JAPANESE',
   chinese = 'CHINESE',
   instant = 'INSTANT',
-  etc = 'ETC'
+  etc = 'ETC',
 }
-

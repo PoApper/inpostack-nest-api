@@ -8,7 +8,8 @@ import { StoreType } from './store.meta';
 import { CategoryModule } from '../category/category.module';
 import { Category } from '../category/category.entity';
 import { Menu } from '../menu/menu.entity';
-import { Account } from '../account/account.entity';
+import { Account } from '../../account/account.entity';
+import { Review } from '../review/review.entity';
 
 const storeDto1: StoreDto = {
   name: '무은재기념관',
@@ -44,7 +45,7 @@ describe('Store Controller', () => {
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: ':memory:',
-          entities: [Store, Category, Menu, Account],
+          entities: [Store, Category, Menu, Account, Review],
           synchronize: true,
         }),
         TypeOrmModule.forFeature([Store]),
@@ -118,7 +119,7 @@ describe('Store Controller', () => {
     it('should update a store entity', async () => {
       const stores = await storeController.getAll(false, false);
       const store = stores[0];
-      await storeController.putOne(store.uuid, storeDto2, '');
+      await storeController.updateOne(store.uuid, storeDto2, '');
       const updated_user = await storeController.getOne(
         store.uuid,
         false,

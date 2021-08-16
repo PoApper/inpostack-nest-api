@@ -4,34 +4,36 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
-import { AccountStatus, AccountType } from "./account.meta";
-import { Store } from '../store/store.entity';
+import { AccountStatus, AccountType } from './account.meta';
+import { Store } from '../market/store/store.entity';
+import { Review } from '../market/review/review.entity';
 
 @Entity()
 export class Account {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   email: string;
 
-  @Column({nullable: false})
+  @Column({ nullable: false })
   name: string;
 
-  @Column({nullable: false})
+  @Column({ nullable: false })
   id: string;
 
-  @Column({nullable: false})
+  @Column({ nullable: false })
   password: string;
 
-  @Column({nullable: false})
+  @Column({ nullable: false })
   crypto_salt: string;
 
-  @Column({nullable: false})
+  @Column({ nullable: false })
   account_type: AccountType;
 
-  @Column({nullable: false, default: AccountStatus.deactivated})
+  @Column({ nullable: false, default: AccountStatus.deactivated })
   account_status: AccountStatus;
 
   @CreateDateColumn()
@@ -44,7 +46,9 @@ export class Account {
    * Database Relationship
    */
 
-  @OneToOne(() => Store, store => store.owner)
+  @OneToOne(() => Store, (store) => store.owner)
   store: Store;
 
+  @OneToMany(() => Review, (review) => review.reviewer)
+  review: Review[];
 }

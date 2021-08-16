@@ -4,32 +4,31 @@ import {
   Get,
   Inject,
   Param,
+  Patch,
   Post,
-  Put,
   Query,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MailService } from '../mail/mail.service';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { AccountService } from '../inpostack/account/account.service';
 import { AccountStatus, AccountType } from '../inpostack/account/account.meta';
 import { AccountCreateDto } from '../inpostack/account/account.dto';
-import { StoreService } from '../inpostack/store/store.service';
-import { AccountTypeGuard } from './role.guard';
-import { AccountTypes } from './role.decorator';
-import { StoreDto } from '../inpostack/store/store.dto';
+import { StoreService } from '../inpostack/market/store/store.service';
 
 /**
  * This is for handle "verifyToken", "login", "logout" tasks
  */
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -41,7 +40,6 @@ export class AuthController {
     private readonly logger: Logger,
   ) {}
 
-  // TODO: will be deprecated
   @Get('verifyToken')
   @UseGuards(AuthGuard('jwt'))
   async verifyToken(@Req() req: Request) {
@@ -52,35 +50,6 @@ export class AuthController {
     }
 
     return user;
-  }
-
-  /**
-   * Return account information
-   */
-  @Get('me')
-  @UseGuards(AuthGuard('jwt'))
-  async getAccountInfo(@Req() req: Request) {
-    const user: any = req.user;
-    return user;
-  }
-
-  /**
-   * Return store information
-   */
-  @Get('me/store')
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
-  @AccountTypes(AccountType.storeOwner)
-  getStoreInfo(@Req() req: Request) {
-    const user: any = req.user;
-    return this.storeService.findOne({ owner_uuid: user.uuid });
-  }
-
-  @Put('me/store')
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
-  @AccountTypes(AccountType.storeOwner)
-  updateStoreInfo(@Req() req: Request, @Body() updateDto: StoreDto) {
-    const user: any = req.user;
-    return this.storeService.update({ owner_uuid: user.uuid }, updateDto);
   }
 
   @Post('login')
@@ -116,12 +85,18 @@ export class AuthController {
   @Post('register')
   @ApiOperation({
     summary: '회원가입',
-    description: '계정 생성 & 인증 메일 발송',
+    description: '계정 생성 & 인증 메일 발송 (admin 생성 불가)',
   })
   async register(
     @Body() dto: AccountCreateDto,
     @Query('sendMail') sendMail?: boolean,
   ) {
+    if (dto.account_type === AccountType.admin) {
+      throw new UnauthorizedException(
+        'Not authorized to create admin account.',
+      );
+    }
+
     let newAccount;
     try {
       newAccount = await this.accountService.save(dto);
@@ -145,7 +120,7 @@ export class AuthController {
     return newAccount;
   }
 
-  @Get('activateAccount/:uuid')
+  @Patch('activateAccount/:uuid')
   async activateAccount(@Param('uuid') uuid: string, @Res() res: Response) {
     try {
       await this.accountService.findOneOrFail({ uuid: uuid });
