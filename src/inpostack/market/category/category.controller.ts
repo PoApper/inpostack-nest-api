@@ -102,22 +102,6 @@ export class CategoryController {
     );
   }
 
-  @Put(':uuid')
-  @ApiOperation({
-    summary: 'update category API',
-    description: '(only for admin) update category',
-  })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
-  @AccountTypes(AccountType.admin)
-  async putOne(
-    @Req() req,
-    @Param('uuid') uuid: string,
-    @Body() dto: CategoryUpdateDto,
-  ) {
-    await this.categoryService.findOneOrFail({ uuid: uuid });
-    return this.categoryService.update({ uuid: uuid }, dto);
-  }
-
   @Put('owner/:uuid')
   @ApiOperation({
     summary: 'update own category API',
@@ -141,16 +125,20 @@ export class CategoryController {
     return this.categoryService.update({ uuid: uuid }, dto);
   }
 
-  @Delete(':uuid')
+  @Put(':uuid')
   @ApiOperation({
-    summary: 'delete category API',
-    description: '(only for admin) delete category',
+    summary: 'update category API',
+    description: '(only for admin) update category',
   })
   @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  async deleteOne(@Req() req, @Param('uuid') uuid: string) {
+  async putOne(
+    @Req() req,
+    @Param('uuid') uuid: string,
+    @Body() dto: CategoryUpdateDto,
+  ) {
     await this.categoryService.findOneOrFail({ uuid: uuid });
-    return this.categoryService.delete({ uuid: uuid });
+    return this.categoryService.update({ uuid: uuid }, dto);
   }
 
   @Delete('owner/:uuid')
@@ -167,6 +155,18 @@ export class CategoryController {
       uuid: uuid,
       store_uuid: store.uuid,
     });
+    return this.categoryService.delete({ uuid: uuid });
+  }
+
+  @Delete(':uuid')
+  @ApiOperation({
+    summary: 'delete category API',
+    description: '(only for admin) delete category',
+  })
+  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @AccountTypes(AccountType.admin)
+  async deleteOne(@Req() req, @Param('uuid') uuid: string) {
+    await this.categoryService.findOneOrFail({ uuid: uuid });
     return this.categoryService.delete({ uuid: uuid });
   }
 }
