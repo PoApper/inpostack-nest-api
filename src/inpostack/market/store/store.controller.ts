@@ -22,6 +22,7 @@ import { StoreType } from './store.meta';
 import { AccountTypeGuard } from '../../../auth/role/role.guard';
 import { AccountTypes } from '../../../auth/role/role.decorator';
 import { AccountType } from '../../account/account.meta';
+import { StoreGuard } from '../../../auth/guard/store.guard';
 
 @ApiTags('Store')
 @Controller('store')
@@ -115,6 +116,29 @@ export class StoreController {
     );
   }
 
+  @Put('owner')
+  @ApiOperation({
+    summary: 'update own store API',
+    description: 'update store information using auth token',
+  })
+  @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
+  @AccountTypes(AccountType.storeOwner)
+  @UseInterceptors(FileInterceptor('file'))
+  updateOwnStore(@Req() req, @Body() dto: StoreDto, @UploadedFile() file) {
+    const store = req.user.store;
+
+    if (file) {
+      const stored_path = `uploads/store/${file.originalname}`;
+      const saveDto = Object.assign(dto, {
+        image_url: stored_path,
+      });
+      fs.writeFile(stored_path, file.buffer, () => {});
+      return this.storeService.update({ uuid: store.uuid }, saveDto);
+    } else {
+      return this.storeService.update({ uuid: store.uuid }, dto);
+    }
+  }
+
   @Put(':uuid')
   @ApiOperation({
     summary: 'update store API',
@@ -137,28 +161,6 @@ export class StoreController {
       return this.storeService.update({ uuid: uuid }, saveDto);
     } else {
       return this.storeService.update({ uuid: uuid }, dto);
-    }
-  }
-
-  @Put('owner')
-  @ApiOperation({
-    summary: 'update own store API',
-    description: 'update store information using auth token',
-  })
-  @UseGuards(AuthGuard('jwt'))
-  @AccountTypes(AccountType.storeOwner)
-  @UseInterceptors(FileInterceptor('file'))
-  updateOwnStore(@Req() req, @Body() dto: StoreDto, @UploadedFile() file) {
-    const user = req.user;
-    if (file) {
-      const stored_path = `uploads/store/${file.originalname}`;
-      const saveDto = Object.assign(dto, {
-        image_url: stored_path,
-      });
-      fs.writeFile(stored_path, file.buffer, () => {});
-      return this.storeService.update({ uuid: user.uuid }, saveDto);
-    } else {
-      return this.storeService.update({ uuid: user.uuid }, dto);
     }
   }
 

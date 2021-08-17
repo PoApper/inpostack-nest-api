@@ -49,8 +49,8 @@ export class CategoryController {
   @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   postOwnCategory(@Req() req, @Body() dto: CategoryOwnerDto) {
-    const user = req.user;
-    const store = user.store;
+    const store = req.user.store;
+
     const saveDto: CategoryDto = {
       store_uuid: store.uuid,
       name: dto.name,
@@ -78,8 +78,7 @@ export class CategoryController {
   @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   getAllByOwner(@Req() req, @Query('menu') menu: boolean) {
-    const user = req.user;
-    const store = user.store;
+    const store = req.user.store;
 
     const relation_query = [];
     if (menu) relation_query.push('menu');
@@ -114,9 +113,7 @@ export class CategoryController {
     @Param('uuid') uuid: string,
     @Body() dto: CategoryUpdateDto,
   ) {
-    const user = req.user;
-    const store = user.store;
-    console.log(store);
+    const store = req.user.store;
 
     await this.categoryService.findOneOrFail({
       uuid: uuid,
@@ -149,8 +146,7 @@ export class CategoryController {
   @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   async deleteOneByOwner(@Req() req, @Param('uuid') uuid: string) {
-    const user = req.user;
-    const store = user.store;
+    const store = req.user.store;
     await this.categoryService.findOneOrFail({
       uuid: uuid,
       store_uuid: store.uuid,
