@@ -4,36 +4,12 @@ import { StoreController } from './store.controller';
 import { Store } from './store.entity';
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
-import { StoreType } from './store.meta';
 import { CategoryModule } from '../category/category.module';
 import { Category } from '../category/category.entity';
 import { Menu } from '../menu/menu.entity';
 import { Account } from '../../account/account.entity';
 import { Review } from '../review/review.entity';
-
-const storeDto1: StoreDto = {
-  name: '무은재기념관',
-  phone: '010-0000-0000',
-  description: '학문에는 경계가 없다',
-  store_type: StoreType.korean,
-  address1: '경상북도 포항시 남구 청암로 77(지곡동)',
-  address2: '기숙사 1동 101호',
-  zipcode: 12345,
-  open_time: '12:00',
-  close_time: '18:00',
-};
-
-const storeDto2: StoreDto = {
-  name: '박태준 학술정보관',
-  phone: '010-1111-1111',
-  description: '자원은 유한하지만, 창의는 무한하다',
-  store_type: StoreType.korean,
-  address1: '경상북도 포항시 남구 청암로 77(지곡동)',
-  address2: '기숙사 1동 101호',
-  zipcode: 12345,
-  open_time: '12:30',
-  close_time: '18:30',
-};
+import { storeDto1, storeDto2 } from '../../../../test/test_values';
 
 describe('Store Controller', () => {
   let storeController: StoreController;
