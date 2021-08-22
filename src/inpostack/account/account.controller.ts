@@ -14,8 +14,8 @@ import { AccountService } from './account.service';
 import { AccountCreateDto, AccountUpdateDto } from './account.dto';
 import { AccountStatus, AccountType } from './account.meta';
 import { AuthGuard } from '@nestjs/passport';
-import { AccountTypes } from '../../auth/role/role.decorator';
-import { AccountTypeGuard } from '../../auth/role/role.guard';
+import { AccountTypes } from '../../auth/decorator/role.decorator';
+import { AccountTypeGuard } from '../../auth/guard/role.guard';
 
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
