@@ -19,8 +19,8 @@ import * as fs from 'fs';
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
 import { StoreType } from './store.meta';
-import { AccountTypeGuard } from '../../../auth/role/role.guard';
-import { AccountTypes } from '../../../auth/role/role.decorator';
+import { AccountTypeGuard } from '../../../auth/guard/role.guard';
+import { AccountTypes } from '../../../auth/decorator/role.decorator';
 import { AccountType } from '../../account/account.meta';
 import { StoreGuard } from '../../../auth/guard/store.guard';
 

@@ -23,6 +23,8 @@ import { AccountService } from '../inpostack/account/account.service';
 import { AccountStatus, AccountType } from '../inpostack/account/account.meta';
 import { AccountCreateDto } from '../inpostack/account/account.dto';
 import { StoreService } from '../inpostack/market/store/store.service';
+import { JwtGuard } from './guard/jwt.guard';
+import { AllowAnonymous } from './decorator/anonymous.decorator';
 
 /**
  * This is for handle "verifyToken", "login", "logout" tasks
@@ -41,15 +43,10 @@ export class AuthController {
   ) {}
 
   @Get('verifyToken')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtGuard)
+  @AllowAnonymous()
   async verifyToken(@Req() req: Request) {
-    const user: any = req.user;
-
-    if (user.account_type == AccountType.storeOwner) {
-      user.store = await this.storeService.findOne({ owner_uuid: user.uuid });
-    }
-
-    return user;
+    return req.user;
   }
 
   @Post('login')

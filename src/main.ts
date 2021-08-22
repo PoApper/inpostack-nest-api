@@ -8,7 +8,6 @@ async function bootstrap() {
   app.enableCors({
     // TODO: refine CORS urls after production
     origin: [
-      'https://localhost:2231',
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:3002',

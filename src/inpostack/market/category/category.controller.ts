@@ -18,8 +18,8 @@ import {
 } from './categoryDto';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { AccountTypeGuard } from '../../../auth/role/role.guard';
-import { AccountTypes } from '../../../auth/role/role.decorator';
+import { AccountTypeGuard } from '../../../auth/guard/role.guard';
+import { AccountTypes } from '../../../auth/decorator/role.decorator';
 import { AccountType } from '../../account/account.meta';
 import { StoreGuard } from '../../../auth/guard/store.guard';
 

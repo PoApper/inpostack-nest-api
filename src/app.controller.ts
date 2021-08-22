@@ -1,10 +1,11 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
-import { AuthGuard } from '@nestjs/passport';
-import { AccountTypeGuard } from './auth/role/role.guard';
-import { AccountTypes } from './auth/role/role.decorator';
+import { AccountTypeGuard } from './auth/guard/role.guard';
+import { AccountTypes } from './auth/decorator/role.decorator';
 import { AccountType } from './inpostack/account/account.meta';
 import { StoreGuard } from './auth/guard/store.guard';
+import { JwtGuard } from './auth/guard/jwt.guard';
+import { AllowAnonymous } from './auth/decorator/anonymous.decorator';
 
 @Controller()
 export class AppController {
@@ -15,21 +16,28 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Get('anonymous_auth')
+  @UseGuards(JwtGuard)
+  @AllowAnonymous()
+  testAnonymousAuth(@Req() req) {
+    return req.user ?? 'Non-login User';
+  }
+
   @Get('private_auth')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtGuard)
   testPrivateAuth(@Req() req) {
     return req.user;
   }
 
   @Get('role_auth')
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @UseGuards(JwtGuard, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   testRoleAuth(@Req() req) {
     return req.user;
   }
 
   @Get('owner_auth')
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
+  @UseGuards(JwtGuard, AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   testStoreAuth(@Req() req) {
     return req.user;
