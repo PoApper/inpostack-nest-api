@@ -23,6 +23,8 @@ import { AccountTypeGuard } from '../../../auth/guard/role.guard';
 import { AccountTypes } from '../../../auth/decorator/role.decorator';
 import { AccountType } from '../../account/account.meta';
 import { StoreGuard } from '../../../auth/guard/store.guard';
+import { JwtGuard } from '../../../auth/guard/jwt.guard';
+import { AllowAnonymous } from '../../../auth/decorator/anonymous.decorator';
 
 @ApiTags('Store')
 @Controller('store')
@@ -99,9 +101,12 @@ export class StoreController {
   }
 
   @Get(':uuid')
+  @UseGuards(JwtGuard)
+  @AllowAnonymous()
   @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'menu', required: false })
   getOne(
+    @Req() req,
     @Param('uuid') uuid: string,
     @Query('category') category: boolean,
     @Query('menu') menu: boolean,
@@ -109,6 +114,8 @@ export class StoreController {
     const relation_query = [];
     if (category) relation_query.push('category');
     if (category && menu) relation_query.push('category.menu');
+
+    this.storeService.saveEvent(req.user ?? 'Non-login User', uuid);
 
     return this.storeService.findOne(
       { uuid: uuid },
