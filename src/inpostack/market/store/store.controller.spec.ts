@@ -10,6 +10,7 @@ import { Menu } from '../menu/menu.entity';
 import { Account } from '../../account/account.entity';
 import { Review } from '../review/review.entity';
 import { storeDto1, storeDto2 } from '../../../../test/test_values';
+import { StoreVisit } from '../../../event/store_visit_event.entity';
 
 describe('Store Controller', () => {
   let storeController: StoreController;
@@ -21,10 +22,10 @@ describe('Store Controller', () => {
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: ':memory:',
-          entities: [Store, Category, Menu, Account, Review],
+          entities: [Store, Category, Menu, Account, Review, StoreVisit],
           synchronize: true,
         }),
-        TypeOrmModule.forFeature([Store]),
+        TypeOrmModule.forFeature([Store, StoreVisit]),
         CategoryModule,
       ],
       controllers: [StoreController],
@@ -83,6 +84,7 @@ describe('Store Controller', () => {
 
     it('should get a store entity', async () => {
       const store = await storeController.getOne(
+        {},
         saved_entity.uuid,
         false,
         false,
@@ -97,6 +99,7 @@ describe('Store Controller', () => {
       const store = stores[0];
       await storeController.updateOne(store.uuid, storeDto2, '');
       const updated_user = await storeController.getOne(
+        {},
         store.uuid,
         false,
         false,

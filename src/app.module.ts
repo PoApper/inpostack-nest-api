@@ -9,6 +9,7 @@ import { MailModule } from './mail/mail.module';
 import { LoggerModule } from './logger/logger.module';
 import { AccountModule } from './inpostack/account/account.module';
 import { StoreModule } from './inpostack/market/store/store.module';
+import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { StoreModule } from './inpostack/market/store/store.module';
     AuthModule,
     MailModule,
     LoggerModule,
+    StatisticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
