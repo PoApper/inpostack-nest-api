@@ -6,14 +6,23 @@ export class CategoryDto {
 
   @ApiProperty()
   readonly name: string;
+
+  @ApiProperty()
+  readonly description: string;
 }
 
 export class CategoryOwnerDto {
   @ApiProperty()
   readonly name: string;
+
+  @ApiProperty()
+  readonly description: string;
 }
 
 export class CategoryUpdateDto {
   @ApiProperty()
   readonly name: string;
+
+  @ApiProperty()
+  readonly description: string;
 }

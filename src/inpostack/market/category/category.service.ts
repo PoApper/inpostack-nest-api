@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './category.entity';
-import { CategoryDto, CategoryUpdateDto } from './categoryDto';
+import { CategoryDto, CategoryUpdateDto } from './category.dto';
 import { StoreService } from '../store/store.service';
 import { Store } from '../store/store.entity';
 
@@ -22,6 +22,7 @@ export class CategoryService {
     return this.categoryRepo.save({
       name: dto.name,
       store: store,
+      description: dto.description,
     });
   }
 

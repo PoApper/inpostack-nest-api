@@ -15,7 +15,7 @@ import {
   CategoryDto,
   CategoryOwnerDto,
   CategoryUpdateDto,
-} from './categoryDto';
+} from './category.dto';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { AccountTypeGuard } from '../../../auth/guard/role.guard';
@@ -54,6 +54,7 @@ export class CategoryController {
     const saveDto: CategoryDto = {
       store_uuid: store.uuid,
       name: dto.name,
+      description: dto.description,
     };
     return this.categoryService.save(saveDto);
   }
