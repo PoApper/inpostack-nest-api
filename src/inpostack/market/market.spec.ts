@@ -141,10 +141,10 @@ describe('Market Controller', () => {
     let saved_entity;
 
     it('should save a category entity', async () => {
-      const categoryList = await storeController.getAll(false, false);
-      const category = categoryList[0];
+      const storeList = await storeController.getAll(false, false);
+      const store = storeList[0];
       const categoryDto1 = {
-        store_uuid: category.uuid,
+        store_uuid: store.uuid,
         name: 'dessert',
       }
       saved_entity = await categoryController.post(categoryDto1);
@@ -191,11 +191,11 @@ describe('Market Controller', () => {
     let saved_entity;
 
     it('should save a menu entity', async () => {
-      const menuList = await categoryController.getAll(false);
-      const menu = menuList[0];
+      const categoryList = await categoryController.getAll(false);
+      const category = categoryList[0];
       const menuDto1 = {
-        category_uuid: menu.uuid,
-        store_uuid: menu.store_uuid,
+        category_uuid: category.uuid,
+        store_uuid: category.store_uuid,
         name: '아메리카노',
         price: 3000,
         description: '따뜻한 아이스아메리카노',
