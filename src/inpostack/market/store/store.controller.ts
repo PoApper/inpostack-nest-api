@@ -89,6 +89,22 @@ export class StoreController {
     return this.storeService.findOneOrFail({ owner_uuid: owner_uuid });
   }
 
+  @Get('name/:store_name')
+  getByStoreName(
+    @Param('store_name') store_name: string,
+    @Query('category') category: boolean,
+    @Query('menu') menu: boolean,
+  ) {
+    const relation_query = [];
+    if (category) relation_query.push('category');
+    if (category && menu) relation_query.push('category.menu');
+
+    return this.storeService.findOne(
+      { name: store_name },
+      { relations: relation_query },
+    );
+  }
+
   @Get('meta')
   @ApiOperation({
     summary: 'get store meta API',
