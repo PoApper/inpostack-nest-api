@@ -2,7 +2,7 @@ import { StoreDto } from '../src/inpostack/market/store/store.dto';
 import { StoreType } from '../src/inpostack/market/store/store.meta';
 import { NoticeDto } from '../src/inpostack/notice/notice.dto';
 import { NoticeType } from '../src/inpostack/notice/notice.meta';
-import { AccountCreateDto } from '../src/inpostack/account/account.dto';
+import { AccountCreateDto, AccountUpdateDto } from '../src/inpostack/account/account.dto';
 import {
   AccountStatus,
   AccountType,
@@ -13,6 +13,15 @@ export const userDto1: AccountCreateDto = {
   name: '포닉스',
   id: 'phoenix',
   password: 'phoenix1986',
+  account_type: AccountType.user,
+  account_status: AccountStatus.activated,
+};
+
+export const userDto2: AccountUpdateDto = {
+  email: 'phoenix2@example.com',
+  name: '포닉스2',
+  id: 'phoenix2',
+  password: 'phoenix21986',
   account_type: AccountType.user,
   account_status: AccountStatus.activated,
 };
@@ -55,3 +64,28 @@ export const noticeDto1: NoticeDto = {
   content: '테스트 공지입니다.',
   notice_type: NoticeType.global,
 };
+
+export const categoryValue1 = {
+  name: 'dessert',
+}
+
+export const categoryValue2 = {
+  name: 'cafe'
+}
+
+export const menuValue1 = {
+  name: '아메리카노',
+  price: 3000,
+  description: '따뜻한 아이스아메리카노',
+  like: 0,
+  hate: 0,
+}
+
+export const menuValue2 = {
+  name: '아이스아메리카노',
+  price: 3000,
+  description: '차가운 아이스아메리카노',
+  like: 0,
+  hate: 0
+}
+
