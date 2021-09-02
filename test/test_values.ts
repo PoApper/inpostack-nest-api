@@ -64,3 +64,28 @@ export const noticeDto1: NoticeDto = {
   content: '테스트 공지입니다.',
   notice_type: NoticeType.global,
 };
+
+export const categoryValue1 = {
+  name: 'dessert',
+}
+
+export const categoryValue2 = {
+  name: 'cafe'
+}
+
+export const menuValue1 = {
+  name: '아메리카노',
+  price: 3000,
+  description: '따뜻한 아이스아메리카노',
+  like: 0,
+  hate: 0,
+}
+
+export const menuValue2 = {
+  name: '아이스아메리카노',
+  price: 3000,
+  description: '차가운 아이스아메리카노',
+  like: 0,
+  hate: 0
+}
+

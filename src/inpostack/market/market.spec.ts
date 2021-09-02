@@ -12,7 +12,14 @@ import { StoreService } from './store/store.service';
 import { MenuController } from './menu/menu.controller';
 import { CategoryService } from './category/category.service';
 import { MenuService } from './menu/menu.service';
-import { storeDto1, storeDto2 } from '../../../test/test_values';
+import {
+  categoryValue1,
+  categoryValue2,
+  menuValue1,
+  menuValue2,
+  storeDto1,
+  storeDto2,
+} from '../../../test/test_values';
 
 
 describe('Market Controller', () => {
@@ -143,10 +150,7 @@ describe('Market Controller', () => {
     it('should save a category entity', async () => {
       const storeList = await storeController.getAll(false, false);
       const store = storeList[0];
-      const categoryDto1 = {
-        store_uuid: store.uuid,
-        name: 'dessert',
-      }
+      const categoryDto1 = Object.assign({store_uuid: store.uuid}, categoryValue1);
       saved_entity = await categoryController.post(categoryDto1);
       const {
         name,
@@ -174,7 +178,7 @@ describe('Market Controller', () => {
     it('should update a category entity', async () => {
       const categoryList = await categoryController.getAll(false);
       const category = categoryList[0];
-      await categoryController.putOne('', category.uuid, {name: 'cafe'});
+      await categoryController.putOne('', category.uuid, categoryValue2);
       const updated_entity = await categoryController.getOne(category.uuid, false);
       const {
         name,
@@ -183,7 +187,7 @@ describe('Market Controller', () => {
       expect({
         name: name,
         store_uuid: store_uuid,
-      }).toEqual({name: 'cafe', store_uuid: category.store_uuid});
+      }).toEqual(Object.assign({store_uuid: category.store_uuid}, categoryValue2))
     });
   });
 
@@ -193,15 +197,10 @@ describe('Market Controller', () => {
     it('should save a menu entity', async () => {
       const categoryList = await categoryController.getAll(false);
       const category = categoryList[0];
-      const menuDto1 = {
+      const menuDto1 = Object.assign({
         category_uuid: category.uuid,
-        store_uuid: category.store_uuid,
-        name: '아메리카노',
-        price: 3000,
-        description: '따뜻한 아이스아메리카노',
-        like: 0,
-        hate: 0,
-      }
+        store_uuid: category.store_uuid
+      }, menuValue1);
       saved_entity = await menuController.post(menuDto1, '');
       const {
         category_uuid,
@@ -240,14 +239,7 @@ describe('Market Controller', () => {
     it('should update a menu entity', async () => {
       const menuList = await menuController.getAll();
       const menu = menuList[0];
-      const menuDto2 = {
-        category_uuid: menu.category_uuid,
-        name: '아이스아메리카노',
-        price: 3000,
-        description: '차가운 아이스아메리카노',
-        like: 0,
-        hate: 0
-      }
+      const menuDto2 = Object.assign({category_uuid: menu.category_uuid}, menuValue2)
       await menuController.putOne(menu.uuid, menuDto2, '');
       const updated_entity = await menuController.getOne(menu.uuid);
       const {
