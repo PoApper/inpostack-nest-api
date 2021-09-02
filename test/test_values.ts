@@ -2,7 +2,10 @@ import { StoreDto } from '../src/inpostack/market/store/store.dto';
 import { StoreType } from '../src/inpostack/market/store/store.meta';
 import { NoticeDto } from '../src/inpostack/notice/notice.dto';
 import { NoticeType } from '../src/inpostack/notice/notice.meta';
-import { AccountCreateDto, AccountUpdateDto } from '../src/inpostack/account/account.dto';
+import {
+  AccountCreateDto,
+  AccountUpdateDto,
+} from '../src/inpostack/account/account.dto';
 import {
   AccountStatus,
   AccountType,
@@ -67,11 +70,13 @@ export const noticeDto1: NoticeDto = {
 
 export const categoryValue1 = {
   name: 'dessert',
-}
+  description: '달콤',
+};
 
 export const categoryValue2 = {
-  name: 'cafe'
-}
+  name: 'cafe',
+  description: '씁쓸',
+};
 
 export const menuValue1 = {
   name: '아메리카노',
@@ -79,13 +84,12 @@ export const menuValue1 = {
   description: '따뜻한 아이스아메리카노',
   like: 0,
   hate: 0,
-}
+};
 
 export const menuValue2 = {
   name: '아이스아메리카노',
   price: 3000,
   description: '차가운 아이스아메리카노',
   like: 0,
-  hate: 0
-}
-
+  hate: 0,
+};
