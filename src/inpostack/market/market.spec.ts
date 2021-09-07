@@ -220,6 +220,7 @@ describe('Market Controller', () => {
         name,
         price,
         description,
+        is_main_menu,
         like,
         hate,
         uuid,
@@ -232,6 +233,7 @@ describe('Market Controller', () => {
         name: name,
         price: price,
         description: description,
+        is_main_menu: is_main_menu,
         like: like,
         hate: hate,
         image_url: null,
@@ -262,6 +264,7 @@ describe('Market Controller', () => {
         name,
         price,
         description,
+        is_main_menu,
         like,
         hate,
       } = updated_entity;
@@ -270,6 +273,7 @@ describe('Market Controller', () => {
         name: name,
         price: price,
         description: description,
+        is_main_menu: is_main_menu,
         like: like,
         hate: hate,
       }).toEqual(menuDto2);

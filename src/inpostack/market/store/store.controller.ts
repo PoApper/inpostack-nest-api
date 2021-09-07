@@ -25,6 +25,8 @@ import { AccountType } from '../../account/account.meta';
 import { StoreGuard } from '../../../auth/guard/store.guard';
 import { JwtGuard } from '../../../auth/guard/jwt.guard';
 import { AllowAnonymous } from '../../../auth/decorator/anonymous.decorator';
+import { getManager } from 'typeorm';
+import randomProcess from '../../../utils/randomProcess';
 
 @ApiTags('Store')
 @Controller('store')
@@ -114,6 +116,65 @@ export class StoreController {
     return {
       store_type: StoreType,
     };
+  }
+
+  @Get('recommend')
+  @ApiOperation({
+    summary: 'get recommend store API',
+    description: 'get 4 recommendations from top 10 visited store',
+  })
+  async getRecommendStore() {
+    const dateTimeUTC = new Date();
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours()+9));
+    const timeNow = dateTime.toISOString().substr(11,5);
+    const dateBefore = new Date(dateTimeUTC.setMonth(dateTimeUTC.getMonth()-1));
+    const entityManager = getManager();
+    const query = await entityManager.query(`
+      SELECT
+        store_visit.store_uuid,
+        store.name,
+        store.image_url,
+        COUNT(*) AS total_visit_user
+      FROM
+        store_visit
+      LEFT JOIN
+        store
+        ON store.uuid = store_visit.store_uuid
+      WHERE
+        DATE(store_visit.visited_at) > ${dateBefore.toISOString().split('T')[0]} AND
+        store.open_time <= '${timeNow}' AND
+        store.close_time >= '${timeNow}'
+      GROUP BY
+        1, 2, 3
+      ORDER BY
+        total_visit_user DESC
+      LIMIT 10
+    `)
+    return query.length ? randomProcess(query, query.length, 4) : null;
+  }
+
+  @Get('random')
+  @ApiOperation({
+    summary: 'get random store API',
+    description: 'get a random store',
+  })
+  async getRandomStore() {
+    const dateTimeUTC = new Date();
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours()+6));
+    const timeNow = dateTime.toISOString().substr(11,5);
+    const entityManager = getManager();
+    const query = await entityManager.query(`
+      SELECT
+        store.uuid,
+        store.name,
+        store.image_url
+      FROM
+        store
+      WHERE
+        store.open_time <= '${timeNow}' AND
+        store.close_time >= '${timeNow}'
+    `)
+    return query.length ? randomProcess(query, query.length, 1) : null;
   }
 
   @Get(':uuid')

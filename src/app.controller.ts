@@ -97,8 +97,8 @@ export class AppController {
         address1: '',
         address2: '',
         zipcode: 0,
-        open_time: '0900',
-        close_time: '2100',
+        open_time: '09:00',
+        close_time: '21:00',
       });
     }
 
@@ -159,6 +159,7 @@ export class AppController {
         like: Math.floor(Math.random() * 100),
         hate: Math.floor(Math.random() * 100),
         description: lorem.generateSentences(3),
+        is_main_menu: true,
       });
     }
     return categoryMenuDummies;

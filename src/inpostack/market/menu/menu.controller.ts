@@ -11,7 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MenuDto, MenuOwnerDto, MenuUpdateDto } from './menu.dto';
 import { MenuService } from './menu.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -22,6 +22,8 @@ import { AccountTypes } from '../../../auth/decorator/role.decorator';
 import { AccountType } from '../../account/account.meta';
 import { StoreGuard } from '../../../auth/guard/store.guard';
 import { CategoryService } from '../category/category.service';
+import { getManager } from 'typeorm';
+import randomProcess from '../../../utils/randomProcess';
 
 @ApiTags('Menu')
 @Controller('menu')
@@ -89,6 +91,63 @@ export class MenuController {
   getAllByOwner(@Req() req) {
     const store = req.user.store;
     return this.menuService.findAll({ store_uuid: store.uuid });
+  }
+
+  @Get('recommend')
+  @ApiOperation({
+    summary: 'get recommend menu API',
+    description: 'get 4 recommendations from main menu',
+  })
+  async getRecommendMenu() {
+    const dateTimeUTC = new Date();
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours()+6));
+    const timeNow = dateTime.toISOString().substr(11,5);
+    const entityManager = getManager();
+    const query = await entityManager.query(`
+      SELECT
+        menu.name,
+        menu.image_url,
+        store.uuid AS store_uuid
+      FROM
+        menu
+      LEFT JOIN
+        store
+        ON store.uuid = menu.store_uuid
+      WHERE
+        store.open_time <= '${timeNow}' AND
+        store.close_time >= '${timeNow}' AND
+        menu.is_main_menu = TRUE AND
+        menu.like > menu.hate
+    `)
+    return query.length ? randomProcess(query, query.length, 4) : null;
+  }
+
+  @Get('random')
+  @ApiOperation({
+    summary: 'get random menu API',
+    description: 'get a random menu',
+  })
+  async getRandomMenu() {
+    const dateTimeUTC = new Date();
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours()+6));
+    const timeNow = dateTime.toISOString().substr(11,5);
+    const entityManager = getManager();
+    const query = await entityManager.query(`
+      SELECT
+        menu.name,
+        menu.image_url,
+        store.uuid AS store_uuid
+      FROM
+        menu
+      LEFT JOIN
+        store
+        ON store.uuid = menu.store_uuid
+      WHERE
+        store.open_time <= '${timeNow}' AND
+        store.close_time >= '${timeNow}' AND
+        menu.is_main_menu = TRUE
+    `)
+    return query.length ? randomProcess(query, query.length, 1) : null;
   }
 
   @Get(':uuid')

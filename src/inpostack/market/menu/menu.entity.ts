@@ -24,6 +24,9 @@ export class Menu {
   @Column('text')
   description: string;
 
+  @Column({ nullable: false, default: false })
+  is_main_menu: boolean
+
   @Column({ nullable: false, default: 0 })
   like: number;
 
