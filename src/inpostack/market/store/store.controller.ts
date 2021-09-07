@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import {
   Body,
   Controller,
@@ -15,7 +16,8 @@ import {
 import { ApiTags, ApiBody, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
-import * as fs from 'fs';
+import { getManager } from 'typeorm';
+
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
 import { StoreType } from './store.meta';
@@ -25,6 +27,7 @@ import { AccountType } from '../../account/account.meta';
 import { StoreGuard } from '../../../auth/guard/store.guard';
 import { JwtGuard } from '../../../auth/guard/jwt.guard';
 import { AllowAnonymous } from '../../../auth/decorator/anonymous.decorator';
+import randomPick from '../../../utils/randomPick';
 
 @ApiTags('Store')
 @Controller('store')
@@ -90,7 +93,10 @@ export class StoreController {
   }
 
   @Get('name/:store_name')
-  getByStoreName(
+  @UseGuards(JwtGuard)
+  @AllowAnonymous()
+  async getByStoreName(
+    @Req() req,
     @Param('store_name') store_name: string,
     @Query('category') category: boolean,
     @Query('menu') menu: boolean,
@@ -99,10 +105,14 @@ export class StoreController {
     if (category) relation_query.push('category');
     if (category && menu) relation_query.push('category.menu');
 
-    return this.storeService.findOne(
+    const store = await this.storeService.findOne(
       { name: store_name },
       { relations: relation_query },
     );
+
+    this.storeService.saveEvent(req.user, store.uuid);
+
+    return store;
   }
 
   @Get('meta')
@@ -114,6 +124,73 @@ export class StoreController {
     return {
       store_type: StoreType,
     };
+  }
+
+  @Get('recommend')
+  @ApiOperation({
+    summary: 'get recommend store API',
+    description: 'get 4 recommendations from top 10 visited store',
+  })
+  async getRecommendStore() {
+    const dateTimeUTC = new Date();
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 9));
+    const timeNow = dateTime.toISOString().substr(11, 5);
+    const dateBefore = new Date(
+      dateTimeUTC.setMonth(dateTimeUTC.getMonth() - 1),
+    );
+    const entityManager = getManager();
+    const ret = await entityManager.query(`
+      SELECT
+        store_visit.store_uuid,
+        store.name,
+        store.image_url,
+        COUNT(*) AS total_visit_user
+      FROM
+        store_visit
+      LEFT JOIN
+        store
+        ON store.uuid = store_visit.store_uuid
+      WHERE
+        DATE(store_visit.visited_at) > ${
+          dateBefore.toISOString().split('T')[0]
+        } AND
+        store.open_time <= '${timeNow}' AND
+        store.close_time >= '${timeNow}'
+      GROUP BY
+        1, 2, 3
+      ORDER BY
+        total_visit_user DESC
+      LIMIT 10
+    `);
+
+    const NUM_OF_RECOMMEND = 4;
+    return ret.length <= NUM_OF_RECOMMEND
+      ? ret
+      : randomPick(ret, NUM_OF_RECOMMEND);
+  }
+
+  @Get('random')
+  @ApiOperation({
+    summary: 'get random store API',
+    description: 'get a random store',
+  })
+  async getRandomStore() {
+    const dateTimeUTC = new Date();
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 9));
+    const timeNow = dateTime.toISOString().substr(11, 5);
+    const entityManager = getManager();
+    const ret = await entityManager.query(`
+      SELECT
+        store.uuid AS store_uuid,
+        store.name,
+        store.image_url
+      FROM
+        store
+      WHERE
+        store.open_time <= '${timeNow}' AND
+        store.close_time >= '${timeNow}'
+    `);
+    return ret.length <= 1 ? ret : randomPick(ret, 1);
   }
 
   @Get(':uuid')
@@ -131,7 +208,7 @@ export class StoreController {
     if (category) relation_query.push('category');
     if (category && menu) relation_query.push('category.menu');
 
-    this.storeService.saveEvent(req.user ?? 'Non-login User', uuid);
+    this.storeService.saveEvent(req.user, uuid);
 
     return this.storeService.findOne(
       { uuid: uuid },

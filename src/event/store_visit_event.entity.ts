@@ -1,11 +1,16 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class StoreVisit {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   user_uuid: string;
 
   @Column({ nullable: false })

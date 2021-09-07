@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import {
   Body,
   Controller,
@@ -11,17 +12,19 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '@nestjs/passport';
+import { getManager } from 'typeorm';
+
 import { MenuDto, MenuOwnerDto, MenuUpdateDto } from './menu.dto';
 import { MenuService } from './menu.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import fs from 'fs';
-import { AuthGuard } from '@nestjs/passport';
 import { AccountTypeGuard } from '../../../auth/guard/role.guard';
 import { AccountTypes } from '../../../auth/decorator/role.decorator';
 import { AccountType } from '../../account/account.meta';
 import { StoreGuard } from '../../../auth/guard/store.guard';
 import { CategoryService } from '../category/category.service';
+import randomPick from '../../../utils/randomPick';
 
 @ApiTags('Menu')
 @Controller('menu')
@@ -89,6 +92,69 @@ export class MenuController {
   getAllByOwner(@Req() req) {
     const store = req.user.store;
     return this.menuService.findAll({ store_uuid: store.uuid });
+  }
+
+  @Get('recommend')
+  @ApiOperation({
+    summary: 'get recommend menu API',
+    description: 'get 4 recommendations from main menu',
+  })
+  async getRecommendMenu() {
+    const dateTimeUTC = new Date();
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 9));
+    const timeNow = dateTime.toISOString().substr(11, 5);
+    const entityManager = getManager();
+    const ret = await entityManager.query(`
+      SELECT
+        menu.name,
+        menu.image_url,
+        store.uuid AS store_uuid,
+        store.name AS store_name
+      FROM
+        menu
+      LEFT JOIN
+        store
+        ON store.uuid = menu.store_uuid
+      WHERE
+        store.open_time <= '${timeNow}' AND
+        store.close_time >= '${timeNow}' AND
+        menu.is_main_menu = TRUE AND
+        menu.like > menu.hate
+    `);
+
+    const NUM_OF_RECOMMEND = 4;
+    return ret.length <= NUM_OF_RECOMMEND
+      ? ret
+      : randomPick(ret, NUM_OF_RECOMMEND);
+  }
+
+  @Get('random')
+  @ApiOperation({
+    summary: 'get random menu API',
+    description: 'get a random menu',
+  })
+  async getRandomMenu() {
+    const dateTimeUTC = new Date();
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 9));
+    const timeNow = dateTime.toISOString().substr(11, 5);
+    const entityManager = getManager();
+    const ret = await entityManager.query(`
+      SELECT
+        menu.name,
+        menu.image_url,
+        store.uuid AS store_uuid,
+        store.name AS store_name
+      FROM
+        menu
+      LEFT JOIN
+        store
+        ON store.uuid = menu.store_uuid
+      WHERE
+        store.open_time <= '${timeNow}' AND
+        store.close_time >= '${timeNow}' AND
+        menu.is_main_menu = TRUE
+    `);
+    return ret.length <= 1 ? ret : randomPick(ret, 1);
   }
 
   @Get(':uuid')

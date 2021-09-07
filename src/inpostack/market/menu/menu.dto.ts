@@ -17,6 +17,9 @@ export class MenuDto {
   readonly description: string;
 
   @ApiProperty()
+  readonly is_main_menu: boolean;
+
+  @ApiProperty()
   readonly like: number;
 
   @ApiProperty()
@@ -38,6 +41,9 @@ export class MenuUpdateDto {
 
   @ApiProperty()
   readonly description: string;
+
+  @ApiProperty()
+  readonly is_main_menu: boolean;
 
   @ApiProperty()
   readonly like: number;
@@ -65,6 +71,9 @@ export class MenuOwnerDto {
 
   @ApiProperty()
   readonly description: string;
+
+  @ApiProperty()
+  readonly is_main_menu: boolean;
 
   @ApiProperty()
   readonly like: number;
