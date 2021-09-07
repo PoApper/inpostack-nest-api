@@ -176,7 +176,7 @@ export class StoreController {
   })
   async getRandomStore() {
     const dateTimeUTC = new Date();
-    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 6));
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 9));
     const timeNow = dateTime.toISOString().substr(11, 5);
     const entityManager = getManager();
     const ret = await entityManager.query(`
