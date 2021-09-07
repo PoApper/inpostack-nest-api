@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import {
   Body,
   Controller,
@@ -15,7 +16,8 @@ import {
 import { ApiTags, ApiBody, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
-import * as fs from 'fs';
+import { getManager } from 'typeorm';
+
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
 import { StoreType } from './store.meta';
@@ -25,8 +27,7 @@ import { AccountType } from '../../account/account.meta';
 import { StoreGuard } from '../../../auth/guard/store.guard';
 import { JwtGuard } from '../../../auth/guard/jwt.guard';
 import { AllowAnonymous } from '../../../auth/decorator/anonymous.decorator';
-import { getManager } from 'typeorm';
-import randomProcess from '../../../utils/randomProcess';
+import randomPick from '../../../utils/randomPick';
 
 @ApiTags('Store')
 @Controller('store')
@@ -92,7 +93,10 @@ export class StoreController {
   }
 
   @Get('name/:store_name')
-  getByStoreName(
+  @UseGuards(JwtGuard)
+  @AllowAnonymous()
+  async getByStoreName(
+    @Req() req,
     @Param('store_name') store_name: string,
     @Query('category') category: boolean,
     @Query('menu') menu: boolean,
@@ -101,10 +105,14 @@ export class StoreController {
     if (category) relation_query.push('category');
     if (category && menu) relation_query.push('category.menu');
 
-    return this.storeService.findOne(
+    const store = await this.storeService.findOne(
       { name: store_name },
       { relations: relation_query },
     );
+
+    this.storeService.saveEvent(req.user, store.uuid);
+
+    return store;
   }
 
   @Get('meta')
@@ -125,11 +133,13 @@ export class StoreController {
   })
   async getRecommendStore() {
     const dateTimeUTC = new Date();
-    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours()+9));
-    const timeNow = dateTime.toISOString().substr(11,5);
-    const dateBefore = new Date(dateTimeUTC.setMonth(dateTimeUTC.getMonth()-1));
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 9));
+    const timeNow = dateTime.toISOString().substr(11, 5);
+    const dateBefore = new Date(
+      dateTimeUTC.setMonth(dateTimeUTC.getMonth() - 1),
+    );
     const entityManager = getManager();
-    const query = await entityManager.query(`
+    const ret = await entityManager.query(`
       SELECT
         store_visit.store_uuid,
         store.name,
@@ -141,7 +151,9 @@ export class StoreController {
         store
         ON store.uuid = store_visit.store_uuid
       WHERE
-        DATE(store_visit.visited_at) > ${dateBefore.toISOString().split('T')[0]} AND
+        DATE(store_visit.visited_at) > ${
+          dateBefore.toISOString().split('T')[0]
+        } AND
         store.open_time <= '${timeNow}' AND
         store.close_time >= '${timeNow}'
       GROUP BY
@@ -149,8 +161,12 @@ export class StoreController {
       ORDER BY
         total_visit_user DESC
       LIMIT 10
-    `)
-    return query.length ? randomProcess(query, query.length, 4) : null;
+    `);
+
+    const NUM_OF_RECOMMEND = 4;
+    return ret.length <= NUM_OF_RECOMMEND
+      ? ret
+      : randomPick(ret, NUM_OF_RECOMMEND);
   }
 
   @Get('random')
@@ -160,10 +176,10 @@ export class StoreController {
   })
   async getRandomStore() {
     const dateTimeUTC = new Date();
-    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours()+6));
-    const timeNow = dateTime.toISOString().substr(11,5);
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 6));
+    const timeNow = dateTime.toISOString().substr(11, 5);
     const entityManager = getManager();
-    const query = await entityManager.query(`
+    const ret = await entityManager.query(`
       SELECT
         store.uuid AS store_uuid,
         store.name,
@@ -173,8 +189,8 @@ export class StoreController {
       WHERE
         store.open_time <= '${timeNow}' AND
         store.close_time >= '${timeNow}'
-    `)
-    return query.length ? randomProcess(query, query.length, 1) : null;
+    `);
+    return ret.length <= 1 ? ret : randomPick(ret, 1);
   }
 
   @Get(':uuid')
@@ -192,7 +208,7 @@ export class StoreController {
     if (category) relation_query.push('category');
     if (category && menu) relation_query.push('category.menu');
 
-    this.storeService.saveEvent(req.user ?? 'Non-login User', uuid);
+    this.storeService.saveEvent(req.user, uuid);
 
     return this.storeService.findOne(
       { uuid: uuid },

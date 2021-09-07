@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import {
   Body,
   Controller,
@@ -12,18 +13,18 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '@nestjs/passport';
+import { getManager } from 'typeorm';
+
 import { MenuDto, MenuOwnerDto, MenuUpdateDto } from './menu.dto';
 import { MenuService } from './menu.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import fs from 'fs';
-import { AuthGuard } from '@nestjs/passport';
 import { AccountTypeGuard } from '../../../auth/guard/role.guard';
 import { AccountTypes } from '../../../auth/decorator/role.decorator';
 import { AccountType } from '../../account/account.meta';
 import { StoreGuard } from '../../../auth/guard/store.guard';
 import { CategoryService } from '../category/category.service';
-import { getManager } from 'typeorm';
-import randomProcess from '../../../utils/randomProcess';
+import randomPick from '../../../utils/randomPick';
 
 @ApiTags('Menu')
 @Controller('menu')
@@ -100,14 +101,15 @@ export class MenuController {
   })
   async getRecommendMenu() {
     const dateTimeUTC = new Date();
-    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours()+6));
-    const timeNow = dateTime.toISOString().substr(11,5);
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 6));
+    const timeNow = dateTime.toISOString().substr(11, 5);
     const entityManager = getManager();
-    const query = await entityManager.query(`
+    const ret = await entityManager.query(`
       SELECT
         menu.name,
         menu.image_url,
-        store.uuid AS store_uuid
+        store.uuid AS store_uuid,
+        store.name AS store_name
       FROM
         menu
       LEFT JOIN
@@ -118,8 +120,12 @@ export class MenuController {
         store.close_time >= '${timeNow}' AND
         menu.is_main_menu = TRUE AND
         menu.like > menu.hate
-    `)
-    return query.length ? randomProcess(query, query.length, 4) : null;
+    `);
+
+    const NUM_OF_RECOMMEND = 4;
+    return ret.length <= NUM_OF_RECOMMEND
+      ? ret
+      : randomPick(ret, NUM_OF_RECOMMEND);
   }
 
   @Get('random')
@@ -129,14 +135,15 @@ export class MenuController {
   })
   async getRandomMenu() {
     const dateTimeUTC = new Date();
-    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours()+6));
-    const timeNow = dateTime.toISOString().substr(11,5);
+    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 6));
+    const timeNow = dateTime.toISOString().substr(11, 5);
     const entityManager = getManager();
-    const query = await entityManager.query(`
+    const ret = await entityManager.query(`
       SELECT
         menu.name,
         menu.image_url,
-        store.uuid AS store_uuid
+        store.uuid AS store_uuid,
+        store.name AS store_name
       FROM
         menu
       LEFT JOIN
@@ -146,8 +153,8 @@ export class MenuController {
         store.open_time <= '${timeNow}' AND
         store.close_time >= '${timeNow}' AND
         menu.is_main_menu = TRUE
-    `)
-    return query.length ? randomProcess(query, query.length, 1) : null;
+    `);
+    return ret.length <= 1 ? ret : randomPick(ret, 1);
   }
 
   @Get(':uuid')
