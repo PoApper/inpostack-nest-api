@@ -165,7 +165,7 @@ export class StoreController {
     const entityManager = getManager();
     const query = await entityManager.query(`
       SELECT
-        store.uuid,
+        store.uuid AS store_uuid,
         store.name,
         store.image_url
       FROM
