@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { StoreType } from './store.meta';
+import { IsFile, MaxFileSize, MemoryStoredFile } from 'nestjs-form-data';
 
 export class StoreDto {
   @ApiProperty()
@@ -35,6 +36,7 @@ export class StoreDto {
   @ApiProperty()
   readonly owner_uuid?: string; // uuid of owner account (it can be null)
 
-  @ApiProperty()
-  readonly image_url?: string;
+  @IsFile()
+  @MaxFileSize(1e6)
+  readonly store_img?: MemoryStoredFile;
 }

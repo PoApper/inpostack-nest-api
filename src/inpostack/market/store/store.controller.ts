@@ -13,10 +13,11 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags, ApiBody, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { getManager } from 'typeorm';
+import { FormDataRequest } from 'nestjs-form-data';
 
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
@@ -28,17 +29,21 @@ import { StoreGuard } from '../../../auth/guard/store.guard';
 import { JwtGuard } from '../../../auth/guard/jwt.guard';
 import { AllowAnonymous } from '../../../auth/decorator/anonymous.decorator';
 import randomPick from '../../../utils/randomPick';
+import { FileService } from '../../../file/file.service';
 
 @ApiTags('Store')
 @Controller('store')
 export class StoreController {
-  constructor(private readonly storeService: StoreService) {}
+  constructor(
+    private readonly storeService: StoreService,
+    private readonly fileService: FileService,
+  ) {}
 
   @Post()
   @ApiBody({ type: StoreDto })
   @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('store_img'))
   post(@Body() dto: StoreDto, @UploadedFile() file) {
     if (file) {
       const stored_path = `uploads/store/${file.originalname}`;
@@ -223,17 +228,21 @@ export class StoreController {
   })
   @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
-  @UseInterceptors(FileInterceptor('file'))
-  updateOwnStore(@Req() req, @Body() dto: StoreDto, @UploadedFile() file) {
+  @FormDataRequest()
+  async updateOwnStore(@Req() req, @Body() dto: StoreDto) {
     const store = req.user.store;
+    const { store_img, ...saveDto } = dto;
 
-    if (file) {
-      const stored_path = `uploads/store/${file.originalname}`;
-      const saveDto = Object.assign(dto, {
-        image_url: stored_path,
-      });
-      fs.writeFile(stored_path, file.buffer, () => {});
-      return this.storeService.update({ uuid: store.uuid }, saveDto);
+    if (store_img) {
+      const logo_url = await this.fileService.uploadFile(
+        'store/logo',
+        store_img,
+        store.uuid,
+      );
+      return this.storeService.update(
+        { uuid: store.uuid },
+        Object.assign(saveDto, { image_url: logo_url }),
+      );
     } else {
       return this.storeService.update({ uuid: store.uuid }, dto);
     }
