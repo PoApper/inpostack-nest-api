@@ -20,6 +20,8 @@ import {
   storeDto1,
   storeDto2,
 } from '../../../test/test_values';
+import { NestjsFormDataModule } from 'nestjs-form-data';
+import { FileModule } from '../../file/file.module';
 
 describe('Market Controller', () => {
   let storeController: StoreController;
@@ -38,6 +40,8 @@ describe('Market Controller', () => {
           synchronize: true,
         }),
         TypeOrmModule.forFeature([Store, StoreVisit, Category, Menu]),
+        NestjsFormDataModule,
+        FileModule,
       ],
       controllers: [StoreController, CategoryController, MenuController],
       providers: [StoreService, CategoryService, MenuService],
