@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import {
   Body,
   Controller,
@@ -9,12 +8,9 @@ import {
   Put,
   Query,
   Req,
-  UploadedFile,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { getManager } from 'typeorm';
 import { FormDataRequest } from 'nestjs-form-data';
@@ -43,18 +39,24 @@ export class StoreController {
   @ApiBody({ type: StoreDto })
   @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  @UseInterceptors(FileInterceptor('store_img'))
-  post(@Body() dto: StoreDto, @UploadedFile() file) {
-    if (file) {
-      const stored_path = `uploads/store/${file.originalname}`;
-      const saveDto = Object.assign(dto, {
-        image_url: stored_path,
-      });
-      fs.writeFile(stored_path, file.buffer, () => {});
-      return this.storeService.save(saveDto);
-    } else {
-      return this.storeService.save(dto);
+  @FormDataRequest()
+  async post(@Body() dto: StoreDto) {
+    const { store_img, ...saveDto } = dto;
+
+    const store = await this.storeService.save(saveDto);
+
+    if (store_img) {
+      const logo_url = await this.fileService.uploadFile(
+        'store/logo',
+        store_img,
+        store.uuid,
+      );
+      await this.storeService.update(
+        { uuid: store.uuid },
+        Object.assign(saveDto, { image_url: logo_url }),
+      );
     }
+    return store;
   }
 
   @Get()
@@ -255,21 +257,23 @@ export class StoreController {
   })
   @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  @UseInterceptors(FileInterceptor('file'))
-  updateOne(
-    @Param('uuid') uuid: string,
-    @Body() dto: StoreDto,
-    @UploadedFile() file,
-  ) {
-    if (file) {
-      const stored_path = `uploads/store/${file.originalname}`;
-      const saveDto = Object.assign(dto, {
-        image_url: stored_path,
-      });
-      fs.writeFile(stored_path, file.buffer, () => {});
-      return this.storeService.update({ uuid: uuid }, saveDto);
+  @FormDataRequest()
+  async updateOne(@Param('uuid') uuid: string, @Body() dto: StoreDto) {
+    const { store_img, ...saveDto } = dto;
+    const store = await this.storeService.findOne({ uuid: uuid });
+
+    if (store_img) {
+      const logo_url = await this.fileService.uploadFile(
+        'store/logo',
+        store_img,
+        store.uuid,
+      );
+      return this.storeService.update(
+        { uuid: store.uuid },
+        Object.assign(saveDto, { image_url: logo_url }),
+      );
     } else {
-      return this.storeService.update({ uuid: uuid }, dto);
+      return this.storeService.update({ uuid: store.uuid }, dto);
     }
   }
 
