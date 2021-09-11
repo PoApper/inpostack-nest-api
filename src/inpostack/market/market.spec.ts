@@ -69,7 +69,7 @@ describe('Market Controller', () => {
   describe('save one store', () => {
     let saved_entity;
     it('should create a store entity', async () => {
-      saved_entity = await storeController.post(storeDto1, '');
+      saved_entity = await storeController.post(storeDto1);
       const {
         name,
         phone,
@@ -80,9 +80,6 @@ describe('Market Controller', () => {
         zipcode,
         open_time,
         close_time,
-        created_at,
-        updated_at,
-        uuid,
       } = saved_entity;
       expect({
         name: name,
@@ -92,13 +89,8 @@ describe('Market Controller', () => {
         address1: address1,
         address2: address2,
         zipcode: zipcode,
-        owner_uuid: null,
-        image_url: null,
         open_time: open_time,
         close_time: close_time,
-        created_at: created_at,
-        updated_at: updated_at,
-        uuid: uuid,
       }).toEqual(storeDto1);
     });
 
@@ -117,7 +109,7 @@ describe('Market Controller', () => {
     it('should update a store entity', async () => {
       const storeList = await storeController.getAll(false, false);
       const store = storeList[0];
-      await storeController.updateOne(store.uuid, storeDto2, '');
+      await storeController.updateOne(store.uuid, storeDto2);
       const updated_entity = await storeController.getOne(
         {},
         store.uuid,
@@ -217,7 +209,7 @@ describe('Market Controller', () => {
         },
         menuValue1,
       );
-      saved_entity = await menuController.post(menuDto1, '');
+      saved_entity = await menuController.post(menuDto1);
       const {
         category_uuid,
         store_uuid,
@@ -227,9 +219,6 @@ describe('Market Controller', () => {
         is_main_menu,
         like,
         hate,
-        uuid,
-        created_at,
-        updated_at,
       } = saved_entity;
       expect({
         category_uuid: category_uuid,
@@ -240,10 +229,6 @@ describe('Market Controller', () => {
         is_main_menu: is_main_menu,
         like: like,
         hate: hate,
-        image_url: null,
-        uuid: uuid,
-        created_at: created_at,
-        updated_at: updated_at,
       }).toEqual(menuDto1);
     });
 
@@ -261,7 +246,7 @@ describe('Market Controller', () => {
         { category_uuid: menu.category_uuid },
         menuValue2,
       );
-      await menuController.putOne(menu.uuid, menuDto2, '');
+      await menuController.putOne(menu.uuid, menuDto2);
       const updated_entity = await menuController.getOne(menu.uuid);
       const {
         category_uuid,

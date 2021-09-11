@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsFile, MaxFileSize, MemoryStoredFile } from 'nestjs-form-data';
 
 export class MenuDto {
   @ApiProperty()
@@ -25,8 +26,9 @@ export class MenuDto {
   @ApiProperty()
   readonly hate: number;
 
-  @ApiProperty()
-  readonly image_url?: string;
+  @IsFile()
+  @MaxFileSize(1e6)
+  readonly menu_img?: MemoryStoredFile;
 }
 
 export class MenuUpdateDto {
@@ -51,8 +53,9 @@ export class MenuUpdateDto {
   @ApiProperty()
   readonly hate: number;
 
-  @ApiProperty()
-  readonly image_url?: string;
+  @IsFile()
+  @MaxFileSize(1e6)
+  readonly menu_img?: MemoryStoredFile;
 }
 
 /**
@@ -81,6 +84,7 @@ export class MenuOwnerDto {
   @ApiProperty()
   readonly hate: number;
 
-  @ApiProperty()
-  readonly image_url?: string;
+  @IsFile()
+  @MaxFileSize(1e6)
+  readonly menu_img?: MemoryStoredFile;
 }

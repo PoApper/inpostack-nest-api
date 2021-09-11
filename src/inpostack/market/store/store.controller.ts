@@ -14,6 +14,7 @@ import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { getManager } from 'typeorm';
 import { FormDataRequest } from 'nestjs-form-data';
+import * as moment from 'moment';
 
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
@@ -46,11 +47,10 @@ export class StoreController {
     const store = await this.storeService.save(saveDto);
 
     if (store_img) {
-      const logo_url = await this.fileService.uploadFile(
-        'store/logo',
-        store_img,
-        store.uuid,
-      );
+      const img_key = `store/logo/${store.uuid}/${moment(Date.now()).format(
+        'YYYYMMDDHHmm',
+      )}`;
+      const logo_url = await this.fileService.uploadFile(img_key, store_img);
       await this.storeService.update(
         { uuid: store.uuid },
         Object.assign(saveDto, { image_url: logo_url }),
@@ -236,11 +236,14 @@ export class StoreController {
     const { store_img, ...saveDto } = dto;
 
     if (store_img) {
-      const logo_url = await this.fileService.uploadFile(
-        'store/logo',
-        store_img,
-        store.uuid,
-      );
+      if (store.image_url) {
+        const deleteKey = store.image_url.split('/').slice(3).join('/');
+        this.fileService.deleteFile(deleteKey);
+      }
+      const img_key = `store/logo/${store.uuid}/${moment(Date.now()).format(
+        'YYYYMMDDHHmm',
+      )}`;
+      const logo_url = await this.fileService.uploadFile(img_key, store_img);
       return this.storeService.update(
         { uuid: store.uuid },
         Object.assign(saveDto, { image_url: logo_url }),
@@ -263,11 +266,14 @@ export class StoreController {
     const store = await this.storeService.findOne({ uuid: uuid });
 
     if (store_img) {
-      const logo_url = await this.fileService.uploadFile(
-        'store/logo',
-        store_img,
-        store.uuid,
-      );
+      if (store.image_url) {
+        const deleteKey = store.image_url.split('/').slice(3).join('/');
+        this.fileService.deleteFile(deleteKey);
+      }
+      const img_key = `store/logo/${store.uuid}/${moment(Date.now()).format(
+        'YYYYMMDDHHmm',
+      )}`;
+      const logo_url = await this.fileService.uploadFile(img_key, store_img);
       return this.storeService.update(
         { uuid: store.uuid },
         Object.assign(saveDto, { image_url: logo_url }),
@@ -280,7 +286,16 @@ export class StoreController {
   @Delete(':uuid')
   @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  deleteOne(@Param('uuid') uuid: string) {
+  async deleteOne(@Param('uuid') uuid: string) {
+    const store = await this.storeService.findOneOrFail({ uuid: uuid });
+
+    if (store.image_url) {
+      const deleteKey = store.image_url.split('/').slice(3).join('/');
+      this.fileService.deleteFile(deleteKey);
+    }
+
+    // TODO: delete all belonging menu images
+
     return this.storeService.delete({ uuid: uuid });
   }
 }

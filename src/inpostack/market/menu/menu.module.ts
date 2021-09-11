@@ -2,12 +2,20 @@ import { Module } from '@nestjs/common';
 import { MenuController } from './menu.controller';
 import { MenuService } from './menu.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { NestjsFormDataModule } from 'nestjs-form-data';
 import { Menu } from './menu.entity';
 import { CategoryModule } from '../category/category.module';
 import { StoreModule } from '../store/store.module';
+import { FileModule } from '../../../file/file.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Menu]), CategoryModule, StoreModule],
+  imports: [
+    TypeOrmModule.forFeature([Menu]),
+    CategoryModule,
+    StoreModule,
+    FileModule,
+    NestjsFormDataModule,
+  ],
   controllers: [MenuController],
   providers: [MenuService],
   exports: [MenuService],
