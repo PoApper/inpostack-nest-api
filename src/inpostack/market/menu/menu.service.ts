@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Menu } from './menu.entity';
 import { Repository } from 'typeorm';
-import { MenuDto, MenuUpdateDto } from './menu.dto';
+import { MenuDto, MenuOwnerDto, MenuUpdateDto } from './menu.dto';
 
 @Injectable()
 export class MenuService {
@@ -11,7 +11,7 @@ export class MenuService {
     private readonly menuRepo: Repository<Menu>,
   ) {}
 
-  async save(dto: MenuDto) {
+  async save(dto: MenuDto | MenuOwnerDto) {
     return this.menuRepo.save(dto);
   }
 
