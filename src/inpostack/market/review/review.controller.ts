@@ -1,6 +1,5 @@
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -44,7 +43,7 @@ export class ReviewController {
     return this.reviewService.find({reviewer_uuid: reviewer_uuid});
   }
 
-  @Get('store/:store_uuid')
+  @Get('`store/:store_uuid`')
   getAllByStore(@Param('store_uuid') store_uuid: string) {
     return this.reviewService.find({store_uuid: store_uuid});
   }
