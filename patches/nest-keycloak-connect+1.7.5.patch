@@ -1,0 +1,26 @@
+diff --git a/node_modules/nest-keycloak-connect/guards/auth.guard.js b/node_modules/nest-keycloak-connect/guards/auth.guard.js
+index 8b034e3..79b0e8d 100644
+--- a/node_modules/nest-keycloak-connect/guards/auth.guard.js
++++ b/node_modules/nest-keycloak-connect/guards/auth.guard.js
+@@ -81,8 +81,9 @@ let AuthGuard = class AuthGuard {
+             }
+             // Empty jwt given, immediate return
+             if (isJwtEmpty) {
+-                this.logger.verbose('Empty JWT, unauthorized');
+-                throw new common_1.UnauthorizedException();
++                // this.logger.verbose('Empty JWT, unauthorized');
++                // throw new common_1.UnauthorizedException();
++                return true;
+             }
+             this.logger.verbose(`User JWT: ${jwt}`);
+             const isValidToken = yield this.validateToken(jwt);
+@@ -94,7 +95,8 @@ let AuthGuard = class AuthGuard {
+                 this.logger.verbose(`Authenticated User: ${JSON.stringify(request.user)}`);
+                 return true;
+             }
+-            throw new common_1.UnauthorizedException();
++            // throw new common_1.UnauthorizedException();
++            return true;
+         });
+     }
+     validateToken(jwt) {

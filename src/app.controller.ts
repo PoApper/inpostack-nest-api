@@ -13,6 +13,7 @@ import { StoreService } from './inpostack/market/store/store.service';
 import { CategoryService } from './inpostack/market/category/category.service';
 import { MenuService } from './inpostack/market/menu/menu.service';
 import { LoremIpsum } from 'lorem-ipsum';
+import { Public } from 'nest-keycloak-connect';
 
 class StoreDummy {
   name: string;
@@ -36,6 +37,7 @@ export class AppController {
   ) {}
 
   @Get()
+  @Public()
   getHello(): string {
     return this.appService.getHello();
   }
@@ -68,6 +70,7 @@ export class AppController {
   }
 
   @Get('default_store_set_up')
+  @Public()
   async defaultStoreSetUp() {
     console.log(__dirname);
     const stream = fs.createReadStream('./default_stores.csv');
@@ -106,6 +109,7 @@ export class AppController {
   }
 
   @Get('default_category_menu_set_up')
+  @Public()
   async defaultCategoryMenuSetUp() {
     const stream = fs.createReadStream('./default_category_and_menu.csv');
     const result = await this.csvParser.parse(
