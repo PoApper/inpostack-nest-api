@@ -42,19 +42,17 @@ export class AuthController {
   @Post('register')
   async register(@Req() req) {
     const user = req.user;
-    console.log(user);
     const existUser = await this.accountService.findOne({
       keycloak_id: user.sub,
     });
     if (existUser) {
       throw new BadRequestException('Already Registered User');
     }
-    const newUser = await this.accountService.save({
+    return await this.accountService.save({
       keycloak_id: user.sub,
       email: user.email,
       name: user.name,
     });
-    console.log(newUser);
   }
 
   @Get('login')
@@ -107,12 +105,10 @@ export class AuthController {
 
       // Find keycloak user exist in DB, if not redirect to InPoStack register process
       const keycloak_user: any = parseToken(jwts.access_token);
-      console.log(keycloak_user);
-      console.log(keycloak_user.sub);
       const existUser = await this.accountService.findOne({
         keycloak_id: keycloak_user.sub,
       });
-      console.log('HAHAHAHAH', existUser);
+
       if (existUser) {
         if (redirect) res.redirect(redirect);
         else res.redirect(process.env.SSO_CALLBACK_DEFAULT);
@@ -179,7 +175,7 @@ export class AuthController {
 
   @Get('logout')
   @UseGuards(InPoStackAuth)
-  async logout(@Req() req, @Res() res) {
+  async logout(@Req() req) {
     const user = req.user;
 
     await this.authService.logoutSso(req.cookies['Refresh']);
@@ -187,7 +183,7 @@ export class AuthController {
     await this.authService.invalidateToken(req.cookies['Authentication']);
     await this.authService.invalidateToken(req.cookies['Refresh']);
 
-    res.redirect(process.env.SSO_CALLBACK_DEFAULT);
+    // res.redirect(process.env.SSO_CALLBACK_DEFAULT);
     this.logger.info(
       `Logout (web): uuid=${user.uuid}, origin: ${req.header('Origin')}`,
     );

@@ -18,5 +18,6 @@ import { StoreModule } from '../inpostack/market/store/store.module';
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
+  exports: [AccountModule, StoreModule],
 })
 export class AuthModule {}

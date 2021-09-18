@@ -43,7 +43,7 @@ export class InPoStackAuth implements CanActivate {
         request.user = null; // not throw Exception, just attach null.
         return true;
       } else {
-        throw new ForbiddenException('Not SSP User');
+        throw new ForbiddenException('Not PoApper SSO User');
       }
     }
 
@@ -51,7 +51,7 @@ export class InPoStackAuth implements CanActivate {
       keycloak_id: user.sub,
     });
     if (!existUser) {
-      throw new ForbiddenException('SSO User, but not SSP User');
+      throw new ForbiddenException('PoApper SSO User, but not InPoStack User');
     }
     request.user = existUser; // replace req.sender into DB sender information
     return true;
