@@ -15,25 +15,19 @@ export class Account {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
+  @Column({ nullable: false, unique: true })
+  keycloak_id: string;
+
   @Column({ nullable: true })
   email: string;
 
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: false })
-  id: string;
-
-  @Column({ nullable: false })
-  password: string;
-
-  @Column({ nullable: false })
-  crypto_salt: string;
-
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: AccountType.user })
   account_type: AccountType;
 
-  @Column({ nullable: false, default: AccountStatus.deactivated })
+  @Column({ nullable: false })
   account_status: AccountStatus;
 
   @CreateDateColumn()

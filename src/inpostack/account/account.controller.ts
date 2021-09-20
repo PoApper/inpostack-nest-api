@@ -39,9 +39,7 @@ export class AccountController {
   @AccountTypes(AccountType.admin)
   post(@Body() dto: AccountCreateDto) {
     try {
-      this.logger.info(
-        `Create new account: user_id=${dto.id}, email=${dto.email}`,
-      );
+      this.logger.info(`Create new account: email=${dto.email}`);
       return this.accountService.save(dto);
     } catch (err) {
       this.logger.error(`Failed to creat account...${err}`);
