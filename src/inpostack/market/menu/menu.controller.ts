@@ -10,10 +10,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { getManager } from 'typeorm';
 import { FormDataRequest } from 'nestjs-form-data';
 import * as moment from 'moment';
+import { Public } from 'nest-keycloak-connect';
 
 import { MenuDto, MenuOwnerDto, MenuUpdateDto } from './menu.dto';
 import { MenuService } from './menu.service';
@@ -24,6 +24,7 @@ import { StoreGuard } from '../../../auth/guard/store.guard';
 import { CategoryService } from '../category/category.service';
 import { FileService } from '../../../file/file.service';
 import randomPick from '../../../utils/randomPick';
+import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
 
 @ApiTags('Menu')
 @Controller('menu')
@@ -36,7 +37,7 @@ export class MenuController {
 
   @Post()
   @ApiBody({ type: MenuDto })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   @FormDataRequest()
   async post(@Body() dto: MenuDto) {
@@ -65,7 +66,7 @@ export class MenuController {
 
   @Post('owner')
   @ApiBody({ type: MenuOwnerDto })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   @FormDataRequest()
   async postByOwner(@Req() req, @Body() dto: MenuOwnerDto) {
@@ -91,12 +92,13 @@ export class MenuController {
   }
 
   @Get()
+  @Public()
   getAll() {
     return this.menuService.findAll();
   }
 
   @Get('owner')
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   getAllByOwner(@Req() req) {
     const store = req.user.store;
@@ -104,6 +106,7 @@ export class MenuController {
   }
 
   @Get('recommend')
+  @Public()
   @ApiOperation({
     summary: 'get recommend menu API',
     description: 'get 4 recommendations from main menu',
@@ -131,13 +134,14 @@ export class MenuController {
         menu.like > menu.hate
     `);
 
-    const NUM_OF_RECOMMEND = 4;
+    const NUM_OF_RECOMMEND = 3;
     return ret.length <= NUM_OF_RECOMMEND
       ? ret
       : randomPick(ret, NUM_OF_RECOMMEND);
   }
 
   @Get('random')
+  @Public()
   @ApiOperation({
     summary: 'get random menu API',
     description: 'get a random menu',
@@ -167,12 +171,13 @@ export class MenuController {
   }
 
   @Get(':uuid')
+  @Public()
   getOne(@Param('uuid') uuid: string) {
     return this.menuService.findOne({ uuid: uuid });
   }
 
   @Put(':uuid')
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   @FormDataRequest()
   async putOne(@Param('uuid') uuid: string, @Body() dto: MenuUpdateDto) {
@@ -206,7 +211,7 @@ export class MenuController {
   }
 
   @Put('owner/:uuid')
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   @FormDataRequest()
   async putOneByOwner(
@@ -245,7 +250,7 @@ export class MenuController {
   }
 
   @Delete(':uuid')
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   async deleteOne(@Param('uuid') uuid: string) {
     const menu = await this.menuService.findOneOrFail({ uuid: uuid });
@@ -257,7 +262,7 @@ export class MenuController {
   }
 
   @Delete('owner/:uuid')
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   async deleteOneByOwner(@Req() req, @Param('uuid') uuid: string) {
     const store = req.user.store;

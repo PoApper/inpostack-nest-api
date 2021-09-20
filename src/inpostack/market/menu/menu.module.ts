@@ -7,10 +7,12 @@ import { Menu } from './menu.entity';
 import { CategoryModule } from '../category/category.module';
 import { StoreModule } from '../store/store.module';
 import { FileModule } from '../../../file/file.module';
+import { AuthModule } from '../../../auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Menu]),
+    AuthModule,
     CategoryModule,
     StoreModule,
     FileModule,
