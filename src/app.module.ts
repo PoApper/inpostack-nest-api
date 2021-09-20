@@ -28,7 +28,8 @@ import { CategoryModule } from './inpostack/market/category/category.module';
       secret: process.env.SSO_SECRET,
       // optional if you want to retrieve JWT from cookie
       cookieKey: 'Authentication',
-      logLevels: ['warn'],
+      useNestLogger: false,
+      // logLevels: ['warn'],
     }),
     InpostackModule,
     AccountModule,
