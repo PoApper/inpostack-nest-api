@@ -34,11 +34,15 @@ export class Review {
    * Database Relationship
    */
 
-  @ManyToOne(() => Account, (reviewer) => reviewer.review)
+  @ManyToOne(() => Account, (reviewer) => reviewer.review, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'reviewer_uuid' })
   reviewer: Account;
 
-  @ManyToOne(() => Store, (store) => store.review)
+  @ManyToOne(() => Store, (store) => store.review, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'store_uuid' })
   store: Store;
 }

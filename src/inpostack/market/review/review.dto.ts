@@ -5,7 +5,7 @@ export class ReviewDto {
   readonly content: string;
 
   @ApiProperty()
-  readonly reviewer_uuid: string;
+  readonly reviewer_uuid?: string;
 
   @ApiProperty()
   readonly store_uuid: string;
@@ -13,5 +13,5 @@ export class ReviewDto {
 
 export class ReviewUpdateDto {
   @ApiProperty()
-  readonly  content: string;
+  readonly content: string;
 }
