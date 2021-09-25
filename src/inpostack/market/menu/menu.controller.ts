@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   Req,
@@ -174,6 +175,22 @@ export class MenuController {
   @Public()
   getOne(@Param('uuid') uuid: string) {
     return this.menuService.findOne({ uuid: uuid });
+  }
+
+  @ApiOperation({
+    summary: 'menu rate API',
+    description: 'rate: {0, 5} = {hate, like}',
+  })
+  @Patch(':uuid/:rate')
+  @UseGuards(InPoStackAuth)
+  async rateMenu(@Param('uuid') uuid: string, @Param('rate') rate: number) {
+    // rate: {0, 5} = {hate, like}
+    const menu = await this.menuService.findOneOrFail({ uuid: uuid });
+    if (rate == 0) {
+      this.menuService.update({ uuid: uuid }, { hate: menu.hate + 1 });
+    } else if (rate == 5) {
+      this.menuService.update({ uuid: uuid }, { like: menu.like + 1 });
+    }
   }
 
   @Put(':uuid')

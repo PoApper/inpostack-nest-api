@@ -27,7 +27,7 @@ export class MenuService {
     return this.menuRepo.findOneOrFail(findOptions);
   }
 
-  update(findOptions: object, dto: MenuUpdateDto) {
+  update(findOptions: object, dto: MenuUpdateDto | object) {
     return this.menuRepo.update(findOptions, dto);
   }
 
