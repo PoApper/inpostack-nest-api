@@ -13,13 +13,14 @@ import {
 import { AccountService } from './account.service';
 import { AccountCreateDto, AccountUpdateDto } from './account.dto';
 import { AccountStatus, AccountType } from './account.meta';
-import { AuthGuard } from '@nestjs/passport';
 import { AccountTypes } from '../../auth/decorator/role.decorator';
 import { AccountTypeGuard } from '../../auth/guard/role.guard';
 
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
+import { InPoStackAuth } from '../../auth/guard/InPoStackAuth.guard';
+import { Public } from 'nest-keycloak-connect';
 
 @ApiTags('Account')
 @Controller('account')
@@ -35,7 +36,7 @@ export class AccountController {
     summary: 'create account API',
     description: '(only for admin) create a new account',
   })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   post(@Body() dto: AccountCreateDto) {
     try {
@@ -51,7 +52,7 @@ export class AccountController {
     summary: 'get all accounts API',
     description: '(only for admin) get whole accounts',
   })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   get() {
     return this.accountService.find({ order: { created_at: 'DESC' } });
@@ -62,7 +63,7 @@ export class AccountController {
     summary: 'get account API with auth token',
     description: 'get my account information using auth token',
   })
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(InPoStackAuth)
   getOwnAccount(@Req() req) {
     const user = req.user;
     // TODO: need to hide password!
@@ -74,6 +75,7 @@ export class AccountController {
     summary: 'get account meta API',
     description: 'get account meta data',
   })
+  @Public()
   getMeta() {
     return {
       account_type: AccountType,
@@ -86,6 +88,7 @@ export class AccountController {
     summary: 'get account API',
     description: 'get a specific account using uuid',
   })
+  @UseGuards(InPoStackAuth)
   getOne(@Param('uuid') uuid: string) {
     // TODO: need to hide password!
     return this.accountService.findOne({ uuid: uuid });
@@ -96,7 +99,7 @@ export class AccountController {
     summary: 'update specific account API',
     description: '(only for admin) update a specific account using uuid',
   })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   updateByAdmin(@Param('uuid') uuid: string, @Body() dto: AccountUpdateDto) {
     try {
@@ -112,7 +115,7 @@ export class AccountController {
     summary: 'update own account API',
     description: 'update own account using auth token',
   })
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(InPoStackAuth)
   updateOwnAccount(@Req() req, @Body() dto: AccountUpdateDto) {
     const user = req.user;
     try {
@@ -128,7 +131,7 @@ export class AccountController {
     summary: 'delete account API',
     description: '(only for admin) delete a specific account using uuid',
   })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   delete(@Param('uuid') uuid: string) {
     try {

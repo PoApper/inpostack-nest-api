@@ -14,8 +14,8 @@ export class StatisticsController {
     return (
       createQueryBuilder('account')
         .select('COUNT(*) AS DRU')
-        .addSelect('strftime("%Y-%m-%d", created_at) AS register_date') // sqlite
-        // .addSelect(`DATE_FORMAT(created_at, '%Y-%m-%d') AS register_date`) // mysql
+        // .addSelect('strftime("%Y-%m-%d", created_at) AS register_date') // sqlite
+        .addSelect(`DATE_FORMAT(created_at, '%Y-%m-%d') AS register_date`) // mysql
         .where(
           `created_at BETWEEN '${new Date(
             start_date ?? 0,
@@ -54,8 +54,8 @@ export class StatisticsController {
     return (
       createQueryBuilder('store_visit')
         .select('COUNT(*) AS TDSV')
-        .addSelect('strftime("%Y-%m-%d", visited_at) AS visit_date') // sqlite
-        // .addSelect(`DATE_FORMAT(visited_at, '%Y-%m-%d') AS visit_date`) // mysql
+        // .addSelect('strftime("%Y-%m-%d", visited_at) AS visit_date') // sqlite
+        .addSelect(`DATE_FORMAT(visited_at, '%Y-%m-%d') AS visit_date`) // mysql
         .where(
           `visited_at BETWEEN '${new Date(
             start_date ?? 0,
@@ -79,8 +79,8 @@ export class StatisticsController {
       createQueryBuilder('store_visit')
         .select('COUNT(*) AS DSV')
         .addSelect('store_uuid')
-        .addSelect('strftime("%Y-%m-%d", visited_at) AS visit_date') // sqlite
-        // .addSelect(`DATE_FORMAT(visited_at, '%Y-%m-%d') AS visit_date`) // mysql
+        // .addSelect('strftime("%Y-%m-%d", visited_at) AS visit_date') // sqlite
+        .addSelect(`DATE_FORMAT(visited_at, '%Y-%m-%d') AS visit_date`) // mysql
         .where(
           `visited_at BETWEEN '${new Date(
             start_date ?? 0,
