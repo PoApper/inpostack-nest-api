@@ -15,6 +15,8 @@ import { StoreType } from './inpostack/market/store/store.meta';
 import { StoreService } from './inpostack/market/store/store.service';
 import { CategoryService } from './inpostack/market/category/category.service';
 import { MenuService } from './inpostack/market/menu/menu.service';
+import { ApiOperation } from '@nestjs/swagger';
+import { createQueryBuilder } from 'typeorm';
 
 class StoreDummy {
   name: string;
@@ -68,6 +70,31 @@ export class AppController {
   @AccountTypes(AccountType.storeOwner)
   testStoreAuth(@Req() req) {
     return req.user;
+  }
+
+  @ApiOperation({ summary: 'InPoStack Overview' })
+  @Public()
+  @Get('overview')
+  async getOverview() {
+    const account_count = await createQueryBuilder('account')
+      .select('COUNT(*) AS account_count')
+      .getRawOne();
+    const store_count = await createQueryBuilder('store')
+      .select('COUNT(*) AS store_count')
+      .getRawOne();
+    const notice_count = await createQueryBuilder('notice')
+      .select('COUNT(*) AS notice_count')
+      .getRawOne();
+    const review_count = await createQueryBuilder('review')
+      .select('COUNT(*) AS review_count')
+      .getRawOne();
+
+    return {
+      ...account_count,
+      ...store_count,
+      ...notice_count,
+      ...review_count,
+    };
   }
 
   @Get('default_store_set_up')
