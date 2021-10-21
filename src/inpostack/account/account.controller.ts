@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -54,8 +55,12 @@ export class AccountController {
   })
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  get() {
-    return this.accountService.find({ order: { created_at: 'DESC' } });
+  get(@Query('take') take: number) {
+    const findOptions = { order: { last_login_at: 'DESC' } };
+    if (take) {
+      Object.assign(findOptions, { take: take });
+    }
+    return this.accountService.find(findOptions);
   }
 
   @Get('me')

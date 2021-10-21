@@ -63,15 +63,24 @@ export class StoreController {
   @Public()
   @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'menu', required: false })
-  getAll(@Query('category') category?: boolean, @Query('menu') menu?: boolean) {
+  getAll(
+    @Query('take') take: number,
+    @Query('category') category?: boolean,
+    @Query('menu') menu?: boolean,
+  ) {
     const relation_query = [];
     if (category) relation_query.push('category');
     if (category && menu) relation_query.push('category.menu');
 
-    return this.storeService.find({
+    const findOptions = {
       order: { created_at: 'DESC' },
       relations: relation_query,
-    });
+    };
+    if (take) {
+      Object.assign(findOptions, { take: take });
+    }
+
+    return this.storeService.find(findOptions);
   }
 
   @Get('owner')
