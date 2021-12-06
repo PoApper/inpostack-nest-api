@@ -7,7 +7,7 @@ import { Category } from './category/category.entity';
 import { Menu } from './menu/menu.entity';
 import { Account } from '../account/account.entity';
 import { Review } from './review/review.entity';
-import { StoreVisit } from '../../event/store_visit_event.entity';
+import { StoreVisitEvent } from '../../event/store-visit-event.entity';
 import { StoreService } from './store/store.service';
 import { MenuController } from './menu/menu.controller';
 import { CategoryService } from './category/category.service';
@@ -36,10 +36,10 @@ describe('Market Controller', () => {
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: ':memory:',
-          entities: [Store, Category, Menu, Account, Review, StoreVisit],
+          entities: [Store, Category, Menu, Account, Review, StoreVisitEvent],
           synchronize: true,
         }),
-        TypeOrmModule.forFeature([Store, StoreVisit, Category, Menu]),
+        TypeOrmModule.forFeature([Store, StoreVisitEvent, Category, Menu]),
         NestjsFormDataModule,
         FileModule,
       ],
