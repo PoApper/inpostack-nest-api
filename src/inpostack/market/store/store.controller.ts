@@ -128,7 +128,7 @@ export class StoreController {
       { relations: relation_query },
     );
 
-    this.storeService.saveEvent(req.user, store.uuid);
+    this.storeService.saveStoreVisitEvent(req.user, store.uuid);
 
     return store;
   }
@@ -229,7 +229,7 @@ export class StoreController {
     if (category) relation_query.push('category');
     if (category && menu) relation_query.push('category.menu');
 
-    this.storeService.saveEvent(req.user, uuid);
+    this.storeService.saveStoreVisitEvent(req.user, uuid);
 
     return this.storeService.findOne(
       { uuid: uuid },

@@ -11,7 +11,7 @@ export class StoreService {
     @InjectRepository(Store)
     private readonly storeRepo: Repository<Store>,
     @InjectRepository(StoreVisitEvent)
-    private readonly storeVisitRepo: Repository<StoreVisitEvent>,
+    private readonly storeVisitEventRepo: Repository<StoreVisitEvent>,
   ) {}
 
   save(dto: StoreDto) {
@@ -42,8 +42,8 @@ export class StoreService {
     return this.storeRepo.delete(findOptions);
   }
 
-  saveEvent(user_uuid: string, store_uuid: string) {
-    return this.storeVisitRepo.save({
+  saveStoreVisitEvent(user_uuid: string, store_uuid: string) {
+    return this.storeVisitEventRepo.save({
       user_uuid: user_uuid,
       store_uuid: store_uuid,
     });
