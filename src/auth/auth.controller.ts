@@ -38,7 +38,7 @@ export class AuthController {
     private readonly logger: Logger,
   ) {}
 
-  // can be register after PoApper SSO logined
+  // register after PoApper SSO login
   @Post('register')
   async register(@Req() req) {
     const user = req.user;
@@ -112,6 +112,7 @@ export class AuthController {
       if (existUser) {
         if (redirect) res.redirect(redirect);
         else res.redirect(process.env.SSO_CALLBACK_DEFAULT);
+        this.authService.saveUserLoginEvent(existUser.uuid);
       } else {
         res.redirect(`${process.env.SSO_CALLBACK_DEFAULT}/register`);
       }
@@ -165,12 +166,12 @@ export class AuthController {
   @Get('verifyToken')
   @UseGuards(InPoStackAuth)
   @AllowAnonymous()
-  verifyToken(@Req() req) {
+  async verifyToken(@Req() req) {
     const user = req.user;
     if (user) {
-      this.accountService.updateLoginById(user.uuid);
+      await this.accountService.updateLoginById(user.uuid);
+      return user;
     }
-    return user;
   }
 
   @Get('logout')
