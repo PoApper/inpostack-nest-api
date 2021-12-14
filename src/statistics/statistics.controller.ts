@@ -12,15 +12,9 @@ export class StatisticsController {
     @Query('end_date') end_date: Date,
   ) {
     return createQueryBuilder('account')
-      .select('COUNT(*) AS DRU')
-      .addSelect(`DATE_FORMAT(created_at, '%Y-%m-%d') AS register_date`) // mysql
-      .where(
-        `created_at BETWEEN '${new Date(
-          start_date ?? 0,
-        ).toISOString()}' AND '${new Date(
-          end_date ?? Date.now(),
-        ).toISOString()}}'`,
-      )
+      .select(`DATE(created_at) AS register_date`)
+      .addSelect('COUNT(*) AS daily_register_user')
+      .where(`login_at BETWEEN '${start_date}' AND '${end_date}'`)
       .groupBy('register_date')
       .orderBy('register_date')
       .getRawMany();
@@ -32,58 +26,32 @@ export class StatisticsController {
     @Query('start_date') start_date: Date,
     @Query('end_date') end_date: Date,
   ) {
-    // TODO: Create User Login Event Table
-    return 'Under Develop';
-    return createQueryBuilder('account')
-      .select('DATE(last_login_at) AS login_at')
-      .addSelect('COUNT(uuid) AS DAU')
-      .where(`last_login_at BETWEEN '${start_date}' AND '${end_date}'`)
-      .orderBy('login_at')
-      .getRawMany();
-  }
-
-  @ApiOperation({ summary: 'Total Daily Store Visit' })
-  @Get('TDSV')
-  async dailyStoreVisitUserTotal(
-    @Query('start_date') start_date: Date,
-    @Query('end_date') end_date: Date,
-  ) {
-    return createQueryBuilder('store_visit')
-      .select('COUNT(*) AS TDSV')
-      .addSelect(`DATE_FORMAT(visited_at, '%Y-%m-%d') AS visit_date`) // mysql
-      .where(
-        `visited_at BETWEEN '${new Date(
-          start_date ?? 0,
-        ).toISOString()}' AND '${new Date(
-          end_date ?? Date.now(),
-        ).toISOString()}}'`,
-      )
-      .groupBy('visit_date')
-      .orderBy('visit_date')
+    return createQueryBuilder('user_login_event')
+      .select('DATE(login_at) AS login_date')
+      .addSelect('COUNT(DISTINCT user_uuid) AS daily_active_user')
+      .where(`login_at BETWEEN '${start_date}' AND '${end_date}'`)
+      .groupBy('login_date')
+      .orderBy('login_date')
       .getRawMany();
   }
 
   @ApiOperation({ summary: 'Daily Store Visit' })
-  @Get('DSV')
-  async dailyStoreVisitUser(
+  @Get('daily_store_visit')
+  async dailyStoreVisitUserTotal(
     @Query('start_date') start_date: Date,
     @Query('end_date') end_date: Date,
+    @Query('store_uuid') store_uuid: string,
   ) {
-    return createQueryBuilder('store_visit')
-      .select('COUNT(*) AS DSV')
-      .addSelect('store_uuid')
-      .addSelect(`DATE_FORMAT(visited_at, '%Y-%m-%d') AS visit_date`) // mysql
-      .where(
-        `visited_at BETWEEN '${new Date(
-          start_date ?? 0,
-        ).toISOString()}' AND '${new Date(
-          end_date ?? Date.now(),
-        ).toISOString()}}'`,
-      )
-      .groupBy('visit_date')
-      .addGroupBy('store_uuid')
-      .orderBy('visit_date')
-      .addOrderBy('store_uuid')
-      .getRawMany();
+    console.log(store_uuid);
+    return (
+      createQueryBuilder('store_visit_event')
+        .select(`DATE(visited_at) AS visit_date`)
+        .addSelect('COUNT(*) AS daily_store_visit')
+        .where(`visited_at BETWEEN '${start_date}' AND '${end_date}'`)
+        // .andWhere(store_uuid ? `store_uuid = ${store_uuid}` : 'TRUE')
+        .groupBy('visit_date')
+        .orderBy('visit_date')
+        .getRawMany()
+    );
   }
 }
