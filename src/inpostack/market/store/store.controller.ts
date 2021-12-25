@@ -161,17 +161,17 @@ export class StoreController {
     const entityManager = getManager();
     const ret = await entityManager.query(`
       SELECT
-        store_visit.store_uuid,
+        store_visit_event.store_uuid,
         store.name,
         store.image_url,
         COUNT(*) AS total_visit_user
       FROM
-        store_visit
+        store_visit_event
       LEFT JOIN
         store
-        ON store.uuid = store_visit.store_uuid
+        ON store.uuid = store_visit_event.store_uuid
       WHERE
-        DATE(store_visit.visited_at) > ${
+        DATE(store_visit_event.visited_at) > ${
           dateBefore.toISOString().split('T')[0]
         } AND
         store.open_time <= '${timeNow}' AND
