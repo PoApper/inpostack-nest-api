@@ -7,9 +7,12 @@ import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { StoreModule } from '../inpostack/market/store/store.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserLoginEvent } from '../event/user-login-event.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([UserLoginEvent]),
     ConfigModule.forRoot(),
     PassportModule,
     HttpModule,

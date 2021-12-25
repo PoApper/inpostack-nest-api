@@ -6,92 +6,51 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 @Controller('statistics')
 export class StatisticsController {
   @ApiOperation({ summary: 'Daily Register User' })
-  @Get('DRU')
+  @Get('daily_register_user')
   async dailyRegisterUser(
     @Query('start_date') start_date: Date,
     @Query('end_date') end_date: Date,
   ) {
-    return (
-      createQueryBuilder('account')
-        .select('COUNT(*) AS DRU')
-        // .addSelect('strftime("%Y-%m-%d", created_at) AS register_date') // sqlite
-        .addSelect(`DATE_FORMAT(created_at, '%Y-%m-%d') AS register_date`) // mysql
-        .where(
-          `created_at BETWEEN '${new Date(
-            start_date ?? 0,
-          ).toISOString()}' AND '${new Date(
-            end_date ?? Date.now(),
-          ).toISOString()}}'`,
-        )
-        .groupBy('register_date')
-        .orderBy('register_date')
-        .getRawMany()
-    );
+    return createQueryBuilder('account')
+      .select(`DATE(created_at) AS register_date`)
+      .addSelect('COUNT(*) AS daily_register_user')
+      .where(`login_at BETWEEN '${start_date}' AND '${end_date}'`)
+      .groupBy('register_date')
+      .orderBy('register_date')
+      .getRawMany();
   }
 
   @ApiOperation({ summary: 'Daily Active User' })
-  @Get('DAU')
+  @Get('daily_active_user')
   async dailyActiveUser(
     @Query('start_date') start_date: Date,
     @Query('end_date') end_date: Date,
   ) {
-    // TODO: Create User Login Event Table
-    return 'Under Develop';
-    return createQueryBuilder('account')
-      .select('DATE(last_login_at) AS login_at')
-      .addSelect('COUNT(uuid) AS DAU')
-      .where(`last_login_at BETWEEN '${start_date}' AND '${end_date}'`)
-      .orderBy('login_at')
+    return createQueryBuilder('user_login_event')
+      .select('DATE(login_at) AS login_date')
+      .addSelect('COUNT(DISTINCT user_uuid) AS daily_active_user')
+      .where(`login_at BETWEEN '${start_date}' AND '${end_date}'`)
+      .groupBy('login_date')
+      .orderBy('login_date')
       .getRawMany();
   }
 
-  @ApiOperation({ summary: 'Total Daily Store Visit' })
-  @Get('TDSV')
+  @ApiOperation({ summary: 'Daily Store Visit' })
+  @Get('daily_store_visit')
   async dailyStoreVisitUserTotal(
     @Query('start_date') start_date: Date,
     @Query('end_date') end_date: Date,
+    @Query('store_uuid') store_uuid: string,
   ) {
+    console.log(store_uuid);
     return (
-      createQueryBuilder('store_visit')
-        .select('COUNT(*) AS TDSV')
-        // .addSelect('strftime("%Y-%m-%d", visited_at) AS visit_date') // sqlite
-        .addSelect(`DATE_FORMAT(visited_at, '%Y-%m-%d') AS visit_date`) // mysql
-        .where(
-          `visited_at BETWEEN '${new Date(
-            start_date ?? 0,
-          ).toISOString()}' AND '${new Date(
-            end_date ?? Date.now(),
-          ).toISOString()}}'`,
-        )
+      createQueryBuilder('store_visit_event')
+        .select(`DATE(visited_at) AS visit_date`)
+        .addSelect('COUNT(*) AS daily_store_visit')
+        .where(`visited_at BETWEEN '${start_date}' AND '${end_date}'`)
+        // .andWhere(store_uuid ? `store_uuid = ${store_uuid}` : 'TRUE')
         .groupBy('visit_date')
         .orderBy('visit_date')
-        .getRawMany()
-    );
-  }
-
-  @ApiOperation({ summary: 'Daily Store Visit' })
-  @Get('DSV')
-  async dailyStoreVisitUser(
-    @Query('start_date') start_date: Date,
-    @Query('end_date') end_date: Date,
-  ) {
-    return (
-      createQueryBuilder('store_visit')
-        .select('COUNT(*) AS DSV')
-        .addSelect('store_uuid')
-        // .addSelect('strftime("%Y-%m-%d", visited_at) AS visit_date') // sqlite
-        .addSelect(`DATE_FORMAT(visited_at, '%Y-%m-%d') AS visit_date`) // mysql
-        .where(
-          `visited_at BETWEEN '${new Date(
-            start_date ?? 0,
-          ).toISOString()}' AND '${new Date(
-            end_date ?? Date.now(),
-          ).toISOString()}}'`,
-        )
-        .groupBy('visit_date')
-        .addGroupBy('store_uuid')
-        .orderBy('visit_date')
-        .addOrderBy('store_uuid')
         .getRawMany()
     );
   }

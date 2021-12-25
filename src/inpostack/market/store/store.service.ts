@@ -3,15 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Store } from './store.entity';
 import { Repository } from 'typeorm';
 import { StoreDto } from './store.dto';
-import { StoreVisit } from '../../../event/store_visit_event.entity';
+import { StoreVisitEvent } from '../../../event/store-visit-event.entity';
 
 @Injectable()
 export class StoreService {
   constructor(
     @InjectRepository(Store)
     private readonly storeRepo: Repository<Store>,
-    @InjectRepository(StoreVisit)
-    private readonly storeVisitRepo: Repository<StoreVisit>
+    @InjectRepository(StoreVisitEvent)
+    private readonly storeVisitEventRepo: Repository<StoreVisitEvent>,
   ) {}
 
   save(dto: StoreDto) {
@@ -27,7 +27,6 @@ export class StoreService {
   }
 
   findOne(findOptions: object, maybeOptions?: object) {
-
     return this.storeRepo.findOne(findOptions, maybeOptions);
   }
 
@@ -43,7 +42,10 @@ export class StoreService {
     return this.storeRepo.delete(findOptions);
   }
 
-  saveEvent(user_uuid: string, store_uuid: string) {
-    return this.storeVisitRepo.save({user_uuid: user_uuid, store_uuid: store_uuid});
+  saveStoreVisitEvent(user_uuid: string, store_uuid: string) {
+    return this.storeVisitEventRepo.save({
+      user_uuid: user_uuid,
+      store_uuid: store_uuid,
+    });
   }
 }

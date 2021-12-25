@@ -4,12 +4,17 @@ import * as queryString from 'querystring';
 
 import { AccountService } from '../inpostack/account/account.service';
 import { AccountStatus } from '../inpostack/account/account.meta';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserLoginEvent } from '../event/user-login-event.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
     private accountService: AccountService,
     private httpService: HttpService,
+    @InjectRepository(UserLoginEvent)
+    private readonly userLoginEventRepo: Repository<UserLoginEvent>,
   ) {}
 
   /**
@@ -22,18 +27,6 @@ export class AuthService {
     if (account.account_status != AccountStatus.activated) {
       throw new UnauthorizedException('Not activated account.');
     }
-
-    // const encryptedPassword = encryptPassword(pass, account.crypto_salt);
-    // if (account.password === encryptedPassword) {
-    //   const {
-    //     password,
-    //     crypto_salt,
-    //     last_login_at,
-    //     account_status,
-    //     ...info
-    //   } = account;
-    //   return info;
-    // }
   }
 
   /**
@@ -127,5 +120,9 @@ export class AuthService {
         },
       )
       .toPromise();
+  }
+
+  saveUserLoginEvent(user_uuid: string) {
+    return this.userLoginEventRepo.save({ user_uuid: user_uuid });
   }
 }

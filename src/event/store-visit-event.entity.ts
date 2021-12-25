@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class StoreVisit {
+export class StoreVisitEvent {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 

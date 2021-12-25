@@ -7,11 +7,11 @@ import { FileModule } from '../../../file/file.module';
 import { StoreService } from './store.service';
 import { StoreController } from './store.controller';
 import { Store } from './store.entity';
-import { StoreVisit } from '../../../event/store_visit_event.entity';
+import { StoreVisitEvent } from '../../../event/store-visit-event.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Store, StoreVisit]),
+    TypeOrmModule.forFeature([Store, StoreVisitEvent]),
     NestjsFormDataModule,
     FileModule,
     AccountModule,
