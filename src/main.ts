@@ -11,9 +11,9 @@ async function bootstrap() {
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:3002',
-      'https://inpo.poapper.com',
-      'https://admin.inpo.poapper.com',
-      'https://store.inpo.poapper.com',
+      'https://inpo.poapper.club',
+      'https://admin.inpo.poapper.club',
+      'https://store.inpo.poapper.club',
     ],
     credentials: true,
   });
