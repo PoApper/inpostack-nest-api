@@ -14,7 +14,7 @@ export class StatisticsController {
     return createQueryBuilder('account')
       .select(`DATE(created_at) AS register_date`)
       .addSelect('COUNT(*) AS daily_register_user')
-      .where(`login_at BETWEEN '${start_date}' AND '${end_date}'`)
+      .where(`created_at BETWEEN '${start_date}' AND '${end_date}'`)
       .groupBy('register_date')
       .orderBy('register_date')
       .getRawMany();
