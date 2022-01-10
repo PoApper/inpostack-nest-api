@@ -16,7 +16,7 @@ export class FileService {
 
   constructor() {}
 
-  async uploadFile(key, file) {
+  async uploadFile(key: string, file) {
     await this.s3.send(
       new PutObjectCommand({
         Bucket: this.bucket,

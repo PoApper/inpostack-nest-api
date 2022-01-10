@@ -14,7 +14,7 @@ import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { getManager } from 'typeorm';
 import { FormDataRequest } from 'nestjs-form-data';
 import { Public } from 'nest-keycloak-connect';
-import * as moment from 'moment';
+import * as path from 'path';
 
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
@@ -42,15 +42,15 @@ export class StoreController {
   @AccountTypes(AccountType.admin)
   @FormDataRequest()
   async post(@Body() dto: StoreDto) {
-    const { store_img, ...saveDto } = dto;
+    const { store_image, ...saveDto } = dto;
 
     const store = await this.storeService.save(saveDto);
 
-    if (store_img) {
-      const img_key = `store/logo/${store.uuid}/${moment(Date.now()).format(
-        'YYYYMMDDHHmm',
+    if (store_image) {
+      const img_key = `store/logo/${store.uuid}${path.extname(
+        store_image.originalName,
       )}`;
-      const logo_url = await this.fileService.uploadFile(img_key, store_img);
+      const logo_url = await this.fileService.uploadFile(img_key, store_image);
       await this.storeService.update(
         { uuid: store.uuid },
         Object.assign(saveDto, { image_url: logo_url }),
@@ -247,17 +247,17 @@ export class StoreController {
   @FormDataRequest()
   async updateOwnStore(@Req() req, @Body() dto: StoreDto) {
     const store = req.user.store;
-    const { store_img, ...saveDto } = dto;
+    const { store_image, ...saveDto } = dto;
 
-    if (store_img) {
+    if (store_image) {
       if (store.image_url) {
         const deleteKey = store.image_url.split('/').slice(3).join('/');
         this.fileService.deleteFile(deleteKey);
       }
-      const img_key = `store/logo/${store.uuid}/${moment(Date.now()).format(
-        'YYYYMMDDHHmm',
+      const img_key = `store/logo/${store.uuid}${path.extname(
+        store_image.originalName,
       )}`;
-      const logo_url = await this.fileService.uploadFile(img_key, store_img);
+      const logo_url = await this.fileService.uploadFile(img_key, store_image);
       return this.storeService.update(
         { uuid: store.uuid },
         Object.assign(saveDto, { image_url: logo_url }),
@@ -276,24 +276,24 @@ export class StoreController {
   @AccountTypes(AccountType.admin)
   @FormDataRequest()
   async updateOne(@Param('uuid') uuid: string, @Body() dto: StoreDto) {
-    const { store_img, ...saveDto } = dto;
+    const { store_image, ...saveDto } = dto;
     const store = await this.storeService.findOne({ uuid: uuid });
 
-    if (store_img) {
+    if (store_image) {
       if (store.image_url) {
         const deleteKey = store.image_url.split('/').slice(3).join('/');
         this.fileService.deleteFile(deleteKey);
       }
-      const img_key = `store/logo/${store.uuid}/${moment(Date.now()).format(
-        'YYYYMMDDHHmm',
+      const img_key = `store/logo/${store.uuid}${path.extname(
+        store_image.originalName,
       )}`;
-      const logo_url = await this.fileService.uploadFile(img_key, store_img);
+      const logo_url = await this.fileService.uploadFile(img_key, store_image);
       return this.storeService.update(
         { uuid: store.uuid },
         Object.assign(saveDto, { image_url: logo_url }),
       );
     } else {
-      return this.storeService.update({ uuid: store.uuid }, dto);
+      return this.storeService.update({ uuid: store.uuid }, saveDto);
     }
   }
 

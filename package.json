@@ -43,7 +43,7 @@
     "nest-csv-parser": "^2.0.4",
     "nest-keycloak-connect": "^1.7.5",
     "nest-winston": "^1.5.0",
-    "nestjs-form-data": "^1.4.7",
+    "nestjs-form-data": "1.5",
     "nodemailer": "^6.6.1",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
@@ -84,6 +84,10 @@
     "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.2.3"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
   },
   "jest": {
     "moduleFileExtensions": [
