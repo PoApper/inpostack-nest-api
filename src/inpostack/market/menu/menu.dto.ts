@@ -27,8 +27,8 @@ export class MenuDto {
   readonly hate: number;
 
   @IsFile()
-  @MaxFileSize(1e6)
-  readonly menu_img?: MemoryStoredFile;
+  @MaxFileSize(10 * 1024 * 1024) // 10MB
+  readonly menu_image?: MemoryStoredFile;
 }
 
 export class MenuUpdateDto {
@@ -54,8 +54,8 @@ export class MenuUpdateDto {
   readonly hate: number;
 
   @IsFile()
-  @MaxFileSize(1e6)
-  readonly menu_img?: MemoryStoredFile;
+  @MaxFileSize(10 * 1024 * 1024) // 10MB
+  readonly menu_image?: MemoryStoredFile;
 }
 
 /**
@@ -85,6 +85,6 @@ export class MenuOwnerDto {
   readonly hate: number;
 
   @IsFile()
-  @MaxFileSize(1e6)
-  readonly menu_img?: MemoryStoredFile;
+  @MaxFileSize(10 * 1024 * 1024) // 10MB
+  readonly menu_image?: MemoryStoredFile;
 }

@@ -13,8 +13,9 @@ import {
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { getManager } from 'typeorm';
 import { FormDataRequest } from 'nestjs-form-data';
-import * as moment from 'moment';
 import { Public } from 'nest-keycloak-connect';
+import * as moment from 'moment';
+import * as path from 'path';
 
 import { MenuDto, MenuOwnerDto, MenuUpdateDto } from './menu.dto';
 import { MenuService } from './menu.service';
@@ -47,15 +48,15 @@ export class MenuController {
       store_uuid: dto.store_uuid,
     });
 
-    const { menu_img, ...saveDto } = dto;
+    const { menu_image, ...saveDto } = dto;
 
     const menu = await this.menuService.save(saveDto);
 
-    if (menu_img) {
+    if (menu_image) {
       const img_key = `menu/logo/${menu.uuid}/${moment(Date.now()).format(
         'YYYYMMDDHHmm',
       )}`;
-      const logo_url = await this.fileService.uploadFile(img_key, menu_img);
+      const logo_url = await this.fileService.uploadFile(img_key, menu_image);
       await this.menuService.update(
         { uuid: menu.uuid },
         Object.assign(saveDto, { image_url: logo_url }),
@@ -72,17 +73,17 @@ export class MenuController {
   @FormDataRequest()
   async postByOwner(@Req() req, @Body() dto: MenuOwnerDto) {
     const store = req.user.store;
-    const { menu_img, ...saveDto } = dto;
+    const { menu_image, ...saveDto } = dto;
 
     const menu = await this.menuService.save(
       Object.assign(saveDto, { store_uuid: store.uuid }),
     );
 
-    if (menu_img) {
-      const img_key = `menu/logo/${menu.uuid}/${moment(Date.now()).format(
-        'YYYYMMDDHHmm',
+    if (menu_image) {
+      const img_key = `menu/logo/${menu.uuid}${path.extname(
+        menu_image.originalName,
       )}`;
-      const logo_url = await this.fileService.uploadFile(img_key, menu_img);
+      const logo_url = await this.fileService.uploadFile(img_key, menu_image);
       await this.menuService.update(
         { uuid: menu.uuid },
         Object.assign(saveDto, { image_url: logo_url }),
@@ -207,17 +208,17 @@ export class MenuController {
       store_uuid: category.store_uuid,
     });
 
-    const { menu_img, ...saveDto } = dto;
+    const { menu_image, ...saveDto } = dto;
 
-    if (menu_img) {
+    if (menu_image) {
       if (menu.image_url) {
         const deleteKey = menu.image_url.split('/').slice(3).join('/');
         this.fileService.deleteFile(deleteKey);
       }
-      const img_key = `menu/logo/${menu.uuid}/${moment(Date.now()).format(
-        'YYYYMMDDHHmm',
+      const img_key = `menu/logo/${menu.uuid}${path.extname(
+        menu_image.originalName,
       )}`;
-      const logo_url = await this.fileService.uploadFile(img_key, menu_img);
+      const logo_url = await this.fileService.uploadFile(img_key, menu_image);
       return this.menuService.update(
         { uuid: menu.uuid },
         Object.assign(saveDto, { image_url: logo_url }),
@@ -246,17 +247,17 @@ export class MenuController {
       store_uuid: store.uuid,
     });
 
-    const { menu_img, ...saveDto } = dto;
+    const { menu_image, ...saveDto } = dto;
 
-    if (menu_img) {
+    if (menu_image) {
       if (menu.image_url) {
         const deleteKey = menu.image_url.split('/').slice(3).join('/');
         this.fileService.deleteFile(deleteKey);
       }
-      const img_key = `menu/logo/${menu.uuid}/${moment(Date.now()).format(
-        'YYYYMMDDHHmm',
+      const img_key = `menu/logo/${menu.uuid}${path.extname(
+        menu_image.originalName,
       )}`;
-      const logo_url = await this.fileService.uploadFile(img_key, menu_img);
+      const logo_url = await this.fileService.uploadFile(img_key, menu_image);
       return this.menuService.update(
         { uuid: menu.uuid },
         Object.assign(saveDto, { image_url: logo_url }),
