@@ -14,7 +14,7 @@ export class StoreDto {
 
   @ApiProperty({
     enum: StoreType,
-    description: 'store type (ex: KOREAN, SEA FOOD, ... ',
+    description: 'store type (ex: KOREAN, SEA FOOD, ... )',
   })
   readonly store_type: StoreType;
 
@@ -37,6 +37,6 @@ export class StoreDto {
   readonly owner_uuid?: string; // uuid of owner account (it can be null)
 
   @IsFile()
-  @MaxFileSize(1e6)
-  readonly store_img?: MemoryStoredFile;
+  @MaxFileSize(10 * 1024 * 1024) // 10MB
+  readonly store_image?: MemoryStoredFile;
 }
