@@ -51,6 +51,9 @@ export class Store {
   @Column({ nullable: true })
   image_url: string;
 
+  @Column({ default: 0 })
+  visit_count: number;
+
   @CreateDateColumn()
   created_at: Date;
 
