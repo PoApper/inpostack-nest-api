@@ -48,4 +48,9 @@ export class StoreService {
       store_uuid: store_uuid,
     });
   }
+
+  async plusVisitCount(uuid: string) {
+    const store: Store = await this.storeRepo.findOne(uuid);
+    return this.storeRepo.update(uuid, { visit_count: store.visit_count + 1 });
+  }
 }

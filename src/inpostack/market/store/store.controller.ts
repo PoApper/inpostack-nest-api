@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -27,6 +28,7 @@ import { AllowAnonymous } from '../../../auth/decorator/anonymous.decorator';
 import randomPick from '../../../utils/randomPick';
 import { FileService } from '../../../file/file.service';
 import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
+import { Store } from './store.entity';
 
 @ApiTags('Store')
 @Controller('store')
@@ -123,12 +125,14 @@ export class StoreController {
     if (category) relation_query.push('category');
     if (category && menu) relation_query.push('category.menu');
 
-    const store = await this.storeService.findOne(
+    const store: Store = await this.storeService.findOne(
       { name: store_name },
       { relations: relation_query },
     );
+    if (!store) throw new BadRequestException('Not Existing Store Name');
 
     this.storeService.saveStoreVisitEvent(req.user, store.uuid);
+    this.storeService.plusVisitCount(store.uuid);
 
     return store;
   }
@@ -219,7 +223,7 @@ export class StoreController {
   @AllowAnonymous()
   @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'menu', required: false })
-  getOne(
+  async getOne(
     @Req() req,
     @Param('uuid') uuid: string,
     @Query('category') category: boolean,
@@ -229,12 +233,16 @@ export class StoreController {
     if (category) relation_query.push('category');
     if (category && menu) relation_query.push('category.menu');
 
-    this.storeService.saveStoreVisitEvent(req.user, uuid);
-
-    return this.storeService.findOne(
+    const store: Store = await this.storeService.findOne(
       { uuid: uuid },
       { relations: relation_query },
     );
+    if (!store) throw new BadRequestException('Not Existing Store UUID');
+
+    this.storeService.saveStoreVisitEvent(req.user, store.uuid);
+    this.storeService.plusVisitCount(store.uuid);
+
+    return store;
   }
 
   @Put('owner')
