@@ -6,7 +6,7 @@ import { AccountModule } from '../../account/account.module';
 import { FileModule } from '../../../file/file.module';
 import { StoreService } from './store.service';
 import { StoreController } from './store.controller';
-import { Store } from './store.entity';
+import { Store } from './entity/store.entity';
 import { StoreVisitEvent } from '../../../event/store-visit-event.entity';
 
 @Module({

@@ -28,7 +28,7 @@ import { AllowAnonymous } from '../../../auth/decorator/anonymous.decorator';
 import randomPick from '../../../utils/randomPick';
 import { FileService } from '../../../file/file.service';
 import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
-import { Store } from './store.entity';
+import { Store } from './entity/store.entity';
 
 @ApiTags('Store')
 @Controller('store')

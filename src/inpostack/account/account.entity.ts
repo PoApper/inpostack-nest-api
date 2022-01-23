@@ -7,7 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { AccountStatus, AccountType } from './account.meta';
-import { Store } from '../market/store/store.entity';
+import { Store } from '../market/store/entity/store.entity';
 import { Review } from '../market/review/review.entity';
 
 @Entity()

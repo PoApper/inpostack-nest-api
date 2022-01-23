@@ -3,7 +3,7 @@ import { MenuController } from './menu.controller';
 import { MenuService } from './menu.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NestjsFormDataModule } from 'nestjs-form-data';
-import { Menu } from './menu.entity';
+import { Menu } from './entity/menu.entity';
 import { CategoryModule } from '../category/category.module';
 import { StoreModule } from '../store/store.module';
 import { FileModule } from '../../../file/file.module';

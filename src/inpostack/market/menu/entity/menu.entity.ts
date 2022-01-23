@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Category } from '../category/category.entity';
-import { Store } from '../store/store.entity';
+import { Category } from '../../category/category.entity';
+import { Store } from '../../store/entity/store.entity';
 
 @Entity()
 export class Menu {
@@ -25,7 +25,7 @@ export class Menu {
   description: string;
 
   @Column({ nullable: false, default: false })
-  is_main_menu: boolean
+  is_main_menu: boolean;
 
   @Column({ nullable: false, default: 0 })
   like: number;

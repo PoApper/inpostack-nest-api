@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Menu } from './menu.entity';
+import { Menu } from './entity/menu.entity';
 import { Repository } from 'typeorm';
 import { MenuDto, MenuOwnerDto, MenuUpdateDto } from './menu.dto';
 

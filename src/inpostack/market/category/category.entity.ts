@@ -8,8 +8,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Store } from '../store/store.entity';
-import { Menu } from '../menu/menu.entity';
+import { Store } from '../store/entity/store.entity';
+import { Menu } from '../menu/entity/menu.entity';
 
 @Entity()
 export class Category {

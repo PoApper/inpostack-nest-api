@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Category } from './category.entity';
 import { CategoryDto, CategoryUpdateDto } from './category.dto';
 import { StoreService } from '../store/store.service';
-import { Store } from '../store/store.entity';
+import { Store } from '../store/entity/store.entity';
 
 @Injectable()
 export class CategoryService {
