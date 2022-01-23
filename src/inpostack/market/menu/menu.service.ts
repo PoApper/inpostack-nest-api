@@ -37,4 +37,22 @@ export class MenuService {
   delete(findOptions: object) {
     return this.menuRepo.delete(findOptions);
   }
+
+  /**
+   * Menu Favorite Operation
+   */
+
+  addToFavoriteList(user_id: string, menu_id: string) {
+    return this.menuFavoriteRepo.save({
+      user_id: user_id,
+      menu_id: menu_id,
+    });
+  }
+
+  removeFromFavoriteList(user_id: string, menu_id: string) {
+    return this.menuFavoriteRepo.delete({
+      user_id: user_id,
+      menu_id: menu_id,
+    });
+  }
 }
