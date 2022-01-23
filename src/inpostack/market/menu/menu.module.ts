@@ -8,10 +8,11 @@ import { CategoryModule } from '../category/category.module';
 import { StoreModule } from '../store/store.module';
 import { FileModule } from '../../../file/file.module';
 import { AuthModule } from '../../../auth/auth.module';
+import { MenuFavorite } from './entity/menu-favorite.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Menu]),
+    TypeOrmModule.forFeature([Menu, MenuFavorite]),
     AuthModule,
     CategoryModule,
     StoreModule,

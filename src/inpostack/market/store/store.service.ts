@@ -4,6 +4,7 @@ import { Store } from './entity/store.entity';
 import { Repository } from 'typeorm';
 import { StoreDto } from './store.dto';
 import { StoreVisitEvent } from '../../../event/store-visit-event.entity';
+import { StoreFavorite } from './entity/store-favorite.entity';
 
 @Injectable()
 export class StoreService {
@@ -12,6 +13,8 @@ export class StoreService {
     private readonly storeRepo: Repository<Store>,
     @InjectRepository(StoreVisitEvent)
     private readonly storeVisitEventRepo: Repository<StoreVisitEvent>,
+    @InjectRepository(StoreFavorite)
+    private readonly storeFavoriteRepo: Repository<StoreFavorite>,
   ) {}
 
   save(dto: StoreDto) {

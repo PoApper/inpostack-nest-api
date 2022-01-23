@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Menu } from './entity/menu.entity';
 import { Repository } from 'typeorm';
 import { MenuDto, MenuOwnerDto, MenuUpdateDto } from './menu.dto';
+import { MenuFavorite } from './entity/menu-favorite.entity';
 
 @Injectable()
 export class MenuService {
   constructor(
     @InjectRepository(Menu)
     private readonly menuRepo: Repository<Menu>,
+    @InjectRepository(MenuFavorite)
+    private readonly menuFavoriteRepo: Repository<MenuFavorite>,
   ) {}
 
   async save(dto: MenuDto | MenuOwnerDto) {
