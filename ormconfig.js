@@ -6,5 +6,6 @@ module.exports = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   entities: ['dist/**/*.entity.js'],
-  synchronize: true,
+  synchronize: false, // should be off to protect prod database.
+  // DO NOT turn on sync option NEVER!
 };
