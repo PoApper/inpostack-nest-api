@@ -29,6 +29,7 @@ import randomPick from '../../../utils/randomPick';
 import { FileService } from '../../../file/file.service';
 import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
 import { Store } from './store.entity';
+import { FavoriteService } from '../favorite/favorite.service';
 
 @ApiTags('Store')
 @Controller('store')
@@ -36,6 +37,7 @@ export class StoreController {
   constructor(
     private readonly storeService: StoreService,
     private readonly fileService: FileService,
+    private readonly favoriteService: FavoriteService,
   ) {}
 
   @Post()
@@ -130,6 +132,7 @@ export class StoreController {
     @Query('category') category: boolean,
     @Query('menu') menu: boolean,
   ) {
+    const user = req.user;
     const relation_query = [];
     if (category) relation_query.push('category');
     if (category && menu) relation_query.push('category.menu');
@@ -140,8 +143,19 @@ export class StoreController {
     );
     if (!store) throw new BadRequestException('Not Existing Store Name');
 
-    this.storeService.saveStoreVisitEvent(req.user, store.uuid);
+    this.storeService.saveStoreVisitEvent(user.uuid, store.uuid);
     this.storeService.plusVisitCount(store.uuid);
+
+    if (user) {
+      for (let i = 0; i < store.category.length; i++) {
+        for (let j = 0; j < store.category[i].menu.length; j++) {
+          const menu = store.category[i].menu[j];
+          store.category[i].menu[j][
+            'is_favorite'
+          ] = await this.favoriteService.isFavoriteMenu(user.uuid, menu.uuid);
+        }
+      }
+    }
 
     return store;
   }

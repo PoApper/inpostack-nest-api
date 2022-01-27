@@ -34,8 +34,8 @@ export class FavoriteService {
     });
   }
 
-  isFavoriteMenu(user_id: string, menu_id: string) {
-    const menuFavorite = this.menuFavoriteRepo.findOne({
+  async isFavoriteMenu(user_id: string, menu_id: string) {
+    const menuFavorite = await this.menuFavoriteRepo.findOne({
       user_id: user_id,
       menu_id: menu_id,
     });
