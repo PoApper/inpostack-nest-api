@@ -70,7 +70,7 @@ export class StoreController {
     @Query('take') take: number,
     @Query('category') category?: boolean,
     @Query('menu') menu?: boolean,
-    @Query('order') criteria?: string,
+    @Query('order') orderBy?: string,
   ) {
     const relation_query = [];
     if (category) relation_query.push('category');
@@ -83,10 +83,10 @@ export class StoreController {
     if (take) {
       Object.assign(findOptions, { take: take });
     }
-    if (criteria == "name") {
+    if (orderBy == "name") {
       Object.assign(findOptions, { order: { name: 'ASC'}})
     }
-    if (criteria == "visit") {
+    if (orderBy == "visit") {
       Object.assign(findOptions, { order: { visit_count: 'DESC'}})
     }
 
