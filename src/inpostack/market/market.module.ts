@@ -15,6 +15,6 @@ import { FavoriteModule } from './favorite/favorite.module';
     FavoriteModule,
   ],
   controllers: [MarketSearchController],
-  exports: [StoreModule, ReviewModule],
+  exports: [StoreModule, ReviewModule, FavoriteModule],
 })
 export class MarketModule {}

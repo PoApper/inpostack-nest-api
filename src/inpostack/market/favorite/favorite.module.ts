@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CategoryModule } from '../category/category.module';
 import { AuthModule } from '../../../auth/auth.module';
 import { FavoriteService } from './favorite.service';
 import { FavoriteController } from './favorite.controller';
@@ -11,7 +10,6 @@ import { StoreFavorite } from './entity/store-favorite.entity';
   imports: [
     TypeOrmModule.forFeature([MenuFavorite, StoreFavorite]),
     AuthModule,
-    CategoryModule,
   ],
   controllers: [FavoriteController],
   providers: [FavoriteService],
