@@ -65,10 +65,12 @@ export class StoreController {
   @Public()
   @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'menu', required: false })
+  @ApiQuery({ name: 'order', required: false})
   getAll(
     @Query('take') take: number,
     @Query('category') category?: boolean,
     @Query('menu') menu?: boolean,
+    @Query('order') criteria?: string,
   ) {
     const relation_query = [];
     if (category) relation_query.push('category');
@@ -80,6 +82,12 @@ export class StoreController {
     };
     if (take) {
       Object.assign(findOptions, { take: take });
+    }
+    if (criteria == "name") {
+      Object.assign(findOptions, { order: { name: 'ASC'}})
+    }
+    if (criteria == "visit") {
+      Object.assign(findOptions, { order: { visit_count: 'DESC'}})
     }
 
     return this.storeService.find(findOptions);
