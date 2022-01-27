@@ -3,21 +3,22 @@ import { MenuController } from './menu.controller';
 import { MenuService } from './menu.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NestjsFormDataModule } from 'nestjs-form-data';
-import { Menu } from './entity/menu.entity';
+import { Menu } from './menu.entity';
 import { CategoryModule } from '../category/category.module';
 import { StoreModule } from '../store/store.module';
 import { FileModule } from '../../../file/file.module';
 import { AuthModule } from '../../../auth/auth.module';
-import { MenuFavorite } from './entity/menu-favorite.entity';
+import { FavoriteModule } from '../favorite/favorite.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Menu, MenuFavorite]),
+    TypeOrmModule.forFeature([Menu]),
     AuthModule,
     CategoryModule,
     StoreModule,
     FileModule,
     NestjsFormDataModule,
+    FavoriteModule,
   ],
   controllers: [MenuController],
   providers: [MenuService],

@@ -8,10 +8,10 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { StoreType } from '../store.meta';
-import { Category } from '../../category/category.entity';
-import { Account } from '../../../account/account.entity';
-import { Menu } from '../../menu/entity/menu.entity';
+import { StoreType } from './store.meta';
+import { Category } from '../category/category.entity';
+import { Account } from '../../account/account.entity';
+import { Menu } from '../menu/menu.entity';
 
 @Entity()
 export class Store {

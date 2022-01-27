@@ -294,25 +294,4 @@ export class MenuController {
     }
     return this.menuService.delete({ uuid: uuid });
   }
-
-  /**
-   * Menu Favorite API
-   */
-
-  @Post('favorite/:menu_uuid')
-  @UseGuards(InPoStackAuth)
-  async addToFavoriteList(@Req() req, @Param('menu_uuid') menu_uuid: string) {
-    const user = req.user;
-    return this.menuService.addToFavoriteList(user.uuid, menu_uuid);
-  }
-
-  @Delete('favorite/:menu_uuid')
-  @UseGuards(InPoStackAuth)
-  async deleteFromFavoriteList(
-    @Req() req,
-    @Param('menu_uuid') menu_uuid: string,
-  ) {
-    const user = req.user;
-    return this.menuService.removeFromFavoriteList(user.uuid, menu_uuid);
-  }
 }

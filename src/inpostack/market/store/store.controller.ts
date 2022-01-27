@@ -28,7 +28,7 @@ import { AllowAnonymous } from '../../../auth/decorator/anonymous.decorator';
 import randomPick from '../../../utils/randomPick';
 import { FileService } from '../../../file/file.service';
 import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
-import { Store } from './entity/store.entity';
+import { Store } from './store.entity';
 
 @ApiTags('Store')
 @Controller('store')
@@ -120,6 +120,7 @@ export class StoreController {
     return this.storeService.findOneOrFail({ owner_uuid: owner_uuid });
   }
 
+  // TODO: change to `store_name/:store_name`
   @Get('name/:store_name')
   @UseGuards(InPoStackAuth)
   @AllowAnonymous()

@@ -4,10 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Account } from './account.entity';
 import { AccountService } from './account.service';
 import { userDto1, userDto2 } from '../../../test/test_values';
-import { Store } from '../market/store/entity/store.entity';
+import { Store } from '../market/store/store.entity';
 import { Review } from '../market/review/review.entity';
 import { Category } from '../market/category/category.entity';
-import { Menu } from '../market/menu/entity/menu.entity';
+import { Menu } from '../market/menu/menu.entity';
 import { LoggerModule } from '../../logger/logger.module';
 
 describe('Account Controller', () => {

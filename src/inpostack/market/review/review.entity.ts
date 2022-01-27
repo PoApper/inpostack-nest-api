@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Store } from '../store/entity/store.entity';
+import { Store } from '../store/store.entity';
 import { Account } from '../../account/account.entity';
 
 @Entity()
