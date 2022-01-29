@@ -17,30 +17,70 @@ export class FavoriteController {
   constructor(private readonly favoriteService: FavoriteService) {}
 
   /**
+   * Store Favorite API
+   */
+
+  @Get('store')
+  @UseGuards(InPoStackAuth)
+  async getMyFavoriteStoreList(@Req() req) {
+    const user = req.user;
+    return this.favoriteService.getAllFavoriteStoreList(user.uuid);
+  }
+
+  @Post('store/:store_uuid')
+  @UseGuards(InPoStackAuth)
+  async addToFavoriteStoreList(
+    @Req() req,
+    @Param('menu_uuid') menu_uuid: string,
+  ) {
+    const user = req.user;
+    return this.favoriteService.addToFavoriteStoreList(user.uuid, menu_uuid);
+  }
+
+  @Delete('store/:store_uuid')
+  @UseGuards(InPoStackAuth)
+  async deleteFromFavoriteStoreList(
+    @Req() req,
+    @Param('menu_uuid') menu_uuid: string,
+  ) {
+    const user = req.user;
+    return this.favoriteService.removeFromFavoriteStoreList(
+      user.uuid,
+      menu_uuid,
+    );
+  }
+
+  /**
    * Menu Favorite API
    */
 
   @Get('menu')
   @UseGuards(InPoStackAuth)
-  async getMyFavoriteList(@Req() req) {
+  async getMyFavoriteMenuList(@Req() req) {
     const user = req.user;
-    return this.favoriteService.getAllFavoriteList(user.uuid);
+    return this.favoriteService.getAllFavoriteMenuList(user.uuid);
   }
 
   @Post('menu/:menu_uuid')
   @UseGuards(InPoStackAuth)
-  async addToFavoriteList(@Req() req, @Param('menu_uuid') menu_uuid: string) {
-    const user = req.user;
-    return this.favoriteService.addToFavoriteList(user.uuid, menu_uuid);
-  }
-
-  @Delete('menu/:menu_uuid')
-  @UseGuards(InPoStackAuth)
-  async deleteFromFavoriteList(
+  async addToFavoriteMenuList(
     @Req() req,
     @Param('menu_uuid') menu_uuid: string,
   ) {
     const user = req.user;
-    return this.favoriteService.removeFromFavoriteList(user.uuid, menu_uuid);
+    return this.favoriteService.addToFavoriteMenuList(user.uuid, menu_uuid);
+  }
+
+  @Delete('menu/:menu_uuid')
+  @UseGuards(InPoStackAuth)
+  async deleteFromFavoriteMenuList(
+    @Req() req,
+    @Param('menu_uuid') menu_uuid: string,
+  ) {
+    const user = req.user;
+    return this.favoriteService.removeFromFavoriteMenuList(
+      user.uuid,
+      menu_uuid,
+    );
   }
 }
