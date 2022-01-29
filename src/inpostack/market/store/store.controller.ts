@@ -67,7 +67,7 @@ export class StoreController {
   @Public()
   @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'menu', required: false })
-  @ApiQuery({ name: 'order', required: false})
+  @ApiQuery({ name: 'order', required: false })
   getAll(
     @Query('take') take: number,
     @Query('category') category?: boolean,
@@ -85,11 +85,11 @@ export class StoreController {
     if (take) {
       Object.assign(findOptions, { take: take });
     }
-    if (orderBy == "name") {
-      Object.assign(findOptions, { order: { name: 'ASC'}})
+    if (orderBy == 'name') {
+      Object.assign(findOptions, { order: { name: 'ASC' } });
     }
-    if (orderBy == "visit") {
-      Object.assign(findOptions, { order: { visit_count: 'DESC'}})
+    if (orderBy == 'visit') {
+      Object.assign(findOptions, { order: { visit_count: 'DESC' } });
     }
 
     return this.storeService.find(findOptions);
@@ -143,7 +143,7 @@ export class StoreController {
     );
     if (!store) throw new BadRequestException('Not Existing Store Name');
 
-    this.storeService.saveStoreVisitEvent(user.uuid, store.uuid);
+    this.storeService.saveStoreVisitEvent(user ? user.uuid : null, store.uuid);
     this.storeService.plusVisitCount(store.uuid);
 
     if (user) {
