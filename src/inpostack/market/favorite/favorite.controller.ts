@@ -31,22 +31,22 @@ export class FavoriteController {
   @UseGuards(InPoStackAuth)
   async addToFavoriteStoreList(
     @Req() req,
-    @Param('menu_uuid') menu_uuid: string,
+    @Param('store_uuid') store_uuid: string,
   ) {
     const user = req.user;
-    return this.favoriteService.addToFavoriteStoreList(user.uuid, menu_uuid);
+    return this.favoriteService.addToFavoriteStoreList(user.uuid, store_uuid);
   }
 
   @Delete('store/:store_uuid')
   @UseGuards(InPoStackAuth)
   async deleteFromFavoriteStoreList(
     @Req() req,
-    @Param('menu_uuid') menu_uuid: string,
+    @Param('store_uuid') store_uuid: string,
   ) {
     const user = req.user;
     return this.favoriteService.removeFromFavoriteStoreList(
       user.uuid,
-      menu_uuid,
+      store_uuid,
     );
   }
 
