@@ -147,6 +147,13 @@ export class StoreController {
     this.storeService.plusVisitCount(store.uuid);
 
     if (user) {
+      // store favorite check
+      store['is_favorite'] = await this.favoriteService.isFavoriteStore(
+        user.uuid,
+        store.uuid,
+      );
+
+      // menu favorite check
       for (let i = 0; i < store.category.length; i++) {
         for (let j = 0; j < store.category[i].menu.length; j++) {
           const menu = store.category[i].menu[j];
