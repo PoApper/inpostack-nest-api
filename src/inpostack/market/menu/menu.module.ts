@@ -8,6 +8,7 @@ import { CategoryModule } from '../category/category.module';
 import { StoreModule } from '../store/store.module';
 import { FileModule } from '../../../file/file.module';
 import { AuthModule } from '../../../auth/auth.module';
+import { FavoriteModule } from '../favorite/favorite.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthModule } from '../../../auth/auth.module';
     StoreModule,
     FileModule,
     NestjsFormDataModule,
+    FavoriteModule,
   ],
   controllers: [MenuController],
   providers: [MenuService],

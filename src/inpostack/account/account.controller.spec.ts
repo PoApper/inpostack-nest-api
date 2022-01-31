@@ -16,14 +16,15 @@ describe('Account Controller', () => {
 
   beforeAll(async () => {
     accountModule = await Test.createTestingModule({
-      imports: [TypeOrmModule.forRoot({
-        type: 'sqlite',
-        database: ':memory:',
-        entities: [Account, Store, Review, Category, Menu],
-        synchronize: true,
-      }),
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: ':memory:',
+          entities: [Account, Store, Review, Category, Menu],
+          synchronize: true,
+        }),
         TypeOrmModule.forFeature([Account]),
-        LoggerModule
+        LoggerModule,
       ],
       controllers: [AccountController],
       providers: [AccountService],
@@ -38,7 +39,7 @@ describe('Account Controller', () => {
 
   describe('get empty', () => {
     it('should return empty arr', async () => {
-     expect(await accountController.get()).toEqual([]);
+      expect(await accountController.get()).toEqual([]);
     });
   });
 
@@ -47,14 +48,7 @@ describe('Account Controller', () => {
 
     it('should create a account entity', async () => {
       saved_entity = await accountController.post(userDto1);
-      const {
-        uuid,
-        email,
-        name,
-        id,
-        account_type,
-        account_status,
-      } = saved_entity;
+      const { email, name, id, account_type, account_status } = saved_entity;
       expect({
         email: email,
         name: name,
@@ -66,14 +60,14 @@ describe('Account Controller', () => {
         name: userDto1.name,
         id: userDto1.id,
         account_type: userDto1.account_type,
-        account_status: userDto1.account_status
-      })
+        account_status: userDto1.account_status,
+      });
     });
 
     it('should get a account entity', async () => {
-      const account = await accountController.getOne(saved_entity.uuid)
+      const account = await accountController.getOne(saved_entity.uuid);
       expect(account).toEqual(saved_entity);
-    })
+    });
   });
 
   describe('update one account', () => {
@@ -82,27 +76,21 @@ describe('Account Controller', () => {
       const account = accounts[0];
       await accountController.updateByAdmin(account.uuid, userDto2);
       const updated_user = await accountController.getOne(account.uuid);
-      const {
-        email,
-        name,
-        id,
-        account_type,
-        account_status,
-      } = updated_user;
+      const { email, name, id, account_type, account_status } = updated_user;
       expect({
         email: email,
         name: name,
         id: id,
         account_type: account_type,
-        account_status: account_status
+        account_status: account_status,
       }).toEqual({
         email: updated_user.email,
         name: updated_user.name,
         id: updated_user.id,
         account_type: updated_user.account_type,
-        account_status: updated_user.account_status
+        account_status: updated_user.account_status,
       });
-    })
+    });
   });
 
   describe('delete one account', () => {
@@ -111,7 +99,7 @@ describe('Account Controller', () => {
       const account = accounts[0];
 
       expect(await accountController.delete(account.uuid)).toEqual({
-        raw: []
+        raw: [],
       });
     });
   });

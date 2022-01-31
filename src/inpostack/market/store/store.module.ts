@@ -8,6 +8,8 @@ import { StoreService } from './store.service';
 import { StoreController } from './store.controller';
 import { Store } from './store.entity';
 import { StoreVisitEvent } from '../../../event/store-visit-event.entity';
+import { FavoriteModule } from '../favorite/favorite.module';
+import { AuthModule } from '../../../auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { StoreVisitEvent } from '../../../event/store-visit-event.entity';
     NestjsFormDataModule,
     FileModule,
     AccountModule,
+    AuthModule,
+    FavoriteModule,
   ],
   providers: [StoreService],
   controllers: [StoreController],

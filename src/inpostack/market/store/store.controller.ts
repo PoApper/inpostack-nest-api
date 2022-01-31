@@ -29,6 +29,7 @@ import randomPick from '../../../utils/randomPick';
 import { FileService } from '../../../file/file.service';
 import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
 import { Store } from './store.entity';
+import { FavoriteService } from '../favorite/favorite.service';
 
 @ApiTags('Store')
 @Controller('store')
@@ -36,6 +37,7 @@ export class StoreController {
   constructor(
     private readonly storeService: StoreService,
     private readonly fileService: FileService,
+    private readonly favoriteService: FavoriteService,
   ) {}
 
   @Post()
@@ -65,7 +67,7 @@ export class StoreController {
   @Public()
   @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'menu', required: false })
-  @ApiQuery({ name: 'order', required: false})
+  @ApiQuery({ name: 'order', required: false })
   getAll(
     @Query('take') take: number,
     @Query('category') category?: boolean,
@@ -83,11 +85,11 @@ export class StoreController {
     if (take) {
       Object.assign(findOptions, { take: take });
     }
-    if (orderBy == "name") {
-      Object.assign(findOptions, { order: { name: 'ASC'}})
+    if (orderBy == 'name') {
+      Object.assign(findOptions, { order: { name: 'ASC' } });
     }
-    if (orderBy == "visit") {
-      Object.assign(findOptions, { order: { visit_count: 'DESC'}})
+    if (orderBy == 'visit') {
+      Object.assign(findOptions, { order: { visit_count: 'DESC' } });
     }
 
     return this.storeService.find(findOptions);
@@ -120,6 +122,7 @@ export class StoreController {
     return this.storeService.findOneOrFail({ owner_uuid: owner_uuid });
   }
 
+  // TODO: change to `store_name/:store_name`
   @Get('name/:store_name')
   @UseGuards(InPoStackAuth)
   @AllowAnonymous()
@@ -129,6 +132,7 @@ export class StoreController {
     @Query('category') category: boolean,
     @Query('menu') menu: boolean,
   ) {
+    const user = req.user;
     const relation_query = [];
     if (category) relation_query.push('category');
     if (category && menu) relation_query.push('category.menu');
@@ -139,8 +143,26 @@ export class StoreController {
     );
     if (!store) throw new BadRequestException('Not Existing Store Name');
 
-    this.storeService.saveStoreVisitEvent(req.user, store.uuid);
+    this.storeService.saveStoreVisitEvent(user ? user.uuid : null, store.uuid);
     this.storeService.plusVisitCount(store.uuid);
+
+    if (user) {
+      // store favorite check
+      store['is_favorite'] = await this.favoriteService.isFavoriteStore(
+        user.uuid,
+        store.uuid,
+      );
+
+      // menu favorite check
+      for (let i = 0; i < store.category.length; i++) {
+        for (let j = 0; j < store.category[i].menu.length; j++) {
+          const menu = store.category[i].menu[j];
+          store.category[i].menu[j][
+            'is_favorite'
+          ] = await this.favoriteService.isFavoriteMenu(user.uuid, menu.uuid);
+        }
+      }
+    }
 
     return store;
   }

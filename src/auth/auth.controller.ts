@@ -19,7 +19,6 @@ import { Public } from 'nest-keycloak-connect';
 import { parseToken } from 'nest-keycloak-connect/util';
 
 import { AccountService } from '../inpostack/account/account.service';
-import { StoreService } from '../inpostack/market/store/store.service';
 import { AllowAnonymous } from './decorator/anonymous.decorator';
 import { RefreshTokenDto } from './auth.dto';
 
@@ -33,7 +32,6 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private readonly accountService: AccountService,
-    private readonly storeService: StoreService,
     @Inject(WINSTON_MODULE_PROVIDER)
     private readonly logger: Logger,
   ) {}

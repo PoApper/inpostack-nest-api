@@ -6,7 +6,6 @@ import { LocalStrategy } from './strategy/local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './strategy/jwt.strategy';
-import { StoreModule } from '../inpostack/market/store/store.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserLoginEvent } from '../event/user-login-event.entity';
 
@@ -17,10 +16,9 @@ import { UserLoginEvent } from '../event/user-login-event.entity';
     PassportModule,
     HttpModule,
     AccountModule,
-    StoreModule,
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
-  exports: [AccountModule, StoreModule],
+  exports: [AccountModule],
 })
 export class AuthModule {}
