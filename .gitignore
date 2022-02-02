@@ -37,7 +37,10 @@ lerna-debug.log*
 static/
 log/
 
-*.sqlite
+.env.*
 .env
+!.env.example
+
+*.sqlite
 *.csv
 *.sql
