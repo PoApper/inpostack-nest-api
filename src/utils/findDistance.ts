@@ -1,10 +1,8 @@
 import axios from 'axios';
 
-// TODO: write function description here
-// TODO: write storeAddress example, zipcode? or Korean address?
 /**
- *
- * @param storeAddress
+ * Find distance between specific korean address and '지곡회관' through kakao api
+ * @param storeAddresss "경상북도 포항시 남구 청암로 77"
  */
 
 async function findDistance(storeAddress: string) {
@@ -33,7 +31,7 @@ async function findDistance(storeAddress: string) {
         Authorization: process.env.KAKAO_KEY,
       },
       params: {
-        origin: '129.322359, 36.015702', // 지곡회관 좌표
+        origin: '129.322359, 36.015702', // geographical CoordinateValue of '지곡회관'
         destination: coordinateValue,
       },
     },
