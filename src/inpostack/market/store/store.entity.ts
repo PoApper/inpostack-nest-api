@@ -54,6 +54,8 @@ export class Store {
   @Column({ default: 0 })
   visit_count: number;
 
+  // TODO: distance 컬럼 추가, default: 0, 단위는
+
   @CreateDateColumn()
   created_at: Date;
 

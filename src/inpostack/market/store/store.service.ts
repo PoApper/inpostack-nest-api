@@ -15,6 +15,7 @@ export class StoreService {
   ) {}
 
   save(dto: StoreDto) {
+    // TODO: 저장하기 전에 distance 구해서 .save() 함수에 전달하는 Object에 함께 전달
     return this.storeRepo.save(dto);
   }
 

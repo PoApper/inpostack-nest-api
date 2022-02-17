@@ -2,10 +2,11 @@ import axios from 'axios';
 
 /**
  * Find distance between specific korean address and '지곡회관' through kakao api
- * @param storeAddresss "경상북도 포항시 남구 청암로 77"
+ * TODO: return의 단위 명시할 것
+ * @param storeAddress "경상북도 포항시 남구 청암로 77"
  */
 
-async function findDistance(storeAddress: string) {
+async function findDistance(storeAddress: string): Promise<number> {
   const addressInfo = await axios.get(
     'https://dapi.kakao.com/v2/local/search/address.json',
     {
