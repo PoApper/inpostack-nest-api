@@ -30,6 +30,10 @@ import { FileService } from '../../../file/file.service';
 import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
 import { Store } from './store.entity';
 import { FavoriteService } from '../favorite/favorite.service';
+import findDistance from '../../../utils/findDistance';
+
+// api.inpo.poapper.club/store
+// POST, GET, PUT
 
 @ApiTags('Store')
 @Controller('store')
@@ -47,6 +51,12 @@ export class StoreController {
   @FormDataRequest()
   async post(@Body() dto: StoreDto) {
     const { store_image, ...saveDto } = dto;
+
+    // TODO: handle saveDto.address1 missing
+    if (saveDto.address1) {
+      const distance = await findDistance(saveDto.address1);
+      Object.assign(saveDto, { distance: distance });
+    }
 
     const store = await this.storeService.save(saveDto);
 
