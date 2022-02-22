@@ -19,6 +19,9 @@ async function findDistance(storeAddress: string): Promise<number> {
       },
     },
   );
+
+  // TODO: invalid storeAddress가 들어올 때 throw new BadRequest('invalid address') 추가
+
   const coordinateValue: string =
     addressInfo.data.documents[0].address.x +
     ',' +
