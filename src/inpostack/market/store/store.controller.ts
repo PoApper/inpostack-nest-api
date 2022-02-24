@@ -32,9 +32,6 @@ import { Store } from './store.entity';
 import { FavoriteService } from '../favorite/favorite.service';
 import findDistance from '../../../utils/findDistance';
 
-// api.inpo.poapper.club/store
-// POST, GET, PUT
-
 @ApiTags('Store')
 @Controller('store')
 export class StoreController {
@@ -43,6 +40,16 @@ export class StoreController {
     private readonly fileService: FileService,
     private readonly favoriteService: FavoriteService,
   ) {}
+
+  // TODO: write this API!
+  @Get('admin_help/fill_all_store_distance')
+  async fill_all_store_distance() {
+    // const stores = []
+    // for (const store of stores) {
+    //   const distance = findDistance(store.address1);
+    //   this.storeService.update(store.uuid, {distance: distnace})
+    // }
+  }
 
   @Post()
   @ApiBody({ type: StoreDto })
