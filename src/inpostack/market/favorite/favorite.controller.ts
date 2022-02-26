@@ -4,12 +4,16 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
 import { FavoriteService } from './favorite.service';
+import { AccountType } from '../../account/account.meta';
+import { Account } from '../../account/account.entity';
 
 @ApiTags('즐겨찾기(favorite)')
 @Controller('favorite')
@@ -22,8 +26,13 @@ export class FavoriteController {
 
   @Get('store')
   @UseGuards(InPoStackAuth)
-  async getMyFavoriteStoreList(@Req() req) {
-    const user = req.user;
+  async getMyFavoriteStoreList(@Req() req, @Query('user_id') user_id: string) {
+    const user: Account = req.user;
+
+    // For non-admin user, only get their own
+    if (user.account_type !== AccountType.admin && user.uuid !== user_id) {
+      throw new UnauthorizedException('Bad Authentication');
+    }
     return this.favoriteService.getAllFavoriteStoreList(user.uuid);
   }
 

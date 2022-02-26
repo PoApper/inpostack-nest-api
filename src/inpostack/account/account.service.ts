@@ -39,7 +39,7 @@ export class AccountService {
     return this.accountRepo.count(findOptions);
   }
 
-  findOne(findOptions: object) {
+  findOne(findOptions: object): Promise<Account> {
     return this.accountRepo.findOne(findOptions);
   }
 
