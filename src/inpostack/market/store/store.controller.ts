@@ -41,15 +41,15 @@ export class StoreController {
     private readonly favoriteService: FavoriteService,
   ) {}
 
-  // TODO: write this API!
   @Get('admin_help/fill_all_store_distance')
   async fill_all_store_distance() {
-    const stores = await this.storeService.find()
+    const stores = await this.storeService.find();
     for (const store of stores) {
-      const distance = findDistance(store.address1);
-      this.storeService.update( 
+      const distance: number = await findDistance(store.address1);
+      await this.storeService.update(
         { uuid: store.uuid },
-        Object.assign(store, { distance: distance }))
+        { distance: distance },
+      );
     }
   }
 
@@ -64,9 +64,8 @@ export class StoreController {
     if (saveDto.address1) {
       const distance = await findDistance(saveDto.address1);
       Object.assign(saveDto, { distance: distance });
-    }
-    else {
-      throw new BadRequestException('No address')
+    } else {
+      throw new BadRequestException('No address');
     }
     const store = await this.storeService.save(saveDto);
 
@@ -177,9 +176,8 @@ export class StoreController {
       for (let i = 0; i < store.category.length; i++) {
         for (let j = 0; j < store.category[i].menu.length; j++) {
           const menu = store.category[i].menu[j];
-          store.category[i].menu[j][
-            'is_favorite'
-          ] = await this.favoriteService.isFavoriteMenu(user.uuid, menu.uuid);
+          store.category[i].menu[j]['is_favorite'] =
+            await this.favoriteService.isFavoriteMenu(user.uuid, menu.uuid);
         }
       }
     }
