@@ -30,10 +30,16 @@ export class FavoriteController {
     const user: Account = req.user;
 
     // For non-admin user, only get their own
-    if (user.account_type !== AccountType.admin && user.uuid !== user_id) {
+    if (
+      user.account_type !== AccountType.admin &&
+      user_id !== null &&
+      user.uuid !== user_id
+    ) {
       throw new UnauthorizedException('Bad Authentication');
+    } else {
+      const target_user_id = user_id ?? user.uuid;
+      return this.favoriteService.getAllFavoriteStoreList(target_user_id);
     }
-    return this.favoriteService.getAllFavoriteStoreList(user.uuid);
   }
 
   @Post('store/:store_uuid')
