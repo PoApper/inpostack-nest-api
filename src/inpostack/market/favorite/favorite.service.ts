@@ -17,7 +17,7 @@ export class FavoriteService {
    * Store Favorite Operation
    */
 
-  getAllFavoriteStoreList(user_id) {
+  getAllFavoriteStoreList(user_id: string) {
     return this.storeFavoriteRepo.find({
       user_id: user_id,
     });
@@ -49,7 +49,7 @@ export class FavoriteService {
    * Menu Favorite Operation
    */
 
-  getAllFavoriteMenuList(user_id) {
+  getAllFavoriteMenuList(user_id: string) {
     return this.menuFavoriteRepo.find({
       user_id: user_id,
     });

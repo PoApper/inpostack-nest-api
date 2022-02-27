@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AccountService } from '../../inpostack/account/account.service';
+import { Account } from '../../inpostack/account/account.entity';
 
 /**
  * If you want to use this Guard, then use this decorator pattern:
@@ -47,7 +48,7 @@ export class InPoStackAuth implements CanActivate {
       }
     }
 
-    const existUser = await this.accountService.findOne({
+    const existUser: Account = await this.accountService.findOne({
       keycloak_id: user.sub,
     });
     if (!existUser) {

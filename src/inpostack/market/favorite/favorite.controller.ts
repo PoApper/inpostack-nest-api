@@ -1,30 +1,62 @@
 import {
   Controller,
   Delete,
+  forwardRef,
   Get,
+  Inject,
   Param,
   Post,
+  Query,
   Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
 import { FavoriteService } from './favorite.service';
+import { AccountType } from '../../account/account.meta';
+import { Account } from '../../account/account.entity';
+import { StoreService } from '../store/store.service';
 
 @ApiTags('즐겨찾기(favorite)')
 @Controller('favorite')
 export class FavoriteController {
-  constructor(private readonly favoriteService: FavoriteService) {}
+  constructor(
+    private readonly favoriteService: FavoriteService,
+    @Inject(forwardRef(() => StoreService))
+    private readonly storeService: StoreService,
+  ) {}
 
   /**
    * Store Favorite API
    */
 
   @Get('store')
+  @ApiQuery({ name: 'user_id', required: false })
   @UseGuards(InPoStackAuth)
-  async getMyFavoriteStoreList(@Req() req) {
-    const user = req.user;
-    return this.favoriteService.getAllFavoriteStoreList(user.uuid);
+  async getMyFavoriteStoreList(@Req() req, @Query('user_id') user_id: string) {
+    const user: Account = req.user;
+
+    // For non-admin user, only get their own
+    if (
+      user.account_type !== AccountType.admin &&
+      user_id !== null &&
+      user.uuid !== user_id
+    ) {
+      throw new UnauthorizedException('Bad Authentication');
+    } else {
+      const target_user_id = user_id ?? user.uuid;
+      const storeFavoriteList =
+        await this.favoriteService.getAllFavoriteStoreList(target_user_id);
+      const storeList = [];
+      for (const storeFavorite of storeFavoriteList) {
+        const store = await this.storeService.findOne({
+          uuid: storeFavorite.store_id,
+        });
+        storeList.push(store);
+      }
+      return storeList;
+    }
   }
 
   @Post('store/:store_uuid')
