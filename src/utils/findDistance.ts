@@ -1,8 +1,9 @@
+import { BadRequestException } from '@nestjs/common';
 import axios from 'axios';
 
 /**
  * Find distance between specific korean address and '지곡회관' through kakao api
- * TODO: return의 단위 명시할 것
+ * @return unit: meters
  * @param storeAddress "경상북도 포항시 남구 청암로 77"
  */
 
@@ -20,7 +21,9 @@ async function findDistance(storeAddress: string): Promise<number> {
     },
   );
 
-  // TODO: invalid storeAddress가 들어올 때 throw new BadRequest('invalid address') 추가
+  if(addressInfo.data.documents.length == 0){
+    throw new BadRequestException('invalid address')
+  }
 
   const coordinateValue: string =
     addressInfo.data.documents[0].address.x +

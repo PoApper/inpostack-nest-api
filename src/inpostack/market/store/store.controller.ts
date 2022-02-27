@@ -61,12 +61,13 @@ export class StoreController {
   async post(@Body() dto: StoreDto) {
     const { store_image, ...saveDto } = dto;
 
-    // TODO: handle saveDto.address1 missing
     if (saveDto.address1) {
       const distance = await findDistance(saveDto.address1);
       Object.assign(saveDto, { distance: distance });
     }
-
+    else {
+      throw new BadRequestException('No address')
+    }
     const store = await this.storeService.save(saveDto);
 
     if (store_image) {
