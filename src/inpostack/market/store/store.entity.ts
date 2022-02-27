@@ -54,7 +54,6 @@ export class Store {
   @Column({ default: 0 })
   visit_count: number;
 
-  // TODO: distance 컬럼 추가, default: 0, 단위는
   @Column({ default: 0, comment: 'unit: meter' })
   distance: number; // unit: meter
 
