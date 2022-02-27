@@ -30,6 +30,7 @@ import { FileService } from '../../../file/file.service';
 import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
 import { Store } from './store.entity';
 import { FavoriteService } from '../favorite/favorite.service';
+import findDistance from '../../../utils/findDistance';
 
 @ApiTags('Store')
 @Controller('store')
@@ -40,6 +41,18 @@ export class StoreController {
     private readonly favoriteService: FavoriteService,
   ) {}
 
+  @Get('admin_help/fill_all_store_distance')
+  async fill_all_store_distance() {
+    const stores = await this.storeService.find();
+    for (const store of stores) {
+      const distance: number = await findDistance(store.address1);
+      await this.storeService.update(
+        { uuid: store.uuid },
+        { distance: distance },
+      );
+    }
+  }
+
   @Post()
   @ApiBody({ type: StoreDto })
   @UseGuards(InPoStackAuth, AccountTypeGuard)
@@ -48,6 +61,12 @@ export class StoreController {
   async post(@Body() dto: StoreDto) {
     const { store_image, ...saveDto } = dto;
 
+    if (saveDto.address1) {
+      const distance = await findDistance(saveDto.address1);
+      Object.assign(saveDto, { distance: distance });
+    } else {
+      throw new BadRequestException('No address');
+    }
     const store = await this.storeService.save(saveDto);
 
     if (store_image) {
@@ -157,9 +176,8 @@ export class StoreController {
       for (let i = 0; i < store.category.length; i++) {
         for (let j = 0; j < store.category[i].menu.length; j++) {
           const menu = store.category[i].menu[j];
-          store.category[i].menu[j][
-            'is_favorite'
-          ] = await this.favoriteService.isFavoriteMenu(user.uuid, menu.uuid);
+          store.category[i].menu[j]['is_favorite'] =
+            await this.favoriteService.isFavoriteMenu(user.uuid, menu.uuid);
         }
       }
     }

@@ -34,7 +34,7 @@ export class StoreService {
     return this.storeRepo.findOneOrFail(findOptions, maybeOptions);
   }
 
-  update(findOptions: object, dto: StoreDto) {
+  update(findOptions: object, dto: StoreDto | object) {
     return this.storeRepo.update(findOptions, dto);
   }
 

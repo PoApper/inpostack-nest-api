@@ -54,6 +54,9 @@ export class Store {
   @Column({ default: 0 })
   visit_count: number;
 
+  @Column({ default: 0, comment: 'unit: meter' })
+  distance: number; // unit: meter
+
   @CreateDateColumn()
   created_at: Date;
 
