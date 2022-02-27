@@ -44,11 +44,13 @@ export class StoreController {
   // TODO: write this API!
   @Get('admin_help/fill_all_store_distance')
   async fill_all_store_distance() {
-    // const stores = []
-    // for (const store of stores) {
-    //   const distance = findDistance(store.address1);
-    //   this.storeService.update(store.uuid, {distance: distnace})
-    // }
+    const stores = await this.storeService.find()
+    for (const store of stores) {
+      const distance = findDistance(store.address1);
+      this.storeService.update( 
+        { uuid: store.uuid },
+        Object.assign(store, { distance: distance }))
+    }
   }
 
   @Post()
