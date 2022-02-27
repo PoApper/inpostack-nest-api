@@ -17,7 +17,7 @@ export class FavoriteService {
    * Store Favorite Operation
    */
 
-  getAllFavoriteStoreList(user_id) {
+  getAllFavoriteStoreList(user_id: string) {
     return this.storeFavoriteRepo.find({
       user_id: user_id,
     });

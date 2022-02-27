@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 
@@ -18,7 +18,7 @@ import { AuthModule } from '../../../auth/auth.module';
     FileModule,
     AccountModule,
     AuthModule,
-    FavoriteModule,
+    forwardRef(() => FavoriteModule),
   ],
   providers: [StoreService],
   controllers: [StoreController],

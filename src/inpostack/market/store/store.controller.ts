@@ -3,7 +3,9 @@ import {
   Body,
   Controller,
   Delete,
+  forwardRef,
   Get,
+  Inject,
   Param,
   Post,
   Put,
@@ -38,6 +40,7 @@ export class StoreController {
   constructor(
     private readonly storeService: StoreService,
     private readonly fileService: FileService,
+    @Inject(forwardRef(() => FavoriteService))
     private readonly favoriteService: FavoriteService,
   ) {}
 
