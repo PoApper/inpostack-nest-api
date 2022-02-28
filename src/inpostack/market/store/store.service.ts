@@ -76,4 +76,18 @@ export class StoreService {
       LIMIT ${limit}
     `);
   }
+
+  getRandomStore(timeNow: string) {
+    return getManager().query(`
+      SELECT
+        store.uuid AS store_uuid,
+        store.name,
+        store.image_url
+      FROM
+        store
+      WHERE
+        store.open_time <= '${timeNow}' AND
+        store.close_time >= '${timeNow}'
+    `);
+  }
 }

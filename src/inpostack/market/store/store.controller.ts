@@ -14,7 +14,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { getManager } from 'typeorm';
 import { FormDataRequest } from 'nestjs-form-data';
 import { Public } from 'nest-keycloak-connect';
 import * as path from 'path';
@@ -240,21 +239,8 @@ export class StoreController {
     description: 'get a random store',
   })
   async getRandomStore() {
-    const dateTimeUTC = new Date();
-    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 9));
-    const timeNow = dateTime.toISOString().substr(11, 5);
-    const entityManager = getManager();
-    const ret = await entityManager.query(`
-      SELECT
-        store.uuid AS store_uuid,
-        store.name,
-        store.image_url
-      FROM
-        store
-      WHERE
-        store.open_time <= '${timeNow}' AND
-        store.close_time >= '${timeNow}'
-    `);
+    const timeNow = moment().tz('Asia/Seoul').format('HH:mm');
+    const ret = await this.storeService.getRandomStore(timeNow);
     return ret.length <= 1 ? ret : randomPick(ret, 1);
   }
 
