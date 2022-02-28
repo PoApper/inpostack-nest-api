@@ -47,7 +47,7 @@ export class FavoriteController {
     } else {
       const target_user_id = user_id ?? user.uuid;
       const storeFavoriteList =
-        await this.favoriteService.getAllFavoriteStoreList(target_user_id);
+        await this.favoriteService.getAllFavoriteStoreByUser(target_user_id);
       const storeList = [];
       for (const storeFavorite of storeFavoriteList) {
         const store = await this.storeService.findOne({

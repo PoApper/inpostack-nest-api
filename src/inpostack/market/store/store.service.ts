@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Store } from './store.entity';
-import { Repository } from 'typeorm';
+import { getManager, Repository } from 'typeorm';
 import { StoreDto } from './store.dto';
 import { StoreVisitEvent } from '../../../event/store-visit-event.entity';
 
@@ -52,5 +52,42 @@ export class StoreService {
   async plusVisitCount(uuid: string) {
     const store: Store = await this.storeRepo.findOne(uuid);
     return this.storeRepo.update(uuid, { visit_count: store.visit_count + 1 });
+  }
+
+  getPopularTopNStores(dateBefore: string, timeNow: string, limit: number) {
+    return getManager().query(`
+      SELECT
+        store_visit_event.store_uuid,
+        store.name,
+        store.image_url,
+        COUNT(*) AS total_visit_count
+      FROM
+        store_visit_event
+      LEFT JOIN
+        store
+        ON store.uuid = store_visit_event.store_uuid
+      WHERE
+        DATE(store_visit_event.visited_at) > '${dateBefore}'
+        AND '${timeNow}' BETWEEN store.open_time AND store.close_time
+      GROUP BY
+        1, 2, 3
+      ORDER BY
+        4 DESC
+      LIMIT ${limit}
+    `);
+  }
+
+  getRandomStore(timeNow: string) {
+    return getManager().query(`
+      SELECT
+        store.uuid AS store_uuid,
+        store.name,
+        store.image_url
+      FROM
+        store
+      WHERE
+        store.open_time <= '${timeNow}' AND
+        store.close_time >= '${timeNow}'
+    `);
   }
 }

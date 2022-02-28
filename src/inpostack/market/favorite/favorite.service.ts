@@ -17,7 +17,7 @@ export class FavoriteService {
    * Store Favorite Operation
    */
 
-  getAllFavoriteStoreList(user_id: string) {
+  getAllFavoriteStoreByUser(user_id: string) {
     return this.storeFavoriteRepo.find({
       user_id: user_id,
     });
@@ -43,6 +43,12 @@ export class FavoriteService {
       store_id: store_id,
     });
     return storeFavorite != null;
+  }
+
+  countUserFavoriteByStore(store_id: string) {
+    return this.storeFavoriteRepo.count({
+      store_id: store_id,
+    });
   }
 
   /**

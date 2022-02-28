@@ -18,3 +18,12 @@ export enum StoreType {
   bossam = 'BOSSAM', // 고기, 보쌈
   etc = 'ETC',
 }
+
+// TODO: integrate later!
+export enum StoreOrderOption {
+  name = 'name',
+  visit = 'visit',
+  distance = 'distance',
+  updated = 'updated',
+  created = 'created',
+}
