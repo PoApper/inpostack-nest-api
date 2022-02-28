@@ -147,7 +147,6 @@ export class StoreController {
     return this.storeService.findOneOrFail({ owner_uuid: owner_uuid });
   }
 
-  // TODO: change to `store_name/:store_name`
   @Get('name/:store_name')
   @UseGuards(InPoStackAuth)
   @AllowAnonymous()
@@ -170,6 +169,10 @@ export class StoreController {
 
     this.storeService.saveStoreVisitEvent(user ? user.uuid : null, store.uuid);
     this.storeService.plusVisitCount(store.uuid);
+
+    // Calculate Favorite Count by Store
+    store['favorite_count'] =
+      await this.favoriteService.countUserFavoriteByStore(store.uuid);
 
     if (user) {
       // store favorite check
