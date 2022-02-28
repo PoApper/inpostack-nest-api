@@ -10,6 +10,7 @@ import { Store } from './store.entity';
 import { StoreVisitEvent } from '../../../event/store-visit-event.entity';
 import { FavoriteModule } from '../favorite/favorite.module';
 import { AuthModule } from '../../../auth/auth.module';
+import { StoreImageModule } from './store-image/store-image.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from '../../../auth/auth.module';
     FileModule,
     AccountModule,
     AuthModule,
+    StoreImageModule,
     forwardRef(() => FavoriteModule),
   ],
   providers: [StoreService],
