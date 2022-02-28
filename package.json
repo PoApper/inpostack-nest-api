@@ -39,6 +39,7 @@
     "korean-regexp": "^1.0.9",
     "lorem-ipsum": "^2.0.3",
     "moment": "^2.29.1",
+    "moment-timezone": "^0.5.34",
     "mysql2": "^2.2.5",
     "nest-csv-parser": "^2.0.4",
     "nest-keycloak-connect": "1.7.5",

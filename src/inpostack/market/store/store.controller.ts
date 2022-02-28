@@ -18,6 +18,8 @@ import { getManager } from 'typeorm';
 import { FormDataRequest } from 'nestjs-form-data';
 import { Public } from 'nest-keycloak-connect';
 import * as path from 'path';
+import * as moment from 'moment';
+import 'moment-timezone';
 
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
@@ -213,36 +215,17 @@ export class StoreController {
     description: 'get 4 recommendations from top 10 visited store',
   })
   async getRecommendStore() {
-    const dateTimeUTC = new Date();
-    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 9));
-    const timeNow = dateTime.toISOString().substr(11, 5);
-    const dateBefore = new Date(
-      dateTimeUTC.setMonth(dateTimeUTC.getMonth() - 1),
+    const dateBefore = moment()
+      .tz('Asia/Seoul')
+      .subtract(1, 'month')
+      .format('YYYY-MM-DD');
+    const timeNow = moment().tz('Asia/Seoul').format('HH:mm');
+
+    const ret = await this.storeService.getPopularTopNStores(
+      dateBefore,
+      timeNow,
+      10,
     );
-    const entityManager = getManager();
-    const ret = await entityManager.query(`
-      SELECT
-        store_visit_event.store_uuid,
-        store.name,
-        store.image_url,
-        COUNT(*) AS total_visit_user
-      FROM
-        store_visit_event
-      LEFT JOIN
-        store
-        ON store.uuid = store_visit_event.store_uuid
-      WHERE
-        DATE(store_visit_event.visited_at) > ${
-          dateBefore.toISOString().split('T')[0]
-        } AND
-        store.open_time <= '${timeNow}' AND
-        store.close_time >= '${timeNow}'
-      GROUP BY
-        1, 2, 3
-      ORDER BY
-        total_visit_user DESC
-      LIMIT 10
-    `);
 
     const NUM_OF_RECOMMEND = 3;
     return ret.length <= NUM_OF_RECOMMEND
