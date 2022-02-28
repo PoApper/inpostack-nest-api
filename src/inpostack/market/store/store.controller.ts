@@ -111,6 +111,9 @@ export class StoreController {
     if (orderBy == 'visit') {
       Object.assign(findOptions, { order: { visit_count: 'DESC' } });
     }
+    if (orderBy == 'distance') {
+      Object.assign(findOptions, { order: { distance: 'ASC'} });
+    }
 
     return this.storeService.find(findOptions);
   }
