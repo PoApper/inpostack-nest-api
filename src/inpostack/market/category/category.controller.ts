@@ -17,11 +17,11 @@ import {
   CategoryUpdateDto,
 } from './category.dto';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { AccountTypeGuard } from '../../../auth/guard/role.guard';
 import { AccountTypes } from '../../../auth/decorator/role.decorator';
 import { AccountType } from '../../account/account.meta';
 import { StoreGuard } from '../../../auth/guard/store.guard';
+import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
 
 @ApiTags('Category')
 @Controller('category')
@@ -34,7 +34,7 @@ export class CategoryController {
     summary: 'create category API',
     description: '(only for admin) create a new category',
   })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   post(@Body() dto: CategoryDto) {
     return this.categoryService.save(dto);
@@ -46,7 +46,7 @@ export class CategoryController {
     summary: 'create own category API',
     description: 'create a new category to own store using auth token',
   })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   postOwnCategory(@Req() req, @Body() dto: CategoryOwnerDto) {
     const store = req.user.store;
@@ -61,7 +61,7 @@ export class CategoryController {
 
   @Get()
   @ApiQuery({ name: 'menu', required: false })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   getAll(@Query('menu') menu: boolean) {
     const relation_query = [];
@@ -76,7 +76,7 @@ export class CategoryController {
     description: 'get all categories belong to own store using auth token',
   })
   @ApiQuery({ name: 'menu', required: false })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   getAllByOwner(@Req() req, @Query('menu') menu: boolean) {
     const store = req.user.store;
@@ -107,7 +107,7 @@ export class CategoryController {
     summary: 'update own category API',
     description: 'update own category using auth token',
   })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   async putOneByOwner(
     @Req() req,
@@ -128,7 +128,7 @@ export class CategoryController {
     summary: 'update category API',
     description: '(only for admin) update category',
   })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   async putOne(
     @Req() req,
@@ -144,7 +144,7 @@ export class CategoryController {
     summary: 'delete own category API',
     description: 'delete own category using auth token',
   })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard, StoreGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   async deleteOneByOwner(@Req() req, @Param('uuid') uuid: string) {
     const store = req.user.store;
@@ -160,7 +160,7 @@ export class CategoryController {
     summary: 'delete category API',
     description: '(only for admin) delete category',
   })
-  @UseGuards(AuthGuard('jwt'), AccountTypeGuard)
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   async deleteOne(@Req() req, @Param('uuid') uuid: string) {
     await this.categoryService.findOneOrFail({ uuid: uuid });
