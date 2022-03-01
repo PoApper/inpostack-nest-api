@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthGuard, KeycloakConnectModule } from 'nest-keycloak-connect';
-import { CsvModule } from 'nest-csv-parser';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -40,7 +39,6 @@ import { CategoryModule } from './inpostack/market/category/category.module';
     MailModule,
     LoggerModule,
     StatisticsModule,
-    CsvModule,
   ],
   controllers: [AppController],
   providers: [
