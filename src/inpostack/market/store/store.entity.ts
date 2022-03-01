@@ -57,6 +57,12 @@ export class Store {
   @Column({ default: 0, comment: 'unit: meter' })
   distance: number; // unit: meter
 
+  @Column({ nullable: true })
+  naver_map_url: string;
+
+  @Column({ nullable: true })
+  kakao_map_url: string;
+
   @CreateDateColumn()
   created_at: Date;
 

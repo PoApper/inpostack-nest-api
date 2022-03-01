@@ -33,5 +33,11 @@ export class StoreDto {
   readonly close_time: string; // HH:MM
 
   @ApiProperty()
+  readonly naver_map_url: string;
+
+  @ApiProperty()
+  readonly kakao_map_url: string;
+
+  @ApiProperty()
   readonly owner_uuid?: string; // uuid of owner account (it can be null)
 }
