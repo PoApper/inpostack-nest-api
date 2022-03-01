@@ -16,7 +16,6 @@ import {
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FormDataRequest } from 'nestjs-form-data';
 import { Public } from 'nest-keycloak-connect';
-import * as path from 'path';
 import * as moment from 'moment';
 import 'moment-timezone';
 
@@ -34,6 +33,7 @@ import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
 import { Store } from './store.entity';
 import { FavoriteService } from '../favorite/favorite.service';
 import findDistance from '../../../utils/findDistance';
+import { StoreLogoDto } from './store-logo.dto';
 
 @ApiTags('Store')
 @Controller('store')
@@ -61,29 +61,36 @@ export class StoreController {
   @ApiBody({ type: StoreDto })
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  @FormDataRequest()
-  async post(@Body() dto: StoreDto) {
-    const { store_image, ...saveDto } = dto;
-
-    if (saveDto.address1) {
-      const distance = await findDistance(saveDto.address1);
-      Object.assign(saveDto, { distance: distance });
+  async post(@Body() storeDto: StoreDto) {
+    if (storeDto.address1) {
+      const distance = await findDistance(storeDto.address1);
+      Object.assign(storeDto, { distance: distance });
     } else {
       throw new BadRequestException('No address');
     }
-    const store = await this.storeService.save(saveDto);
 
-    if (store_image) {
-      const img_key = `store/logo/${store.uuid}${path.extname(
-        store_image.originalName,
-      )}`;
-      const logo_url = await this.fileService.uploadFile(img_key, store_image);
-      await this.storeService.update(
-        { uuid: store.uuid },
-        Object.assign(saveDto, { image_url: logo_url }),
-      );
-    }
-    return store;
+    return this.storeService.save(storeDto);
+  }
+
+  @Post('logo/:store_id')
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
+  @AccountTypes(AccountType.admin)
+  @FormDataRequest()
+  async registerStoreLogo(
+    @Param('store_id') store_id: string,
+    @Body() storeLogoDto: StoreLogoDto,
+  ) {
+    const { store_logo } = storeLogoDto;
+    if (!store_logo) throw new BadRequestException('invalid logo');
+
+    const store = await this.storeService.findOne({ uuid: store_id });
+    if (!store) throw new BadRequestException('Not exist store');
+
+    const logoKey = `store/logo/${store_id}`;
+    const logoUrl = await this.fileService.uploadFile(logoKey, store_logo);
+
+    await this.storeService.update({ uuid: store_id }, { image_url: logoUrl });
+    return logoUrl;
   }
 
   @Get()
@@ -279,26 +286,9 @@ export class StoreController {
   @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
   @FormDataRequest()
-  async updateOwnStore(@Req() req, @Body() dto: StoreDto) {
+  async updateOwnStore(@Req() req, @Body() storeDto: StoreDto) {
     const store = req.user.store;
-    const { store_image, ...saveDto } = dto;
-
-    if (store_image) {
-      if (store.image_url) {
-        const deleteKey = store.image_url.split('/').slice(3).join('/');
-        this.fileService.deleteFile(deleteKey);
-      }
-      const img_key = `store/logo/${store.uuid}${path.extname(
-        store_image.originalName,
-      )}`;
-      const logo_url = await this.fileService.uploadFile(img_key, store_image);
-      return this.storeService.update(
-        { uuid: store.uuid },
-        Object.assign(saveDto, { image_url: logo_url }),
-      );
-    } else {
-      return this.storeService.update({ uuid: store.uuid }, dto);
-    }
+    return this.storeService.update({ uuid: store.uuid }, storeDto);
   }
 
   @Put(':uuid')
@@ -309,26 +299,11 @@ export class StoreController {
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   @FormDataRequest()
-  async updateOne(@Param('uuid') uuid: string, @Body() dto: StoreDto) {
-    const { store_image, ...saveDto } = dto;
+  async updateOne(@Param('uuid') uuid: string, @Body() storeDto: StoreDto) {
     const store = await this.storeService.findOne({ uuid: uuid });
+    if (!store) throw new BadRequestException('Not exist store');
 
-    if (store_image) {
-      if (store.image_url) {
-        const deleteKey = store.image_url.split('/').slice(3).join('/');
-        this.fileService.deleteFile(deleteKey);
-      }
-      const img_key = `store/logo/${store.uuid}${path.extname(
-        store_image.originalName,
-      )}`;
-      const logo_url = await this.fileService.uploadFile(img_key, store_image);
-      return this.storeService.update(
-        { uuid: store.uuid },
-        Object.assign(saveDto, { image_url: logo_url }),
-      );
-    } else {
-      return this.storeService.update({ uuid: store.uuid }, saveDto);
-    }
+    return this.storeService.update({ uuid: uuid }, storeDto);
   }
 
   @Delete(':uuid')
