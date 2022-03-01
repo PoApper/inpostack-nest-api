@@ -169,6 +169,8 @@ export class AuthController {
     if (user) {
       await this.accountService.updateLoginById(user.uuid);
       return user;
+    } else {
+      return {};
     }
   }
 
