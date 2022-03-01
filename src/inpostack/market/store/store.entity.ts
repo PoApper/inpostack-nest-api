@@ -21,7 +21,7 @@ export class Store {
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   phone: string;
 
   @Column('text')
@@ -39,10 +39,10 @@ export class Store {
   @Column({ nullable: false })
   zipcode: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   open_time: string; // HH:MM
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   close_time: string; // HH:MM
 
   @Column({ nullable: true })
