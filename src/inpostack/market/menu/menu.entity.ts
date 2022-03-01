@@ -18,20 +18,14 @@ export class Menu {
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   price: number;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   description: string;
 
   @Column({ nullable: false, default: false })
   is_main_menu: boolean;
-
-  @Column({ nullable: false, default: 0 })
-  like: number;
-
-  @Column({ nullable: false, default: 0 })
-  hate: number;
 
   @Column({ nullable: true })
   image_url: string;
