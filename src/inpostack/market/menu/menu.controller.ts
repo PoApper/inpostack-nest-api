@@ -131,8 +131,7 @@ export class MenuController {
       WHERE
         store.open_time <= '${timeNow}' AND
         store.close_time >= '${timeNow}' AND
-        menu.is_main_menu = TRUE AND
-        menu.like > menu.hate
+        menu.is_main_menu = TRUE
     `);
 
     const NUM_OF_RECOMMEND = 3;
