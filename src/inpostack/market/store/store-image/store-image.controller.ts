@@ -47,7 +47,7 @@ export class StoreImageController {
     );
     const storeImageLinkList: Array<string> = [];
     for (const storeImage of storeImageList) {
-      const storeImageLink = `${process.env.S3_CF_DIST_URL}/${process.env.S3_TARGET_DIR}/store-image/${storeImage.uuid}`;
+      const storeImageLink = `${process.env.S3_CF_DIST_URL}/store-image/${storeImage.uuid}`;
       storeImageLinkList.push(storeImageLink);
     }
     return storeImageLinkList;
