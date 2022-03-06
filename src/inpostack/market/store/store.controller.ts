@@ -46,6 +46,8 @@ export class StoreController {
   ) {}
 
   @Get('admin_help/fill_all_store_distance')
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
+  @AccountTypes(AccountType.admin)
   async fill_all_store_distance() {
     const stores = await this.storeService.find();
     for (const store of stores) {
