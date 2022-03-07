@@ -63,6 +63,9 @@ export class Store {
   @Column({ nullable: true })
   kakao_map_url: string;
 
+  @Column({ nullable: true })
+  label: string; // ex. 전통 맛집, 강추, 밥약 추천
+
   @CreateDateColumn()
   created_at: Date;
 

@@ -39,5 +39,8 @@ export class StoreDto {
   readonly kakao_map_url: string;
 
   @ApiProperty()
+  readonly label: string;
+
+  @ApiProperty()
   readonly owner_uuid?: string; // uuid of owner account (it can be null)
 }
