@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { StoreType } from './store.meta';
+import { StoreRegionType, StoreType } from './store.meta';
 
 export class StoreDto {
   @ApiProperty()
@@ -37,6 +37,15 @@ export class StoreDto {
 
   @ApiProperty()
   readonly kakao_map_url: string;
+
+  @ApiProperty()
+  readonly label: string;
+
+  @ApiProperty({
+    enum: StoreRegionType,
+    description: 'region type: 효자(hyo-ja), 지곡(ji-gok), ...',
+  })
+  readonly region: StoreRegionType;
 
   @ApiProperty()
   readonly owner_uuid?: string; // uuid of owner account (it can be null)

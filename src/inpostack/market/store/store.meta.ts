@@ -20,10 +20,19 @@ export enum StoreType {
 }
 
 // TODO: integrate later!
-export enum StoreOrderOption {
+export enum StoreSortOption {
   name = 'name',
   visit = 'visit',
   distance = 'distance',
   updated = 'updated',
   created = 'created',
+}
+
+export enum StoreRegionType {
+  hyoja = 'hyo-ja',
+  skview = 'sk-view',
+  yugang = 'yu-gang',
+  yidong = 'yi-dong',
+  jigok = 'ji-gok',
+  others = 'others',
 }

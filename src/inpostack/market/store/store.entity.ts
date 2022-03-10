@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { StoreType } from './store.meta';
+import { StoreRegionType, StoreType } from './store.meta';
 import { Category } from '../category/category.entity';
 import { Account } from '../../account/account.entity';
 import { Menu } from '../menu/menu.entity';
@@ -62,6 +62,12 @@ export class Store {
 
   @Column({ nullable: true })
   kakao_map_url: string;
+
+  @Column({ nullable: true })
+  label: string; // ex. 전통 맛집, 강추, 밥약 추천
+
+  @Column({ nullable: true })
+  region: StoreRegionType;
 
   @CreateDateColumn()
   created_at: Date;
