@@ -28,10 +28,11 @@ export enum StoreSortOption {
   created = 'created',
 }
 
-export enum RegionType {
+export enum StoreRegionType {
   hyoja = 'hyo-ja',
   skview = 'sk-view',
   yugang = 'yu-gang',
   yidong = 'yi-dong',
   jigok = 'ji-gok',
+  others = 'others',
 }

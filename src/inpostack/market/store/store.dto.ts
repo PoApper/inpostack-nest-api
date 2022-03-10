@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { RegionType, StoreType } from './store.meta';
+import { StoreRegionType, StoreType } from './store.meta';
 
 export class StoreDto {
   @ApiProperty()
@@ -42,10 +42,10 @@ export class StoreDto {
   readonly label: string;
 
   @ApiProperty({
-    enum: RegionType,
+    enum: StoreRegionType,
     description: 'region type: 효자(hyo-ja), 지곡(ji-gok), ...',
   })
-  readonly region: RegionType;
+  readonly region: StoreRegionType;
 
   @ApiProperty()
   readonly owner_uuid?: string; // uuid of owner account (it can be null)

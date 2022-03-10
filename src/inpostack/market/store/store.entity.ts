@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { RegionType, StoreType } from './store.meta';
+import { StoreRegionType, StoreType } from './store.meta';
 import { Category } from '../category/category.entity';
 import { Account } from '../../account/account.entity';
 import { Menu } from '../menu/menu.entity';
@@ -67,7 +67,7 @@ export class Store {
   label: string; // ex. 전통 맛집, 강추, 밥약 추천
 
   @Column({ nullable: true })
-  region: RegionType;
+  region: StoreRegionType;
 
   @CreateDateColumn()
   created_at: Date;

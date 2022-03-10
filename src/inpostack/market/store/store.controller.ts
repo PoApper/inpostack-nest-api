@@ -21,7 +21,7 @@ import 'moment-timezone';
 
 import { StoreService } from './store.service';
 import { StoreDto } from './store.dto';
-import { StoreType } from './store.meta';
+import { StoreRegionType, StoreType } from './store.meta';
 import { AccountTypeGuard } from '../../../auth/guard/role.guard';
 import { AccountTypes } from '../../../auth/decorator/role.decorator';
 import { AccountType } from '../../account/account.meta';
@@ -213,6 +213,7 @@ export class StoreController {
   getMeta() {
     return {
       store_type: StoreType,
+      store_region: StoreRegionType,
     };
   }
 
