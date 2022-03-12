@@ -39,6 +39,9 @@ export class Store {
   @Column({ nullable: false })
   zipcode: number;
 
+  @Column({ nullable: true, type: 'text' })
+  opening_hours: string; // JSON string
+
   @Column({ nullable: true })
   open_time: string; // HH:MM
 

@@ -27,6 +27,9 @@ export class StoreDto {
   readonly zipcode: number;
 
   @ApiProperty()
+  readonly opening_hours: string;
+
+  @ApiProperty()
   readonly open_time: string; // HH:MM
 
   @ApiProperty()
