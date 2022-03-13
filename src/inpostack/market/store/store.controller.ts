@@ -59,8 +59,8 @@ export class StoreController {
 
   @Post()
   @ApiBody({ type: StoreDto })
-  // @UseGuards(InPoStackAuth, AccountTypeGuard)
-  // @AccountTypes(AccountType.admin)
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
+  @AccountTypes(AccountType.admin)
   async post(@Body() storeDto: StoreDto) {
     if (storeDto.address1) {
       const distance = await findDistance(storeDto.address1);
