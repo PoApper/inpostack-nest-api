@@ -39,6 +39,9 @@ export class Store {
   @Column({ nullable: false })
   zipcode: number;
 
+  @Column({ nullable: true, type: 'text' })
+  opening_hours: string; // JSON string, refer annotation below
+
   @Column({ nullable: true })
   open_time: string; // HH:MM
 
@@ -92,3 +95,10 @@ export class Store {
   @OneToMany(() => Menu, (menu) => menu.store)
   review: Menu[];
 }
+
+/*
+* opening_hours input example: JSON string
+*   "{\"Monday\":[{\"startTime\":\"09:00\",\"endTime\":\"14:00\"},{\"startTime\":\"17:00\",\"endTime\":\"19:30\"}],\"Tuesday\":[{\"startTime\":\"09:00\",\"endTime\":\"14:00\"},{\"startTime\":\"17:00\",\"endTime\":\"19:30\"}]}"
+*
+* use JSON.parse() to convert JSON string -> JSON
+* */
