@@ -26,7 +26,6 @@ import { StoreRegionType, StoreType } from './store.meta';
 import { AccountTypeGuard } from '../../../auth/guard/role.guard';
 import { AccountTypes } from '../../../auth/decorator/role.decorator';
 import { AccountType } from '../../account/account.meta';
-import { StoreGuard } from '../../../auth/guard/store.guard';
 import { AllowAnonymous } from '../../../auth/decorator/anonymous.decorator';
 import randomPick from '../../../utils/randomPick';
 import { FileService } from '../../../file/file.service';
@@ -129,33 +128,6 @@ export class StoreController {
     }
 
     return this.storeService.find(findOptions);
-  }
-
-  @Get('owner')
-  @ApiQuery({ name: 'category', required: false })
-  @ApiQuery({ name: 'menu', required: false })
-  @UseGuards(InPoStackAuth, AccountTypeGuard)
-  @AccountTypes(AccountType.storeOwner)
-  getOwnStore(
-    @Req() req,
-    @Query('category') category: boolean,
-    @Query('menu') menu: boolean,
-  ) {
-    const user = req.user;
-    const relation_query = [];
-    if (category) relation_query.push('category');
-    if (category && menu) relation_query.push('category.menu');
-
-    return this.storeService.findOneOrFail(
-      { owner_uuid: user.uuid },
-      { relations: relation_query },
-    );
-  }
-
-  @Get('owner/:owner_uuid')
-  @Public()
-  getByOwner(@Param('owner_uuid') owner_uuid: string) {
-    return this.storeService.findOneOrFail({ owner_uuid: owner_uuid });
   }
 
   @Get('name/:store_name')
@@ -280,19 +252,6 @@ export class StoreController {
     this.storeService.plusVisitCount(store.uuid);
 
     return store;
-  }
-
-  @Put('owner')
-  @ApiOperation({
-    summary: 'update own store API',
-    description: 'update store information using auth token',
-  })
-  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
-  @AccountTypes(AccountType.storeOwner)
-  @FormDataRequest()
-  async updateOwnStore(@Req() req, @Body() storeDto: StoreDto) {
-    const store = req.user.store;
-    return this.storeService.update({ uuid: store.uuid }, storeDto);
   }
 
   @Put(':uuid')

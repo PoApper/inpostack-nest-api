@@ -7,7 +7,6 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -17,12 +16,11 @@ import { Public } from 'nest-keycloak-connect';
 import * as moment from 'moment';
 import * as path from 'path';
 
-import { MenuDto, MenuOwnerDto, MenuUpdateDto } from './menu.dto';
+import { MenuDto, MenuUpdateDto } from './menu.dto';
 import { MenuService } from './menu.service';
 import { AccountTypeGuard } from '../../../auth/guard/role.guard';
 import { AccountTypes } from '../../../auth/decorator/role.decorator';
 import { AccountType } from '../../account/account.meta';
-import { StoreGuard } from '../../../auth/guard/store.guard';
 import { CategoryService } from '../category/category.service';
 import { FileService } from '../../../file/file.service';
 import randomPick from '../../../utils/randomPick';
@@ -66,45 +64,10 @@ export class MenuController {
     return menu;
   }
 
-  @Post('owner')
-  @ApiBody({ type: MenuOwnerDto })
-  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
-  @AccountTypes(AccountType.storeOwner)
-  @FormDataRequest()
-  async postByOwner(@Req() req, @Body() dto: MenuOwnerDto) {
-    const store = req.user.store;
-    const { menu_image, ...saveDto } = dto;
-
-    const menu = await this.menuService.save(
-      Object.assign(saveDto, { store_uuid: store.uuid }),
-    );
-
-    if (menu_image) {
-      const img_key = `menu/logo/${menu.uuid}${path.extname(
-        menu_image.originalName,
-      )}`;
-      const logo_url = await this.fileService.uploadFile(img_key, menu_image);
-      await this.menuService.update(
-        { uuid: menu.uuid },
-        Object.assign(saveDto, { image_url: logo_url }),
-      );
-    }
-
-    return menu;
-  }
-
   @Get()
   @Public()
   getAll() {
     return this.menuService.findAll();
-  }
-
-  @Get('owner')
-  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
-  @AccountTypes(AccountType.storeOwner)
-  getAllByOwner(@Req() req) {
-    const store = req.user.store;
-    return this.menuService.findAll({ store_uuid: store.uuid });
   }
 
   @Get('recommend')
@@ -214,69 +177,11 @@ export class MenuController {
     }
   }
 
-  @Put('owner/:uuid')
-  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
-  @AccountTypes(AccountType.storeOwner)
-  @FormDataRequest()
-  async putOneByOwner(
-    @Req() req,
-    @Param('uuid', ParseUUIDPipe) uuid: string,
-    @Body() dto: MenuOwnerDto,
-  ) {
-    const store = req.user.store;
-    const menu = await this.menuService.findOneOrFail({
-      uuid: uuid,
-      store_uuid: store.uuid,
-    });
-    await this.categoryService.findOneOrFail({
-      uuid: dto.category_uuid,
-      store_uuid: store.uuid,
-    });
-
-    const { menu_image, ...saveDto } = dto;
-
-    if (menu_image) {
-      if (menu.image_url) {
-        const deleteKey = menu.image_url.split('/').slice(3).join('/');
-        this.fileService.deleteFile(deleteKey);
-      }
-      const img_key = `menu/logo/${menu.uuid}${path.extname(
-        menu_image.originalName,
-      )}`;
-      const logo_url = await this.fileService.uploadFile(img_key, menu_image);
-      return this.menuService.update(
-        { uuid: menu.uuid },
-        Object.assign(saveDto, { image_url: logo_url }),
-      );
-    } else {
-      return this.menuService.update({ uuid: uuid }, saveDto);
-    }
-  }
-
   @Delete(':uuid')
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   async deleteOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
     const menu = await this.menuService.findOneOrFail({ uuid: uuid });
-    if (menu.image_url) {
-      const deleteKey = menu.image_url.split('/').slice(3).join('/');
-      this.fileService.deleteFile(deleteKey);
-    }
-    return this.menuService.delete({ uuid: uuid });
-  }
-
-  @Delete('owner/:uuid')
-  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
-  @AccountTypes(AccountType.storeOwner)
-  async deleteOneByOwner(
-    @Req() req,
-    @Param('uuid', ParseUUIDPipe) uuid: string,
-  ) {
-    const store = req.user.store;
-    const menu = await this.menuService.findOneOrFail({
-      uuid: uuid,
-      store_uuid: store.uuid,
-    });
     if (menu.image_url) {
       const deleteKey = menu.image_url.split('/').slice(3).join('/');
       this.fileService.deleteFile(deleteKey);
