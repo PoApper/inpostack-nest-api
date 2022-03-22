@@ -5,6 +5,7 @@ import {
   Get,
   Inject,
   Param,
+  ParseUUIDPipe,
   Post,
   Query,
   Req,
@@ -34,7 +35,10 @@ export class FavoriteController {
   @Get('store')
   @ApiQuery({ name: 'user_id', required: false })
   @UseGuards(InPoStackAuth)
-  async getMyFavoriteStoreList(@Req() req, @Query('user_id') user_id: string) {
+  async getMyFavoriteStoreList(
+    @Req() req,
+    @Query('user_id', ParseUUIDPipe) user_id: string,
+  ) {
     const user: Account = req.user;
 
     // For non-admin user, only get their own
@@ -63,7 +67,7 @@ export class FavoriteController {
   @UseGuards(InPoStackAuth)
   async addToFavoriteStoreList(
     @Req() req,
-    @Param('store_uuid') store_uuid: string,
+    @Param('store_uuid', ParseUUIDPipe) store_uuid: string,
   ) {
     const user = req.user;
     return this.favoriteService.addToFavoriteStoreList(user.uuid, store_uuid);
@@ -97,7 +101,7 @@ export class FavoriteController {
   @UseGuards(InPoStackAuth)
   async addToFavoriteMenuList(
     @Req() req,
-    @Param('menu_uuid') menu_uuid: string,
+    @Param('menu_uuid', ParseUUIDPipe) menu_uuid: string,
   ) {
     const user = req.user;
     return this.favoriteService.addToFavoriteMenuList(user.uuid, menu_uuid);
@@ -107,7 +111,7 @@ export class FavoriteController {
   @UseGuards(InPoStackAuth)
   async deleteFromFavoriteMenuList(
     @Req() req,
-    @Param('menu_uuid') menu_uuid: string,
+    @Param('menu_uuid', ParseUUIDPipe) menu_uuid: string,
   ) {
     const user = req.user;
     return this.favoriteService.removeFromFavoriteMenuList(

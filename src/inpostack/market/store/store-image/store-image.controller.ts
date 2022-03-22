@@ -6,12 +6,18 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { StoreImageService } from './store-image.service';
 import { FileService } from '../../../../file/file.service';
 import { FormDataRequest } from 'nestjs-form-data';
 import { StoreImageDto } from './store-image.dto';
+import { InPoStackAuth } from '../../../../auth/guard/InPoStackAuth.guard';
+import { AccountTypeGuard } from '../../../../auth/guard/role.guard';
+import { AccountTypes } from '../../../../auth/decorator/role.decorator';
+import { AccountType } from '../../../account/account.meta';
 
 @ApiTags('Store Image')
 @Controller('store-image')
@@ -22,9 +28,11 @@ export class StoreImageController {
   ) {}
 
   @Post(':store_id')
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
+  @AccountTypes(AccountType.admin)
   @FormDataRequest()
   async add_store_image(
-    @Param('store_id') store_id: string,
+    @Param('store_id', ParseUUIDPipe) store_id: string,
     @Body() dto: StoreImageDto,
   ) {
     const { store_image } = dto;
@@ -41,7 +49,9 @@ export class StoreImageController {
   }
 
   @Get(':store_id')
-  async get_all_store_images_links(@Param('store_id') store_id: string) {
+  async get_all_store_images_links(
+    @Param('store_id', ParseUUIDPipe) store_id: string,
+  ) {
     const storeImageList = await this.storeImageService.findAllStoreImages(
       store_id,
     );
@@ -54,7 +64,11 @@ export class StoreImageController {
   }
 
   @Delete('image/:store_image_id')
-  delete_store_image(@Param('store_image_id') store_image_id: string) {
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
+  @AccountTypes(AccountType.admin)
+  delete_store_image(
+    @Param('store_image_id', ParseUUIDPipe) store_image_id: string,
+  ) {
     return this.storeImageService.deleteStoreImage(store_image_id);
   }
 }

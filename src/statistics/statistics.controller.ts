@@ -1,15 +1,11 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { createQueryBuilder } from 'typeorm';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { StatisticsService } from './statistics.service';
 
 @ApiTags('Statistics')
 @Controller('statistics')
 export class StatisticsController {
-  constructor(
-    private readonly statisticsService: StatisticsService
-  ) {
-  }
+  constructor(private readonly statisticsService: StatisticsService) {}
 
   @ApiOperation({ summary: 'Daily Register User' })
   @Get('daily_register_user')
@@ -36,15 +32,24 @@ export class StatisticsController {
     @Query('end_date') endDate: Date,
     @Query('store_uuid') storeUuid: string,
   ) {
-    return this.statisticsService.dailyTotalStoreVisitUserQuery(startDate, endDate, storeUuid);
+    return this.statisticsService.dailyTotalStoreVisitUserQuery(
+      startDate,
+      endDate,
+      storeUuid,
+    );
   }
 
-  @ApiOperation({summary: 'Store Visit Time'})
+  @ApiOperation({ summary: 'Store Visit Time' })
   @Get('store_visit_time')
-  async storeVisitTime(@Query('start_date') startDate: Date,
-                       @Query('end_date') endDate: Date,
-                       @Query('store_uuid') storeUuid: string
+  async storeVisitTime(
+    @Query('start_date') startDate: Date,
+    @Query('end_date') endDate: Date,
+    @Query('store_uuid') storeUuid: string,
   ) {
-    return this.statisticsService.storeVisitTimeQuery(startDate, endDate, storeUuid)
+    return this.statisticsService.storeVisitTimeQuery(
+      startDate,
+      endDate,
+      storeUuid,
+    );
   }
 }

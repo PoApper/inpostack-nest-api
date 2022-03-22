@@ -3,8 +3,7 @@ import { createQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class StatisticsService {
-  constructor() {
-  }
+  constructor() {}
 
   dailyRegisterUserQuery(startDate: Date, endDate: Date) {
     return createQueryBuilder('account')
@@ -26,7 +25,11 @@ export class StatisticsService {
       .getRawMany();
   }
 
-  dailyTotalStoreVisitUserQuery(startDate: Date, endDate: Date, storeUuid?: string) {
+  dailyTotalStoreVisitUserQuery(
+    startDate: Date,
+    endDate: Date,
+    storeUuid?: string,
+  ) {
     return (
       createQueryBuilder('store_visit_event')
         .select(`DATE(visited_at) AS visit_date`)
@@ -42,20 +45,20 @@ export class StatisticsService {
   storeVisitTimeQuery(startDate: Date, endDate: Date, storeUuid: string) {
     const startDateUtc = new Date(startDate);
     const endDateUtc = new Date(endDate);
-    startDateUtc.setHours(startDateUtc.getHours()-9);
-    endDateUtc.setHours(endDateUtc.getHours()-9);
-    return (
-      createQueryBuilder('store_visit_event')
-        .select([
-          `DATE_FORMAT(CONVERT_TZ(visited_at, '+00:00','+09:00'), '%h:%i') AS visit_hour`,
-          `visited_at`,
-          'COUNT(*) AS visit_count'
-        ])
-        .where(`visited_at BETWEEN '${startDateUtc.toISOString()}' AND '${endDateUtc.toISOString()}'`)
-        .andWhere(`store_uuid = '${storeUuid}'`)
-        .groupBy('visit_hour')
-        .orderBy('visited_at')
-        .getRawMany()
-    );
+    startDateUtc.setHours(startDateUtc.getHours() - 9);
+    endDateUtc.setHours(endDateUtc.getHours() - 9);
+    return createQueryBuilder('store_visit_event')
+      .select([
+        `DATE_FORMAT(CONVERT_TZ(visited_at, '+00:00','+09:00'), '%h:%i') AS visit_hour`,
+        `visited_at`,
+        'COUNT(*) AS visit_count',
+      ])
+      .where(
+        `visited_at BETWEEN '${startDateUtc.toISOString()}' AND '${endDateUtc.toISOString()}'`,
+      )
+      .andWhere(`store_uuid = '${storeUuid}'`)
+      .groupBy('visit_hour')
+      .orderBy('visited_at')
+      .getRawMany();
   }
 }

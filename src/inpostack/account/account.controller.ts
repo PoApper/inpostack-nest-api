@@ -5,6 +5,7 @@ import {
   Get,
   Inject,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -94,7 +95,7 @@ export class AccountController {
     description: 'get a specific account using uuid',
   })
   @UseGuards(InPoStackAuth)
-  getOne(@Param('uuid') uuid: string) {
+  getOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
     // TODO: need to hide password!
     return this.accountService.findOne({ uuid: uuid });
   }
@@ -106,7 +107,10 @@ export class AccountController {
   })
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  updateByAdmin(@Param('uuid') uuid: string, @Body() dto: AccountUpdateDto) {
+  updateByAdmin(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Body() dto: AccountUpdateDto,
+  ) {
     try {
       this.logger.info(`Update account: uuid=${uuid}`);
       return this.accountService.update({ uuid: uuid }, dto);
@@ -138,7 +142,7 @@ export class AccountController {
   })
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  delete(@Param('uuid') uuid: string) {
+  delete(@Param('uuid', ParseUUIDPipe) uuid: string) {
     try {
       this.logger.info(`Delete account: uuid=${uuid}`);
       return this.accountService.delete({ uuid: uuid });

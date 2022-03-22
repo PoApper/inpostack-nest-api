@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Req,
@@ -50,19 +51,21 @@ export class ReviewController {
 
   @Get('reviewer/:reviewer_uuid')
   @UseGuards(InPoStackAuth)
-  getAllByReviewer(@Param('reviewer_uuid') reviewer_uuid: string) {
+  getAllByReviewer(
+    @Param('reviewer_uuid', ParseUUIDPipe) reviewer_uuid: string,
+  ) {
     return this.reviewService.find({ reviewer_uuid: reviewer_uuid });
   }
 
   @Get('store/:store_uuid')
   @Public()
-  getAllByStore(@Param('store_uuid') store_uuid: string) {
+  getAllByStore(@Param('store_uuid', ParseUUIDPipe) store_uuid: string) {
     return this.reviewService.find({ store_uuid: store_uuid });
   }
 
   @Get(':uuid')
   @Public()
-  getOne(@Param('uuid') uuid: string) {
+  getOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.reviewService.findOne({ uuid: uuid });
   }
 
@@ -70,7 +73,7 @@ export class ReviewController {
   @UseGuards(InPoStackAuth)
   async updateOwnReview(
     @Req() req,
-    @Param('uuid') uuid: string,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
     @Body() dto: ReviewUpdateDto,
   ) {
     const user = req.user;
@@ -85,14 +88,20 @@ export class ReviewController {
   @Put(':uuid')
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  async update(@Param('uuid') uuid: string, @Body() dto: ReviewDto) {
+  async update(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Body() dto: ReviewDto,
+  ) {
     await this.reviewService.findOneOrFail({ uuid: uuid });
     return this.reviewService.update({ uuid: uuid }, dto);
   }
 
   @Delete('reviewer/:uuid')
   @UseGuards(InPoStackAuth)
-  async deleteOwnReview(@Req() req, @Param('uuid') uuid: string) {
+  async deleteOwnReview(
+    @Req() req,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+  ) {
     const user = req.user;
     const review = await this.reviewService.findOneOrFail({ uuid: uuid });
     if (user.uuid === review.reviewer_uuid) {
@@ -105,7 +114,7 @@ export class ReviewController {
   @Delete(':uuid')
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  async delete(@Param('uuid') uuid: string) {
+  async delete(@Param('uuid', ParseUUIDPipe) uuid: string) {
     await this.reviewService.findOneOrFail({ uuid: uuid });
     return this.reviewService.delete({ uuid: uuid });
   }

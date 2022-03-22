@@ -7,6 +7,7 @@ import {
   Get,
   Inject,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -14,7 +15,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { FormDataRequest } from 'nestjs-form-data';
 import { Public } from 'nest-keycloak-connect';
 import * as moment from 'moment';
 import 'moment-timezone';
@@ -25,24 +25,22 @@ import { StoreRegionType, StoreType } from './store.meta';
 import { AccountTypeGuard } from '../../../auth/guard/role.guard';
 import { AccountTypes } from '../../../auth/decorator/role.decorator';
 import { AccountType } from '../../account/account.meta';
-import { StoreGuard } from '../../../auth/guard/store.guard';
 import { AllowAnonymous } from '../../../auth/decorator/anonymous.decorator';
 import randomPick from '../../../utils/randomPick';
-import { FileService } from '../../../file/file.service';
 import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
 import { Store } from './store.entity';
 import { FavoriteService } from '../favorite/favorite.service';
 import findDistance from '../../../utils/findDistance';
-import { StoreLogoDto } from './store-logo.dto';
+import { StoreLogoService } from './store-logo/store-logo.service';
 
 @ApiTags('Store')
 @Controller('store')
 export class StoreController {
   constructor(
     private readonly storeService: StoreService,
-    private readonly fileService: FileService,
     @Inject(forwardRef(() => FavoriteService))
     private readonly favoriteService: FavoriteService,
+    private readonly storeLogoService: StoreLogoService,
   ) {}
 
   @Get('admin_help/fill_all_store_distance')
@@ -72,27 +70,6 @@ export class StoreController {
     }
 
     return this.storeService.save(storeDto);
-  }
-
-  @Post('logo/:store_id')
-  @UseGuards(InPoStackAuth, AccountTypeGuard)
-  @AccountTypes(AccountType.admin)
-  @FormDataRequest()
-  async registerStoreLogo(
-    @Param('store_id') store_id: string,
-    @Body() storeLogoDto: StoreLogoDto,
-  ) {
-    const { store_logo } = storeLogoDto;
-    if (!store_logo) throw new BadRequestException('invalid logo');
-
-    const store = await this.storeService.findOne({ uuid: store_id });
-    if (!store) throw new BadRequestException('Not exist store');
-
-    const logoKey = `store/logo/${store_id}`;
-    const logoUrl = await this.fileService.uploadFile(logoKey, store_logo);
-
-    await this.storeService.update({ uuid: store_id }, { image_url: logoUrl });
-    return logoUrl;
   }
 
   @Get()
@@ -128,33 +105,6 @@ export class StoreController {
     }
 
     return this.storeService.find(findOptions);
-  }
-
-  @Get('owner')
-  @ApiQuery({ name: 'category', required: false })
-  @ApiQuery({ name: 'menu', required: false })
-  @UseGuards(InPoStackAuth, AccountTypeGuard)
-  @AccountTypes(AccountType.storeOwner)
-  getOwnStore(
-    @Req() req,
-    @Query('category') category: boolean,
-    @Query('menu') menu: boolean,
-  ) {
-    const user = req.user;
-    const relation_query = [];
-    if (category) relation_query.push('category');
-    if (category && menu) relation_query.push('category.menu');
-
-    return this.storeService.findOneOrFail(
-      { owner_uuid: user.uuid },
-      { relations: relation_query },
-    );
-  }
-
-  @Get('owner/:owner_uuid')
-  @Public()
-  getByOwner(@Param('owner_uuid') owner_uuid: string) {
-    return this.storeService.findOneOrFail({ owner_uuid: owner_uuid });
   }
 
   @Get('name/:store_name')
@@ -261,7 +211,7 @@ export class StoreController {
   @ApiQuery({ name: 'menu', required: false })
   async getOne(
     @Req() req,
-    @Param('uuid') uuid: string,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
     @Query('category') category: boolean,
     @Query('menu') menu: boolean,
   ) {
@@ -281,19 +231,6 @@ export class StoreController {
     return store;
   }
 
-  @Put('owner')
-  @ApiOperation({
-    summary: 'update own store API',
-    description: 'update store information using auth token',
-  })
-  @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
-  @AccountTypes(AccountType.storeOwner)
-  @FormDataRequest()
-  async updateOwnStore(@Req() req, @Body() storeDto: StoreDto) {
-    const store = req.user.store;
-    return this.storeService.update({ uuid: store.uuid }, storeDto);
-  }
-
   @Put(':uuid')
   @ApiOperation({
     summary: 'update store API',
@@ -301,8 +238,10 @@ export class StoreController {
   })
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  @FormDataRequest()
-  async updateOne(@Param('uuid') uuid: string, @Body() storeDto: StoreDto) {
+  async updateOne(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Body() storeDto: StoreDto,
+  ) {
     const store = await this.storeService.findOne({ uuid: uuid });
     if (!store) throw new BadRequestException('Not exist store');
 
@@ -312,16 +251,14 @@ export class StoreController {
   @Delete(':uuid')
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  async deleteOne(@Param('uuid') uuid: string) {
+  async deleteOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
     const store = await this.storeService.findOneOrFail({ uuid: uuid });
 
     if (store.image_url) {
-      const deleteKey = store.image_url.split('/').slice(3).join('/');
-      this.fileService.deleteFile(deleteKey);
+      await this.storeLogoService.deleteStoreLogoById(uuid);
     }
 
     // TODO: delete all belonging menu images
-
     return this.storeService.delete({ uuid: uuid });
   }
 }
