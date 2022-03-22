@@ -7,6 +7,7 @@ import {
   Get,
   Inject,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -79,7 +80,7 @@ export class StoreController {
   @AccountTypes(AccountType.admin)
   @FormDataRequest()
   async registerStoreLogo(
-    @Param('store_id') store_id: string,
+    @Param('store_id', ParseUUIDPipe) store_id: string,
     @Body() storeLogoDto: StoreLogoDto,
   ) {
     const { store_logo } = storeLogoDto;
@@ -261,7 +262,7 @@ export class StoreController {
   @ApiQuery({ name: 'menu', required: false })
   async getOne(
     @Req() req,
-    @Param('uuid') uuid: string,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
     @Query('category') category: boolean,
     @Query('menu') menu: boolean,
   ) {
@@ -302,7 +303,10 @@ export class StoreController {
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   @FormDataRequest()
-  async updateOne(@Param('uuid') uuid: string, @Body() storeDto: StoreDto) {
+  async updateOne(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Body() storeDto: StoreDto,
+  ) {
     const store = await this.storeService.findOne({ uuid: uuid });
     if (!store) throw new BadRequestException('Not exist store');
 
@@ -312,7 +316,7 @@ export class StoreController {
   @Delete(':uuid')
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  async deleteOne(@Param('uuid') uuid: string) {
+  async deleteOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
     const store = await this.storeService.findOneOrFail({ uuid: uuid });
 
     if (store.image_url) {

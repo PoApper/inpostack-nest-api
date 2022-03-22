@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   UseGuards,
@@ -62,7 +63,7 @@ export class NoticeController {
     description: 'get a specific notice using uuid',
   })
   @Public()
-  getOne(@Param('uuid') uuid: string) {
+  getOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.noticeService.findOne({ uuid: uuid });
   }
 
@@ -73,7 +74,10 @@ export class NoticeController {
   })
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  updateOne(@Param('uuid') uuid: string, @Body() dto: NoticeDto) {
+  updateOne(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Body() dto: NoticeDto,
+  ) {
     return this.noticeService.update({ uuid: uuid }, dto);
   }
 
@@ -84,7 +88,7 @@ export class NoticeController {
   })
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  deleteOne(@Param('uuid') uuid: string) {
+  deleteOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.noticeService.delete({ uuid: uuid });
   }
 }

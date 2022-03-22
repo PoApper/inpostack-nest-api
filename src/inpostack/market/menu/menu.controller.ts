@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Req,
@@ -180,7 +181,10 @@ export class MenuController {
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
   @FormDataRequest()
-  async putOne(@Param('uuid') uuid: string, @Body() dto: MenuUpdateDto) {
+  async putOne(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Body() dto: MenuUpdateDto,
+  ) {
     const category = await this.categoryService.findOneOrFail({
       uuid: dto.category_uuid,
     });
@@ -216,7 +220,7 @@ export class MenuController {
   @FormDataRequest()
   async putOneByOwner(
     @Req() req,
-    @Param('uuid') uuid: string,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
     @Body() dto: MenuOwnerDto,
   ) {
     const store = req.user.store;
@@ -252,7 +256,7 @@ export class MenuController {
   @Delete(':uuid')
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  async deleteOne(@Param('uuid') uuid: string) {
+  async deleteOne(@Param('uuid', ParseUUIDPipe) uuid: string) {
     const menu = await this.menuService.findOneOrFail({ uuid: uuid });
     if (menu.image_url) {
       const deleteKey = menu.image_url.split('/').slice(3).join('/');
@@ -264,7 +268,10 @@ export class MenuController {
   @Delete('owner/:uuid')
   @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
-  async deleteOneByOwner(@Req() req, @Param('uuid') uuid: string) {
+  async deleteOneByOwner(
+    @Req() req,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+  ) {
     const store = req.user.store;
     const menu = await this.menuService.findOneOrFail({
       uuid: uuid,

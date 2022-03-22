@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -92,7 +93,10 @@ export class CategoryController {
 
   @Get(':uuid')
   @ApiQuery({ name: 'menu', required: false })
-  getOne(@Param('uuid') uuid: string, @Query('menu') menu: boolean) {
+  getOne(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Query('menu') menu: boolean,
+  ) {
     const relation_query = [];
     if (menu) relation_query.push('menu');
 
@@ -111,7 +115,7 @@ export class CategoryController {
   @AccountTypes(AccountType.storeOwner)
   async putOneByOwner(
     @Req() req,
-    @Param('uuid') uuid: string,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
     @Body() dto: CategoryUpdateDto,
   ) {
     const store = req.user.store;
@@ -132,7 +136,7 @@ export class CategoryController {
   @AccountTypes(AccountType.admin)
   async putOne(
     @Req() req,
-    @Param('uuid') uuid: string,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
     @Body() dto: CategoryUpdateDto,
   ) {
     await this.categoryService.findOneOrFail({ uuid: uuid });
@@ -146,7 +150,10 @@ export class CategoryController {
   })
   @UseGuards(InPoStackAuth, AccountTypeGuard, StoreGuard)
   @AccountTypes(AccountType.storeOwner)
-  async deleteOneByOwner(@Req() req, @Param('uuid') uuid: string) {
+  async deleteOneByOwner(
+    @Req() req,
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+  ) {
     const store = req.user.store;
     await this.categoryService.findOneOrFail({
       uuid: uuid,
@@ -162,7 +169,7 @@ export class CategoryController {
   })
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  async deleteOne(@Req() req, @Param('uuid') uuid: string) {
+  async deleteOne(@Req() req, @Param('uuid', ParseUUIDPipe) uuid: string) {
     await this.categoryService.findOneOrFail({ uuid: uuid });
     return this.categoryService.delete({ uuid: uuid });
   }
