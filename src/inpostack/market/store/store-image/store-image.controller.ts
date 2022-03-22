@@ -18,6 +18,7 @@ import { InPoStackAuth } from '../../../../auth/guard/InPoStackAuth.guard';
 import { AccountTypeGuard } from '../../../../auth/guard/role.guard';
 import { AccountTypes } from '../../../../auth/decorator/role.decorator';
 import { AccountType } from '../../../account/account.meta';
+import { Public } from 'nest-keycloak-connect';
 
 @ApiTags('Store Image')
 @Controller('store-image')
@@ -49,18 +50,19 @@ export class StoreImageController {
   }
 
   @Get(':store_id')
+  @Public()
   async get_all_store_images_links(
     @Param('store_id', ParseUUIDPipe) store_id: string,
   ) {
     const storeImageList = await this.storeImageService.findAllStoreImages(
       store_id,
     );
-    const storeImageLinkList: Array<string> = [];
     for (const storeImage of storeImageList) {
-      const storeImageLink = `${process.env.S3_CF_DIST_URL}/store-image/${storeImage.uuid}`;
-      storeImageLinkList.push(storeImageLink);
+      storeImage[
+        'link'
+      ] = `${process.env.S3_CF_DIST_URL}/store-image/${storeImage.uuid}`;
     }
-    return storeImageLinkList;
+    return storeImageList;
   }
 
   @Delete('image/:store_image_id')
