@@ -15,7 +15,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { FormDataRequest } from 'nestjs-form-data';
 import { Public } from 'nest-keycloak-connect';
 import * as moment from 'moment';
 import 'moment-timezone';
@@ -33,7 +32,6 @@ import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
 import { Store } from './store.entity';
 import { FavoriteService } from '../favorite/favorite.service';
 import findDistance from '../../../utils/findDistance';
-import { StoreLogoDto } from './store-logo.dto';
 
 @ApiTags('Store')
 @Controller('store')
@@ -72,27 +70,6 @@ export class StoreController {
     }
 
     return this.storeService.save(storeDto);
-  }
-
-  @Post('logo/:store_id')
-  @UseGuards(InPoStackAuth, AccountTypeGuard)
-  @AccountTypes(AccountType.admin)
-  @FormDataRequest()
-  async registerStoreLogo(
-    @Param('store_id', ParseUUIDPipe) store_id: string,
-    @Body() storeLogoDto: StoreLogoDto,
-  ) {
-    const { store_logo } = storeLogoDto;
-    if (!store_logo) throw new BadRequestException('invalid logo');
-
-    const store = await this.storeService.findOne({ uuid: store_id });
-    if (!store) throw new BadRequestException('Not exist store');
-
-    const logoKey = `store/logo/${store_id}`;
-    const logoUrl = await this.fileService.uploadFile(logoKey, store_logo);
-
-    await this.storeService.update({ uuid: store_id }, { image_url: logoUrl });
-    return logoUrl;
   }
 
   @Get()
@@ -261,7 +238,6 @@ export class StoreController {
   })
   @UseGuards(InPoStackAuth, AccountTypeGuard)
   @AccountTypes(AccountType.admin)
-  @FormDataRequest()
   async updateOne(
     @Param('uuid', ParseUUIDPipe) uuid: string,
     @Body() storeDto: StoreDto,
@@ -284,7 +260,6 @@ export class StoreController {
     }
 
     // TODO: delete all belonging menu images
-
     return this.storeService.delete({ uuid: uuid });
   }
 }
