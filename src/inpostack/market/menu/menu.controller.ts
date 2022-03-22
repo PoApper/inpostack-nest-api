@@ -10,10 +10,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { getManager } from 'typeorm';
 import { FormDataRequest } from 'nestjs-form-data';
 import { Public } from 'nest-keycloak-connect';
 import * as moment from 'moment';
+import 'moment-timezone';
 import * as path from 'path';
 
 import { MenuDto, MenuUpdateDto } from './menu.dto';
@@ -77,26 +77,17 @@ export class MenuController {
     description: 'get 4 recommendations from main menu',
   })
   async getRecommendMenu() {
-    const dateTimeUTC = new Date();
-    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 9));
-    const timeNow = dateTime.toISOString().substr(11, 5);
-    const entityManager = getManager();
-    const ret = await entityManager.query(`
-      SELECT
-        menu.name,
-        menu.image_url,
-        store.uuid AS store_uuid,
-        store.name AS store_name
-      FROM
-        menu
-      LEFT JOIN
-        store
-        ON store.uuid = menu.store_uuid
-      WHERE
-        store.open_time <= '${timeNow}' AND
-        store.close_time >= '${timeNow}' AND
-        menu.is_main_menu = TRUE
-    `);
+    const dateBefore = moment()
+      .tz('Asia/Seoul')
+      .subtract(1, 'month')
+      .format('YYYY-MM-DD');
+    const timeNow = moment().tz('Asia/Seoul').format('HH:mm');
+
+    const ret = await this.menuService.getPopularTopNMenus(
+      dateBefore,
+      timeNow,
+      10,
+    );
 
     const NUM_OF_RECOMMEND = 3;
     return ret.length <= NUM_OF_RECOMMEND
@@ -111,26 +102,8 @@ export class MenuController {
     description: 'get a random menu',
   })
   async getRandomMenu() {
-    const dateTimeUTC = new Date();
-    const dateTime = new Date(dateTimeUTC.setHours(dateTimeUTC.getHours() + 9));
-    const timeNow = dateTime.toISOString().substr(11, 5);
-    const entityManager = getManager();
-    const ret = await entityManager.query(`
-      SELECT
-        menu.name,
-        menu.image_url,
-        store.uuid AS store_uuid,
-        store.name AS store_name
-      FROM
-        menu
-      LEFT JOIN
-        store
-        ON store.uuid = menu.store_uuid
-      WHERE
-        store.open_time <= '${timeNow}' AND
-        store.close_time >= '${timeNow}' AND
-        menu.is_main_menu = TRUE
-    `);
+    const timeNow = moment().tz('Asia/Seoul').format('HH:mm');
+    const ret = await this.menuService.getRandomMenu(timeNow);
     return ret.length <= 1 ? ret : randomPick(ret, 1);
   }
 
