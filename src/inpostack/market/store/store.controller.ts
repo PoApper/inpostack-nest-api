@@ -27,20 +27,20 @@ import { AccountTypes } from '../../../auth/decorator/role.decorator';
 import { AccountType } from '../../account/account.meta';
 import { AllowAnonymous } from '../../../auth/decorator/anonymous.decorator';
 import randomPick from '../../../utils/randomPick';
-import { FileService } from '../../../file/file.service';
 import { InPoStackAuth } from '../../../auth/guard/InPoStackAuth.guard';
 import { Store } from './store.entity';
 import { FavoriteService } from '../favorite/favorite.service';
 import findDistance from '../../../utils/findDistance';
+import { StoreLogoService } from './store-logo/store-logo.service';
 
 @ApiTags('Store')
 @Controller('store')
 export class StoreController {
   constructor(
     private readonly storeService: StoreService,
-    private readonly fileService: FileService,
     @Inject(forwardRef(() => FavoriteService))
     private readonly favoriteService: FavoriteService,
+    private readonly storeLogoService: StoreLogoService,
   ) {}
 
   @Get('admin_help/fill_all_store_distance')
@@ -255,8 +255,7 @@ export class StoreController {
     const store = await this.storeService.findOneOrFail({ uuid: uuid });
 
     if (store.image_url) {
-      const deleteKey = store.image_url.split('/').slice(3).join('/');
-      this.fileService.deleteFile(deleteKey);
+      await this.storeLogoService.deleteStoreLogoById(uuid);
     }
 
     // TODO: delete all belonging menu images

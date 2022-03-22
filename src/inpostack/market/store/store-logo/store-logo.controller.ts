@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Param,
   ParseUUIDPipe,
   Post,
@@ -9,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { FormDataRequest } from 'nestjs-form-data';
-import 'moment-timezone';
 
 import { AccountTypeGuard } from '../../../../auth/guard/role.guard';
 import { AccountTypes } from '../../../../auth/decorator/role.decorator';
@@ -48,5 +48,12 @@ export class StoreLogoController {
       image_url: logoUrl,
     });
     return logoUrl;
+  }
+
+  @Delete(':store_id')
+  @UseGuards(InPoStackAuth, AccountTypeGuard)
+  @AccountTypes(AccountType.admin)
+  deleteStoreLogo(@Param('store_id', ParseUUIDPipe) store_id: string) {
+    return this.storeLogoService.deleteStoreLogoById(store_id);
   }
 }
