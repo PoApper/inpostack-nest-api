@@ -11,9 +11,7 @@ async function bootstrap() {
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:3002',
-      'https://inpo.poapper.club',
-      'https://admin.inpo.poapper.club',
-      'https://store.inpo.poapper.club',
+      /^(https:\/\/([^\.]*\.)?inpostack\.poapper\.club)$/i,
     ],
     credentials: true,
   });
