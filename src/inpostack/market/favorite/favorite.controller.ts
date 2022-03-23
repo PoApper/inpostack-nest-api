@@ -35,10 +35,7 @@ export class FavoriteController {
   @Get('store')
   @ApiQuery({ name: 'user_id', required: false })
   @UseGuards(InPoStackAuth)
-  async getMyFavoriteStoreList(
-    @Req() req,
-    @Query('user_id', ParseUUIDPipe) user_id: string,
-  ) {
+  async getMyFavoriteStoreList(@Req() req, @Query('user_id') user_id: string) {
     const user: Account = req.user;
 
     // For non-admin user, only get their own
@@ -87,36 +84,36 @@ export class FavoriteController {
   }
 
   /**
-   * Menu Favorite API
+   * Menu Favorite API (Deprecated)
    */
 
-  @Get('menu')
-  @UseGuards(InPoStackAuth)
-  async getMyFavoriteMenuList(@Req() req) {
-    const user = req.user;
-    return this.favoriteService.getAllFavoriteMenuList(user.uuid);
-  }
-
-  @Post('menu/:menu_uuid')
-  @UseGuards(InPoStackAuth)
-  async addToFavoriteMenuList(
-    @Req() req,
-    @Param('menu_uuid', ParseUUIDPipe) menu_uuid: string,
-  ) {
-    const user = req.user;
-    return this.favoriteService.addToFavoriteMenuList(user.uuid, menu_uuid);
-  }
-
-  @Delete('menu/:menu_uuid')
-  @UseGuards(InPoStackAuth)
-  async deleteFromFavoriteMenuList(
-    @Req() req,
-    @Param('menu_uuid', ParseUUIDPipe) menu_uuid: string,
-  ) {
-    const user = req.user;
-    return this.favoriteService.removeFromFavoriteMenuList(
-      user.uuid,
-      menu_uuid,
-    );
-  }
+  // @Get('menu')
+  // @UseGuards(InPoStackAuth)
+  // async getMyFavoriteMenuList(@Req() req) {
+  //   const user = req.user;
+  //   return this.favoriteService.getAllFavoriteMenuList(user.uuid);
+  // }
+  //
+  // @Post('menu/:menu_uuid')
+  // @UseGuards(InPoStackAuth)
+  // async addToFavoriteMenuList(
+  //   @Req() req,
+  //   @Param('menu_uuid', ParseUUIDPipe) menu_uuid: string,
+  // ) {
+  //   const user = req.user;
+  //   return this.favoriteService.addToFavoriteMenuList(user.uuid, menu_uuid);
+  // }
+  //
+  // @Delete('menu/:menu_uuid')
+  // @UseGuards(InPoStackAuth)
+  // async deleteFromFavoriteMenuList(
+  //   @Req() req,
+  //   @Param('menu_uuid', ParseUUIDPipe) menu_uuid: string,
+  // ) {
+  //   const user = req.user;
+  //   return this.favoriteService.removeFromFavoriteMenuList(
+  //     user.uuid,
+  //     menu_uuid,
+  //   );
+  // }
 }

@@ -7,7 +7,7 @@ import {
   AccountRegisterDto,
   AccountUpdateDto,
 } from './account.dto';
-import { AccountStatus, AccountType } from './account.meta';
+import { AccountStatus } from './account.meta';
 
 const Message = {
   NOT_EXISTING_USER: "There's no such user.",
@@ -26,7 +26,6 @@ export class AccountService {
     const saveDto = Object.assign({}, dto, {
       last_login_at: new Date(),
       account_status: AccountStatus.activated,
-      account_type: AccountType.admin,
     });
     return this.accountRepo.save(saveDto);
   }
