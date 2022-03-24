@@ -33,6 +33,7 @@ import { FavoriteService } from '../favorite/favorite.service';
 import findDistance from '../../../utils/findDistance';
 import { StoreLogoService } from './store-logo/store-logo.service';
 import { parseOpeningHour } from '../../../utils/parseOpeningHour';
+import isJson from '../../../utils/jsonCheck';
 
 @ApiTags('Store')
 @Controller('store')
@@ -109,7 +110,7 @@ export class StoreController {
 
     // store open or close
     for (const store of storeArr) {
-      if (store['opening_hours']) {
+      if (store['opening_hours'] && isJson(store['opening_hours'])) {
         const openingJSON = JSON.parse(store['opening_hours']);
         store['status'] = parseOpeningHour(openingJSON, new Date());
       } else {
@@ -171,9 +172,13 @@ export class StoreController {
     }
 
     // store open or close
-    const openingJSON = JSON.parse(store['opening_hours']);
-    store['status'] = parseOpeningHour(openingJSON, new Date());
-
+    if (store['opening_hours'] && isJson(store['opening_hours'])) {
+      const openingJSON = JSON.parse(store['opening_hours']);
+      store['status'] = parseOpeningHour(openingJSON, new Date());
+    } else {
+      // 만약 정보가 없다면 'unknown'
+      store['status'] = 'unknown';
+    }
     return store;
   }
 
@@ -255,8 +260,13 @@ export class StoreController {
     }
 
     // store open or close
-    const openingJSON = JSON.parse(store['opening_hours']);
-    store['status'] = parseOpeningHour(openingJSON, new Date());
+    if (store['opening_hours'] && isJson(store['opening_hours'])) {
+      const openingJSON = JSON.parse(store['opening_hours']);
+      store['status'] = parseOpeningHour(openingJSON, new Date());
+    } else {
+      // 만약 정보가 없다면 'unknown'
+      store['status'] = 'unknown';
+    }
 
     return store;
   }
