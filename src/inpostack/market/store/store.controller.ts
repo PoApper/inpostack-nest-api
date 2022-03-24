@@ -32,6 +32,7 @@ import { Store } from './store.entity';
 import { FavoriteService } from '../favorite/favorite.service';
 import findDistance from '../../../utils/findDistance';
 import { StoreLogoService } from './store-logo/store-logo.service';
+import { parseOpeningHour } from '../../../utils/parseOpeningHour';
 
 @ApiTags('Store')
 @Controller('store')
@@ -77,7 +78,7 @@ export class StoreController {
   @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'menu', required: false })
   @ApiQuery({ name: 'order', required: false })
-  getAll(
+  async getAll(
     @Query('take') take: number,
     @Query('category') category?: boolean,
     @Query('menu') menu?: boolean,
@@ -104,7 +105,20 @@ export class StoreController {
       Object.assign(findOptions, { order: { distance: 'ASC' } });
     }
 
-    return this.storeService.find(findOptions);
+    const storeArr = await this.storeService.find(findOptions);
+
+    // store open or close
+    for (const store of storeArr) {
+      if (store['opening_hours']) {
+        const openingJSON = JSON.parse(store['opening_hours']);
+        store['status'] = parseOpeningHour(openingJSON, new Date());
+      } else {
+        // 만약 정보가 없다면 'unknown'
+        store['status'] = 'unknown';
+      }
+    }
+
+    return storeArr;
   }
 
   @Get('name/:store_name')
@@ -127,8 +141,13 @@ export class StoreController {
     );
     if (!store) throw new BadRequestException('Not Existing Store Name');
 
-    this.storeService.saveStoreVisitEvent(user ? user.uuid : null, store.uuid);
-    this.storeService.plusVisitCount(store.uuid);
+    await this.storeService.saveStoreVisitEvent(
+      user ? user.uuid : null,
+      store.uuid,
+    );
+    if (user && user.account_type !== AccountType.admin) {
+      await this.storeService.plusVisitCount(store.uuid);
+    }
 
     // Calculate Favorite Count by Store
     store['favorite_count'] =
@@ -150,6 +169,10 @@ export class StoreController {
         }
       }
     }
+
+    // store open or close
+    const openingJSON = JSON.parse(store['opening_hours']);
+    store['status'] = parseOpeningHour(openingJSON, new Date());
 
     return store;
   }
@@ -225,8 +248,15 @@ export class StoreController {
     );
     if (!store) throw new BadRequestException('Not Existing Store UUID');
 
-    this.storeService.saveStoreVisitEvent(req.user, store.uuid);
-    this.storeService.plusVisitCount(store.uuid);
+    const user = req.user;
+    await this.storeService.saveStoreVisitEvent(user, store.uuid);
+    if (user && user.account_type !== AccountType.admin) {
+      await this.storeService.plusVisitCount(store.uuid);
+    }
+
+    // store open or close
+    const openingJSON = JSON.parse(store['opening_hours']);
+    store['status'] = parseOpeningHour(openingJSON, new Date());
 
     return store;
   }
