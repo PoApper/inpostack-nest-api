@@ -71,6 +71,14 @@ export class StoreController {
       throw new BadRequestException('No address');
     }
 
+    // name check
+    const nameExistStore = await this.storeService.findOne({
+      name: storeDto.name,
+    });
+    if (nameExistStore) {
+      throw new BadRequestException('Store Name Already Exist');
+    }
+
     return this.storeService.save(storeDto);
   }
 
@@ -284,6 +292,14 @@ export class StoreController {
   ) {
     const store = await this.storeService.findOne({ uuid: uuid });
     if (!store) throw new BadRequestException('Not exist store');
+
+    // name check
+    const nameExistStore = await this.storeService.findOne({
+      name: storeDto.name,
+    });
+    if (nameExistStore) {
+      throw new BadRequestException('Store Name Already Exist');
+    }
 
     return this.storeService.update({ uuid: uuid }, storeDto);
   }
