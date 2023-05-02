@@ -12,6 +12,8 @@ async function bootstrap() {
       'http://localhost:3001',
       'http://localhost:3002',
       /^(https:\/\/([^\.]*\.)?inpostack\.poapper\.club)$/i,
+      'https://popo.poapper.club',
+      'https://popo.postech.ac.kr',
     ],
     credentials: true,
   });
